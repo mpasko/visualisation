@@ -3,17 +3,19 @@
 <head>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+<script type="text/javascript" src="invoker.js"></script>
 <script type="text/javascript" src="script.js"></script>
 </head>
 <body>
 <div id="content"></div>
-<!--
-<form action="http://localhost:9998/aq21" method="POST">
-<input type="text" name="content" size="200" value='[{"attributesGroup":{"attributes":{name:"alamakota"}}}]' step="10"><br>
-<input type="text" name="Content-Type" value="text/json"><br>
-<input type="text" name="Content-Length" value="55"><br>
-<input type="submit" value="submit">
+<form>
+Request:<br>
+<textarea rows="20" cols="100" readonly id="Request">
+</textarea><br>
+<input type="button" value="AQ21" id="Button"><br>
+Response:<br>
+<textarea rows="20" cols="100" readonly id="Response">
+</textarea>
 </form>
--->
 </body>
 </html>

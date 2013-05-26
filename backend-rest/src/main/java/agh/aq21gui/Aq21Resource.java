@@ -39,8 +39,8 @@ public class Aq21Resource {
 		Invoker invoker = new Invoker();
 		String result;
 		try {
-			System.out.println("Received AQ21 format:");
-			System.out.println(input.toString());
+//			System.out.println("Received AQ21 format:");
+//			System.out.println(input.toString());
 			result = invoker.invoke(input.toString());
 			return parser.parse(result);
 		} catch (IOException ex) {

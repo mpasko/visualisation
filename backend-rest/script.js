@@ -1,4 +1,6 @@
-﻿jQuery(document).ready(function() {
+﻿
+jQuery.noConflict();
+jQuery(document).ready(function() {
 	var query = 
 {
   "runsGroup" : {
@@ -133,43 +135,19 @@
     "values" : [ "blue", "0", "33.5", "c2" ]
   } ]
 };
-//	var ready = JSON.stringify(query).replace(/"/g, "'");
-	var ready = JSON.stringify(query);
-//	var ready = query;
-	var resource = 'http://localhost:9998/jersey/aq21/postIt';
-//	var resource = 'localhost:9998/jersey/aq21/debug';
-	var ourType = 'application/json';
-//	var ourType = 'application/xml'; Don't do that!
-	jQuery('#content').append("Request<br><hr>");
-	jQuery('#content').append(ready);
-	jQuery('#content').append("<br>Response<br><hr>");
-//	jQuery.ajaxSetup({	
-//		accepts: {json: 'application/json; charset=utf-8'}
-//	});
-//	jQuery.post(resource, {json: ready}, function(data) {
-//			jQuery('#content').append(data);
-//		});
-	jQuery.ajax({
-		type: 'POST',
-		contentType: ourType,
-		dataType: 'json',
-		crossDomain: true,
-		url: resource,
-		data: ready,
-		headers: {'Access-Control-Allow-Origin:': '*'},
-		cache: false,
-		success: function(data) {
-			jQuery('#content').append(JSON.stringify(data["outputHypotheses"][0]["content"]));
-		},
-		beforeSend: function(jqXHR) {
-//			jqXHR.setRequestHeader("Content-type","application/json; charset=utf-8");
-		},
-		processData: false,
-		error: function(XMLHttpRequest, textStatus, errorThrown) {
-			jQuery('#content').append(XMLHttpRequest);
-			jQuery('#content').append(errorThrown);
-			jQuery('#content').append(textStatus);
-			jQuery('#content').append("<br>request failed!");
-		}
+
+	jQuery('#Request').append(JSON.stringify(query));
+	
+	jQuery('#Button').click(function(){
+		jQuery('#Response').empty();
+		invokeAQ21(query, function(result){
+			//On success
+			jQuery('#Response').append(result.replace(/\n/g, "<br>"));
+		}, function(){
+			//On error
+			jQuery('#Response').append("Request failed");
+		});
+		return false;
 	});
+	
 });
