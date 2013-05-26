@@ -1,0 +1,17 @@
+http://api.jquery.com/jQuery.ajax/
+http://en.wikipedia.org/wiki/List_of_HTTP_header_fields
+http://en.wikipedia.org/wiki/HTTP_status_code
+
+http://stackoverflow.com/questions/9928266/cross-domain-rest-jersey-web-services-with-cors
+http://stackoverflow.com/questions/2699277/post-data-to-jsonp
+http://stackoverflow.com/questions/4508198/how-to-use-type-post-in-jsonp-ajax-call
+
+https://www.google.pl/search?q=Jrsey+CORS&ie=utf-8&oe=utf-8&aq=t&rls=org.mozilla:pl:official&client=firefox-a#client=firefox-a&hs=OVI&rls=org.mozilla:pl%3Aofficial&sclient=psy-ab&q=Jersey+CORS&oq=Jersey+CORS&gs_l=serp.3..0l3j0i30.9244.9244.0.9484.1.1.0.0.0.0.202.202.2-1.1.0...0.0...1c.1.14.psy-ab.18ANcxi_sc0&pbx=1&bav=on.2,or.r_qf.&bvm=bv.47008514,d.bGE&fp=f6d6f2ece6ce35a9&biw=1280&bih=940
+
+http://forum.jquery.com/topic/ajax-http-post-using-jquery-fails-in-firefox
+
+https://grizzly.java.net/docs/1.9/apidocs/com/sun/grizzly/tcp/http11/GrizzlyAdapterChain.html
+
+http://www.sencha.com/forum/showthread.php?162292-%28CORS%29-Cross-Origin-Resource-Sharing-requests
+
+https://java.net/projects/jersey/lists/users/archive/2009-04/message/478
