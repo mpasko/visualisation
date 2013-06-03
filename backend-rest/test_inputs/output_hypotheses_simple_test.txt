@@ -1,0 +1,5 @@
+Output_Hypotheses Name
+{
+[class=c1]
+ <-- [number=1]
+}

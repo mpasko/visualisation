@@ -12,7 +12,7 @@ var invokeAQ21 = function(query,callback,onerror) {
 		headers: {'Access-Control-Allow-Origin:': '*'},
 		cache: false,
 		success: function(data) {
-			var result = JSON.stringify(data["outputHypotheses"][0]["content"]);
+			var result = JSON.stringify(data["outputHypotheses"]);
 			callback(result);
 		},
 		processData: false,

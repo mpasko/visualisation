@@ -44,6 +44,7 @@ public class Aq21ResourceTest extends TestCase {
     /**
      * Test to see that the message "Got it!" is sent in the response.
      */
+	/*
     public void testAq21Resource() {
 		Input input = new Input();
 		input.addAttribute("blabla", "", "");
@@ -52,6 +53,7 @@ public class Aq21ResourceTest extends TestCase {
 		OutputHypotheses oh = responseMsg.outputHypotheses.get(0);
         assertEquals("blabla", oh.content);
     }
+	*/
 	
 	public void testJSON() {
 		/* now unnecessary */

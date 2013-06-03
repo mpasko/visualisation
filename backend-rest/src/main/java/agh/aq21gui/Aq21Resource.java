@@ -68,6 +68,8 @@ public class Aq21Resource {
 		return invoke(input);
     }
 	
+	/* Get cannot consume any arguments */
+	/* *x/ 
 	@GET
 	@Path("getIt")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -78,6 +80,7 @@ public class Aq21Resource {
     public Output getIt(Input input) {
 		return invoke(input);
     }
+	/* */ 
 	
 	@PUT
 	@Path("putIt")

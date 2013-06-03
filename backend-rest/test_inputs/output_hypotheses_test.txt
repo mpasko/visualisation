@@ -1,0 +1,10 @@
+Output_Hypotheses Hypothesis-name
+{
+positive_events           = 2
+negative_events           = 2
+[class=c1] 
+   <-- [number=1 : 2,0,100%,2,0,100%]
+        : p=2,n=0,q=1,cx=7,s=2 # 9
+   <-- [length>=200][background=red]
+
+}

@@ -30,7 +30,7 @@ public class Invoker {
 		StringBuilder out = new StringBuilder();
 		String line;
 		while ((line = br.readLine()) != null) {
-			out.append(line);
+			out.append(line).append("\n");
 		}
 		return out.toString();
 	}
