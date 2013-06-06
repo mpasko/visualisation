@@ -88,11 +88,11 @@ public class Input {
 	}
 	
 	public void addEvent(String... values){
-		Event e = new Event();
-		for(String item : values){
-			e.values.add(item);
-		}
-		this.eventsGroup.events.add(e);
+		eventsGroup.addEvent(values);
+	}
+
+	public void sEG(EventsGroup group) {
+		this.eventsGroup = group;
 	}
 	
 	@Override

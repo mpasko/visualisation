@@ -1,4 +1,30 @@
 ﻿
+function readSingleFile(evt) {
+	//Retrieve the first (and only!) File from the FileList object
+    var f = evt.target.files[0]; 
+
+	if (f) {
+		var r = new FileReader();
+		r.onload = function(e) { 
+			var csv = e.target.result;
+			jQuery('#Response').empty();
+			convertFromCSV(csv, function(result){
+				//On success
+				jQuery('#Response').append(result.replace(/\n/g, "<br>"));
+			}, function(){
+				//On error
+				jQuery('#Response').append("Request failed");
+				alert("Request failed");
+			});
+		}
+		r.readAsText(f);
+		
+		return false;
+	} else { 
+		alert("Failed to load file");
+	}
+}
+
 jQuery.noConflict();
 jQuery(document).ready(function() {
 	var query = 
@@ -150,4 +176,6 @@ jQuery(document).ready(function() {
 		return false;
 	});
 	
+	document.getElementById('fileinput')
+	.addEventListener('change', readSingleFile, false);
 });

@@ -4,6 +4,10 @@
  */
 package agh.aq21gui;
 
+import agh.aq21gui.model.input.AttributesGroup;
+import agh.aq21gui.model.input.Input;
+import agh.aq21gui.model.output.Output;
+import agh.aq21gui.model.output.OutputParser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -12,6 +16,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -41,7 +47,7 @@ public class Invoker {
 		bw.close();
 	}
 	
-	public String invoke(String input) throws IOException, ProgramExecutionException{
+	public String run(String input) throws IOException, ProgramExecutionException{
 		FileOutputStream fos = new FileOutputStream("input.aq21");
 		fos.flush();
 		stringToStream(input, fos);
@@ -55,5 +61,29 @@ public class Invoker {
 //			throw new ProgramExecutionException(errorMessage);
 //		}
 		return streamToString(stdin);
+	}
+
+	public Output invoke(Input input) {
+		if (input == null) {
+			Logger.getLogger(Aq21Resource.class.getName()).warning("AQ21 received null or empty object!");
+			return null;
+		}
+		OutputParser parser = new OutputParser();
+		AttributesGroup ag = (AttributesGroup) input.gAG();
+		if (ag.attributes.get(0).name.equals("blabla")) {
+			Logger.getLogger(Aq21Resource.class.getName()).info("Special case: 'blabla' attribute!");
+			return parser.parse("blabla");
+		}
+		Logger.getLogger(Aq21Resource.class.getName()).info("Request accepted");
+		String result;
+		try {
+			result = run(input.toString());
+			return parser.parse(result);
+		} catch (IOException ex) {
+			Logger.getLogger(Aq21Resource.class.getName()).log(Level.WARNING, null, ex);
+		} catch (ProgramExecutionException ex) {
+			Logger.getLogger(Aq21Resource.class.getName()).log(Level.WARNING, null, ex);
+		}
+		return null;
 	}
 }

@@ -31,4 +31,12 @@ public class EventsGroup {
 		builder.append("}\n");
 		return builder.toString();
 	}
+
+	public void addEvent(String... values) {
+		Event e = new Event();
+		for (String item : values) {
+			e.values.add(item);
+		}
+		events.add(e);
+	}
 }

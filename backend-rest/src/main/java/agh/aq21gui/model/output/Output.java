@@ -5,6 +5,8 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.model.input.EventsGroup;
+import agh.aq21gui.model.input.Input;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,7 +18,7 @@ import org.antlr.runtime.tree.CommonTree;
  */
 @XmlRootElement
 //@XmlSeeAlso(OutputHypotheses.class)
-public class Output {
+public class Output extends Input{
 	
 	OutputHypotheses outHypo = new OutputHypotheses();
 	
