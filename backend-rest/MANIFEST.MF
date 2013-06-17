@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: marcin
+Build-Jdk: 1.7.0_09
+Main-Class: agh.aq21gui.Main
+Class-Path: lib/jersey-json-1.17.1.jar
