@@ -96,15 +96,13 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <archive>
-                        <manifest>
-                            <mainClass>agh.aq21gui.Main</mainClass>
-                        </manifest>
+                        <manifestFile>MANIFEST.MF</manifestFile>
                     </archive>
                 </configuration>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
-                        <phase>deploy</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>attached</goal>
                         </goals>

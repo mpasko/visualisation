@@ -1,4 +1,13 @@
 ﻿
+var query;
+
+function updateQuery(result){
+	query = result;
+	var text = JSON.stringify(result).replace(/\n/g, "<br>");
+	jQuery('#Request').empty();
+	jQuery('#Request').append(text);
+}
+
 function readSingleFile(evt) {
 	//Retrieve the first (and only!) File from the FileList object
     var f = evt.target.files[0]; 
@@ -8,12 +17,12 @@ function readSingleFile(evt) {
 		r.onload = function(e) { 
 			var csv = e.target.result;
 			jQuery('#Response').empty();
-			convertFromCSV(csv, function(result){
+			convertFromAQ21(csv, function(result){
 				//On success
-				jQuery('#Response').append(result.replace(/\n/g, "<br>"));
+				updateQuery(result);
 			}, function(){
 				//On error
-				jQuery('#Response').append("Request failed");
+				jQuery('#Request').append("Request failed");
 				alert("Request failed");
 			});
 		}
@@ -27,7 +36,7 @@ function readSingleFile(evt) {
 
 jQuery.noConflict();
 jQuery(document).ready(function() {
-	var query = 
+	updateQuery( 
 {
   "runsGroup" : {
     "runs" : [ {
@@ -136,7 +145,7 @@ jQuery(document).ready(function() {
   }, {
     "name" : "number",
     "domain" : "linear",
-    "parameters" : "{ 0, 1, 2 }"
+    "parameters" : "0, 1, 2"
   }, {
     "name" : "length",
     "domain" : "continuous",
@@ -144,12 +153,12 @@ jQuery(document).ready(function() {
   }, {
     "name" : "class",
     "domain" : "nominal",
-    "parameters" : "{c1, c2}"
+    "parameters" : "c1, c2"
   } ],
   "domains" : [ {
     "name" : "color",
-    "subdomain" : "nominal",
-    "parameters" : "{red, green, blue}"
+    "domain" : "nominal",
+    "parameters" : "red, green, blue"
   } ],
   "events" : [ {
     "values" : [ "red", "1", "34.6", "c1" ]
@@ -160,15 +169,14 @@ jQuery(document).ready(function() {
   }, {
     "values" : [ "blue", "0", "33.5", "c2" ]
   } ]
-};
-
-	jQuery('#Request').append(JSON.stringify(query));
+});
 	
 	jQuery('#Button').click(function(){
 		jQuery('#Response').empty();
 		invokeAQ21(query, function(result){
 			//On success
-			jQuery('#Response').append(result.replace(/\n/g, "<br>"));
+			var text = JSON.stringify(result).replace(/\n/g, "<br>");
+			jQuery('#Response').append(text);
 		}, function(){
 			//On error
 			jQuery('#Response').append("Request failed");
@@ -178,4 +186,17 @@ jQuery(document).ready(function() {
 	
 	document.getElementById('fileinput')
 	.addEventListener('change', readSingleFile, false);
+	
+	jQuery(window).bind('beforeunload', function(){
+		stopService();
+	});
+
+	jQuery(window).bind('onunload', function(){
+		stopService();
+	});
+	
+//	window.onbeforeunload = function (e){
+		
+//		return true;
+//	}
 });

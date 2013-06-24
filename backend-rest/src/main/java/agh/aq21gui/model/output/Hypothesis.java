@@ -5,13 +5,12 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
-import agh.aq21gui.model.input.Attribute;
+import agh.aq21gui.utils.FormatterUtil;
+import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.antlr.runtime.tree.CommonTree;
 
 /**
  *
@@ -24,6 +23,7 @@ public class Hypothesis {
 	public String name;
 	
 	private ClassesGroup classes=null;
+	protected String LABEL;
 	
 	@XmlElement(name="classes")
 	public void setClasses(List<ClassDescriptor> classesDescriptors){
@@ -38,10 +38,19 @@ public class Hypothesis {
 	public List<Rule> rules = new LinkedList<Rule>();
 	
 	public Hypothesis(){
-		
+		LABEL = "Output_hypotheses";
 	}
 	
-	public void addBody(CommonTree tree){
+	public void addBody(TreeNode tree){
+		/* now: */
+		TreeNode classesTree = tree.childAt(0, TParser.CLASSES);
+		classes = new ClassesGroup(classesTree);
+		for(TreeNode ruleNode : tree.iterator(TParser.RULE)){
+			Rule ruleObject = new Rule();
+			ruleObject.parseRule(ruleNode);
+			rules.add(ruleObject);
+		}
+		/* before: *x/
 		if(tree.getType() == TParser.HYPOTHESIS_BODY){
 			CommonTree classesTree = (CommonTree)tree.getChild(0);
 			classes = new ClassesGroup(classesTree);
@@ -53,6 +62,7 @@ public class Hypothesis {
 			Logger.getLogger("Interpreter").severe("Error! Expected HYPOTHESIS_BODY, received:");
 			Logger.getLogger("Interpreter").severe(tree.toString());
 		}
+		/* */
 	}
 	
 /*	
@@ -65,5 +75,15 @@ public class Hypothesis {
 		}
 	}
 */
+
+	@Override
+	public String toString() {
+		if (rules.isEmpty()) {
+			return "";
+		}
+		StringBuilder builder = FormatterUtil.begin(LABEL, name);
+		FormatterUtil.appendAll(builder, rules);
+		return FormatterUtil.terminate(builder);
+	}
 	
 }

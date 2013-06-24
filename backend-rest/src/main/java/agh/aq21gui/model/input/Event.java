@@ -4,9 +4,10 @@
  */
 package agh.aq21gui.model.input;
 
+import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
-import java.util.List;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.antlr.runtime.tree.CommonTree;
 
 /**
  *
@@ -32,5 +33,12 @@ public class Event {
 			}
 		}
 		return builder.toString();
+	}
+
+	void parseRow(TreeNode eventNode) {
+		for(Object obj : eventNode.tree().getChildren()){
+			CommonTree cell = (CommonTree) obj;
+			values.add(cell.getText());
+		}
 	}
 }

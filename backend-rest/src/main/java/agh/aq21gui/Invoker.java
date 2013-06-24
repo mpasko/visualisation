@@ -7,7 +7,7 @@ package agh.aq21gui;
 import agh.aq21gui.model.input.AttributesGroup;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Output;
-import agh.aq21gui.model.output.OutputParser;
+import agh.aq21gui.utils.OutputParser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -43,13 +43,17 @@ public class Invoker {
 	
 	public static void stringToStream(String in, OutputStream out) throws IOException{
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));
-		bw.write(in);
+		for(String line : in.split("\n")){
+			bw.write(line);
+			bw.newLine();
+		}
 		bw.close();
 	}
 	
 	public String run(String input) throws IOException, ProgramExecutionException{
 		FileOutputStream fos = new FileOutputStream("input.aq21");
 		fos.flush();
+//		input = input.replace("\n", "\n\r");
 		stringToStream(input, fos);
 		Process process = runtime.exec(Configuration.AQ21PATH+" input.aq21");
 		InputStream stdin = process.getInputStream();
@@ -60,7 +64,10 @@ public class Invoker {
 //		if(!errorMessage.isEmpty()){
 //			throw new ProgramExecutionException(errorMessage);
 //		}
-		return streamToString(stdin);
+		String result = streamToString(stdin);
+		System.out.println("AQ21 Program Result is:");
+		System.out.println(result);
+		return result;
 	}
 
 	public Output invoke(Input input) {

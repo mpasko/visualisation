@@ -4,6 +4,8 @@
  */
 package agh.aq21gui.model.input;
 
+import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,5 +30,13 @@ public class UniversalParametersContainer {
 			builder.append(parameter.toString());
 		}
 		return builder.toString();
+	}
+
+	void parseParams(TreeNode childAt) {
+		for(TreeNode paramNode : childAt.iterator(TParser.PARAMETER)){
+			Parameter param = new Parameter();
+			param.parseParam(paramNode);
+			parameters.add(param);
+		}
 	}
 }

@@ -4,7 +4,6 @@
  */
 package agh.aq21gui.model.output;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**

@@ -4,58 +4,28 @@
  */
 package agh.aq21gui.model.input;
 
-import java.util.LinkedList;
-import java.util.List;
-import javax.xml.bind.annotation.XmlElement;
+import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.TreeNode;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author marcin
  */
 @XmlRootElement
-//@XmlSeeAlso({UniversalParametersContainer.class})
-public class RunsGroup {
-	public LinkedList<Run> runs;
-	
-	@XmlTransient
-	public UniversalParametersContainer globalLearningParameters;
+public class RunsGroup extends TestsGroup{
 	
 	public RunsGroup(){
-		globalLearningParameters = new UniversalParametersContainer();
-		runs = new LinkedList<Run>();
+		LABEL = "Runs";
 	}
 	
-	public void addParameter(String name, String value){
-		Parameter p = new Parameter();
-		p.name = name;
-		p.value = value;
-		globalLearningParameters.parameters.add(p);
-	}
-	
-	@XmlElement(name="globalLearningParameters")
-	public void setGlobalLearningParameters(List<Parameter> parameters){
-		globalLearningParameters.parameters=parameters;
-	}
-	
-//	@XmlElement(name="globalLearningParameters")
-	public List<Parameter> getGlobalLearningParameters(){
-		return globalLearningParameters.parameters;
-	}
-	
-	@Override
-	public String toString(){
-		StringBuilder builder = new StringBuilder();
-		builder.append("Runs\n{\n");
-		if(globalLearningParameters!=null){
-			builder.append(globalLearningParameters.toString()).append('\n');
+	public void parseRuns(TreeNode treeNode) {
+		globalLearningParameters.parseParams(treeNode.childAt(0, TParser.RUNS_PARAMS));
+		TreeNode runsList = treeNode.childAt(1, TParser.RUNS_LIST);
+		for (TreeNode runNode : runsList.iterator(TParser.RUN)) {
+			Run run = new Run();
+			run.parseRun(runNode);
+			this.runs.add(run);
 		}
-		for(Run run : runs){
-			builder.append(run.toString());
-		}
-		builder.append("}\n");
-		return builder.toString();
-	}
+	}	
 }

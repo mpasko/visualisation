@@ -1,13 +1,9 @@
 package agh.aq21gui;
 
-import agh.aq21gui.model.input.AttributesGroup;
 import agh.aq21gui.model.input.Input;
-import agh.aq21gui.model.output.CSVConverter;
+import agh.aq21gui.utils.CSVConverter;
 import agh.aq21gui.model.output.Output;
-import agh.aq21gui.model.output.OutputParser;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import agh.aq21gui.utils.OutputParser;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -82,11 +78,32 @@ public class Aq21Resource {
 	}
 	
 	@POST
+	@Path("fromAQ21")
+	@Consumes({MediaType.TEXT_PLAIN})
+	@Produces({
+		MediaType.APPLICATION_JSON
+	//	,MediaType.APPLICATION_XML
+	})
+	public Input fromAQ21(String aq21){
+		OutputParser parser = new OutputParser();
+		String pure = CSVConverter.dewebify(aq21);
+		Input out = parser.parse(pure);
+		return out;
+	}
+	
+	@POST
 	@Path("debug")
 	@Consumes({"text/plain"})
     @Produces({MediaType.APPLICATION_JSON})
 	public Output getIt(String input) {
 		OutputParser parser = new OutputParser();
 		return parser.parse(input);
+	}
+	
+	@GET
+	@Path("stop")
+	public String stop(){
+		ServiceStopper stopper = new ServiceStopper();
+		return stopper.stop();
 	}
 }

@@ -35,7 +35,7 @@ public class Main {
     }
 	
     
-    public static void main(String[] args) throws IOException {		
+    public static void main(String[] args) throws IOException, InterruptedException {		
 //        SelectorThread threadSelector = startServer();
 		
         System.out.println(String.format("Jersey app started with WADL available at "
@@ -46,7 +46,7 @@ public class Main {
 		server.getSelectorThread().getKeepAliveStats().disable();
 		
 		ServletAdapter staticAdapter = new ServletAdapter();
-		staticAdapter.setProperty( "load-on-startup", 1 );
+		staticAdapter.setProperty( "load-on-startup", 0 );
 		staticAdapter.setContextPath("/");
 		staticAdapter.addRootFolder("/");
 		final String webadapter = "/web";
@@ -60,7 +60,7 @@ public class Main {
 		//serviceAdapter.setProperty("javax.ws.rs.Application", "org.antares.rs.JerseyAdaptor");
 		serviceAdapter.addInitParameter("com.sun.jersey.config.property.packages", "agh.aq21gui");
 		serviceAdapter.addInitParameter(JSONConfiguration.FEATURE_POJO_MAPPING, "true");
-//		serviceAdapter.setProperty("load-on-startup", 1 );
+		serviceAdapter.setProperty("load-on-startup", 1 );
 		final String jerseyadapter = "/jersey";
 		serviceAdapter.setContextPath(jerseyadapter);
 		server.addGrizzlyAdapter(serviceAdapter, new String[]{jerseyadapter});
@@ -68,8 +68,10 @@ public class Main {
         server.start();
 		
 		URI uri= UriBuilder.fromUri("http://localhost/").port(9998).path(webadapter).path("tester.html").build();
+		Thread.sleep(1000);
 		Desktop.getDesktop().browse(uri);
-        System.in.read();
+        ServiceStopper stopper = new ServiceStopper();
+		stopper.waitForUserInput();
 		server.stop();
 //        threadSelector.stopEndpoint();
     }    

@@ -5,10 +5,9 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
-import org.antlr.runtime.tree.CommonTree;
 
 /**
  *
@@ -19,7 +18,14 @@ public class ClassesGroup {
 	
 	public ClassesGroup(){}
 	
-	public ClassesGroup(CommonTree tree){
+	public ClassesGroup(TreeNode classes){
+		/* now */
+		for(TreeNode classNode : classes.iterator(TParser.CLASS_DESCRIPTION)){
+			ClassDescriptor descriptor = new ClassDescriptor();
+			descriptor.parseSelector(classNode);
+			descriptors.add(descriptor);
+		}
+		/* before *x/
 		for(Object t : tree.getChildren()){
 			CommonTree childTree = (CommonTree)t;
 			if(childTree.getType()==TParser.CLASS_DESCRIPTION){
@@ -33,5 +39,6 @@ public class ClassesGroup {
 				Logger.getLogger("Interpreter").severe(tree.toString());
 			}
 		}
+		/* */
 	}
 }

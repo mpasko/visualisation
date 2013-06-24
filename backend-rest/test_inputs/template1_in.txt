@@ -1,0 +1,74 @@
+Description
+{
+Template for learning problem. Please comment out not needed parts of the
+file by using # and/or (# #).
+}
+Domains
+{
+  color nominal {red, green, blue}
+}
+Attributes
+{
+  background color
+  number linear { 0, 1, 2 }
+  length continuous 0, 200
+  class nominal {c1, c2}
+}
+Runs
+{
+  Run_c1
+  {
+    Mode = TF # Possible values: TF, ATF, and PD
+    Consequent = [class=c1]
+    Ambiguity = IncludeInPos # Possible values: IncludeInPos, IncludeInNeg,
+                             # IgnoreForLearning, and DisplayAmbiguities
+    Trim = Optimal # Possible values: MostGen, Optimal, MostSpec
+    Compute_alternative_covers = True
+    Maxstar = 1
+    Maxrule = 10
+  }
+
+  Run_c2
+  {
+    Mode = TF # Possible values: TF, ATF, and PD
+    Consequent = [class=c2]
+    Ambiguity = IncludeInPos # Possible values: IncludeInPos, IncludeInNeg,
+                             # IgnoreForLearning, and DisplayAmbiguities
+    Trim = Optimal # Possible values: MostGen, Optimal, MostSpec
+    Compute_alternative_covers = False
+    Maxstar = 1
+    Maxrule = 1
+  }
+
+  Run_All_in_PD
+  {
+    Mode = PD # Possible values: TF, ATF, and PD
+    Consequent = [class=*] # '*' indicates learning for all possible values
+    Ambiguity = IncludeInPos # Possible values: IncludeInPos, IncludeInNeg,
+                             # IgnoreForLearning, and DisplayAmbiguities
+    Trim = Optimal # Possible values: MostGen, Optimal, MostSpec
+    Compute_alternative_covers = False
+    Maxstar = 1
+    Maxrule = 1
+    }
+
+  Run_Multi-head
+  {
+    Mode = PD # Possible values: TF, ATF, and PD
+    Consequent = [class=c1][length<=40] # Definition of Multi-head rules
+    Ambiguity = IncludeInPos # Possible values: IncludeInPos, IncludeInNeg,
+                             # IgnoreForLearning, and DisplayAmbiguities
+    Trim = Optimal # Possible values: MostGen, Optimal, MostSpec
+    Compute_alternative_covers = False
+    Maxstar = 1
+    Maxrule = 1
+  }
+}
+
+Events
+{
+red, 1, 34.6, c1
+green, 0, 2.45, c2
+red, 1, 33.0, c1
+blue, 0, 33.5, c2
+}

@@ -4,6 +4,9 @@
  */
 package agh.aq21gui.model.input;
 
+import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.FormatterUtil;
+import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
@@ -15,6 +18,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlTransient
 public class DomainsGroup implements IAQ21Serializable{
 	public List<Domain> domains;
+	protected String LABEL = "Domains";
+	protected int CHILD_TOKEN = TParser.DOMAIN;
 	
 	public DomainsGroup(){
 		domains = new LinkedList<Domain>();
@@ -22,12 +27,19 @@ public class DomainsGroup implements IAQ21Serializable{
 	
 	@Override
 	public String toString(){
-		StringBuilder builder = new StringBuilder();
-		builder.append("Domains\n{\n");
-		for(Domain domain : domains){
-			builder.append(domain.toString());
+		if(domains.isEmpty()){
+			return "";
 		}
-		builder.append("}\n");
-		return builder.toString();
+		StringBuilder builder = FormatterUtil.begin(LABEL);
+		FormatterUtil.appendAll(builder, domains);
+		return FormatterUtil.terminate(builder);
+	}
+
+	public void parseDomains(TreeNode treeNode) {
+		for(TreeNode node: treeNode.iterator(CHILD_TOKEN)){
+			Domain domain = new Domain();
+			domain.parseDomain(node);
+			domains.add(domain);
+		}
 	}
 }

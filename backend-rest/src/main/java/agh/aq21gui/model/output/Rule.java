@@ -5,6 +5,7 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -29,7 +30,8 @@ public class Rule {
 		
 	}
 	
-	Rule(CommonTree child) {
+/* before *x/	
+	Rule(TreeNode rule) {
 		//System.out.println("uno");
 		CommonTree selectorsTrees = (CommonTree) child.getChild(0);
 		if(selectorsTrees.getType()==TParser.SELECTORS){
@@ -53,4 +55,15 @@ public class Rule {
 		}
 	}
 	
+/* now */
+	void parseRule(TreeNode ruleNode) {
+		
+		TreeNode selectorsTree = ruleNode.childAt(0, TParser.SELECTORS);
+		for(TreeNode selectorNode : selectorsTree.iterator(TParser.SELECTOR)){
+			Selector selector = new Selector();
+			selector.parseSelector(selectorNode);
+			selectors.add(selector);
+		}
+	}
+/* */	
 }

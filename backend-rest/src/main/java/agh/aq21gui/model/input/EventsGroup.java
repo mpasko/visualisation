@@ -4,9 +4,12 @@
  */
 package agh.aq21gui.model.input;
 
+import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.FormatterUtil;
+import agh.aq21gui.utils.TreeNode;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -16,6 +19,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlTransient
 public class EventsGroup {
 	public List<Event> events;
+	String LABEL = "Events";
 	
 	public EventsGroup(){
 		events = new LinkedList<Event>();
@@ -23,20 +27,25 @@ public class EventsGroup {
 	
 	@Override
 	public String toString(){
-		StringBuilder builder = new StringBuilder();
-		builder.append("Events\n{\n");
-		for(Event attribute : events){
-			builder.append(attribute.toString());
+		if(events.isEmpty()){
+			return "";
 		}
-		builder.append("}\n");
-		return builder.toString();
+		StringBuilder builder = FormatterUtil.begin(LABEL);
+		FormatterUtil.appendAll(builder, events);
+		return FormatterUtil.terminate(builder);
 	}
 
 	public void addEvent(String... values) {
 		Event e = new Event();
-		for (String item : values) {
-			e.values.add(item);
-		}
+		e.values.addAll(Arrays.asList(values));
 		events.add(e);
+	}
+
+	public void parseEvents(TreeNode treeNode) {
+		for(TreeNode eventNode: treeNode.iterator(TParser.ROW)){
+			Event event = new Event();
+			event.parseRow(eventNode);
+			events.add(event);
+		}
 	}
 }
