@@ -27,7 +27,8 @@ public class OutputParser {
 	}
 	
 	public Output parse(String out){
-		lexer.setCharStream(new ANTLRStringStream(out.toLowerCase()));
+		String processed = out.toLowerCase().replace("..", "@");
+		lexer.setCharStream(new ANTLRStringStream(processed));
 		lexer.reset();
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 //		System.out.println("lex:");

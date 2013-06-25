@@ -5,6 +5,7 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,9 +27,7 @@ public class UniversalParametersContainer {
 	@Override
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
-		for(Parameter parameter : parameters){
-			builder.append(parameter.toString());
-		}
+		FormatterUtil.appendAll(builder, parameters, 3);
 		return builder.toString();
 	}
 

@@ -5,6 +5,7 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
@@ -51,13 +52,11 @@ public class Test {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(name).append("\n{\n");
+		StringBuilder builder = FormatterUtil.begin(name);
 		if (runSpecificParameters != null) {
 			builder.append(runSpecificParameters);
 		}
-		builder.append("}\n");
-		return builder.toString();
+		return FormatterUtil.terminate(builder);
 	}
 	
 }

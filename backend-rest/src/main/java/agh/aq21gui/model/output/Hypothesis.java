@@ -82,7 +82,7 @@ public class Hypothesis {
 			return "";
 		}
 		StringBuilder builder = FormatterUtil.begin(LABEL, name);
-		FormatterUtil.appendAll(builder, rules);
+		FormatterUtil.appendAll(builder, rules, 1);
 		return FormatterUtil.terminate(builder);
 	}
 	

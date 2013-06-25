@@ -31,7 +31,7 @@ public class EventsGroup {
 			return "";
 		}
 		StringBuilder builder = FormatterUtil.begin(LABEL);
-		FormatterUtil.appendAll(builder, events);
+		FormatterUtil.appendAll(builder, events, 1);
 		return FormatterUtil.terminate(builder);
 	}
 

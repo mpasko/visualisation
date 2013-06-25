@@ -65,8 +65,10 @@ public class Invoker {
 //			throw new ProgramExecutionException(errorMessage);
 //		}
 		String result = streamToString(stdin);
-		System.out.println("AQ21 Program Result is:");
-		System.out.println(result);
+		
+		FileOutputStream diagnostic = new FileOutputStream("output.log");
+		diagnostic.flush();
+		stringToStream(result, diagnostic);
 		return result;
 	}
 

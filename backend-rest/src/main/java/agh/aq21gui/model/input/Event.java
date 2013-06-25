@@ -24,9 +24,10 @@ public class Event {
 	@Override
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
-		for(String value : values){
+		for(int i=0; i<values.size(); ++i){
+			String value = values.get(i);
 			builder.append(value);
-			if(!value.equals(values.getLast())){
+			if(i<values.size()-1){
 				builder.append(", ");
 			}else{
 				builder.append('\n');

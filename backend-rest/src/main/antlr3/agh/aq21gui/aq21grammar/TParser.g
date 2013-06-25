@@ -91,7 +91,7 @@ output_item
 description : DESCRIPTION NL? OPEN any_character* CLOSE NL?
  -> ^(NULL) ;
 
-any_character : ID | FLOAT | DOT | COLON | SLASH | EQUAL | NL
+any_character : INT | ID | PERCENT | DOT | COLON | SLASH | EQUAL | NL
  -> ^(NULL) ;
 
 attributes : ATTRIBUTES NL? OPEN NL? attribute* CLOSE NL?
@@ -102,7 +102,7 @@ attribute
  -> ^(ATTRIBUTE $name $type ^(DOMAIN_ARGS_BRACE simple_value+))
 	| name=ID type=ID simple_value (COMA simple_value)* NL
  -> ^(ATTRIBUTE $name $type ^(DOMAIN_ARGS simple_value+))
-	| name=ID type=ID (EPSILON EQUAL FLOAT COST EQUAL FLOAT)? NL 
+	| name=ID type=ID (EPSILON EQUAL simple_value COST EQUAL simple_value)? NL 
  -> ^(ATTRIBUTE $name $type ^(DOMAIN_ARGS_EMPTY)) 
     ;
 
@@ -113,8 +113,8 @@ domain
  -> ^(DOMAIN $name $type ^(DOMAIN_ARGS_BRACE simple_value+))
    | name=ID type=ID simple_value (COMA simple_value)* NL
  -> ^(DOMAIN $name $type ^(DOMAIN_ARGS simple_value+)) 
-//   | name=ID type=ID NL
-// -> ^(DOMAIN $name $type ^(DOMAIN_ARGS_EMPTY))
+   | name=ID type=ID NL
+ -> ^(DOMAIN $name $type ^(DOMAIN_ARGS_EMPTY))
    ;
 
 runs : RUNS NL? OPEN NL? parameter* run* CLOSE NL?
@@ -159,7 +159,7 @@ selector_additional_params : COLON simple_value (COMA simple_value)*
 rule_additional_params : COLON parameter (COMA parameter)* 
 	-> ^(RULE_PARAMS parameter+) ;
 
-result_parameter : name=ID COMA fl_value=FLOAT NL?
+result_parameter : name=ID COMA fl_value=simple_value NL?
  -> ^(PARAMETER $name $fl_value) ;
 
 parameter : name=ID EQUAL value? NL?
@@ -186,13 +186,24 @@ row : simple_value (COMA simple_value)* NL
   -> ^(ROW simple_value+); 
 
 atom
+//	: id_value=ID ->  $id_value
+//	| in_value=INT ->  $in_value 
+//	| first=INT DOT rest=INT -> {new CommonTree(new CommonToken(ID, $first.text+"."+$rest.text))}
+//	| first=ID  RANGE_OP last=ID  -> ^(RANGE $first $last)
+//	| first=INT RANGE_OP last=INT -> ^(RANGE $first $last)
+//	| ID ( COMA ID )+ -> ^(VALUE_SET ID+)
+
+//before uncomment fix the code!
+//	| INT ( COMA INT )+ -> ^(VALUE_SET INT+)
 	: simple_value -> simple_value
-	| first=simple_value DOT DOT last=simple_value -> ^(RANGE $first $last)
-	| simple_value ( COMA simple_value )+ -> ^(VALUE_SET simple_value+)
+	| simple_value RANGE_OP simple_value -> ^(RANGE simple_value+) 
+	| simple_value (COMA simple_value)+ -> ^(VALUE_SET simple_value+)
 	;
 
 simple_value
-	:  id_value=ID ->  $id_value
+	: id_value=ID ->  $id_value
+//	| in_value=INT ->  $in_value 
 	| fl_value=FLOAT ->  $fl_value 
+//	| first=INT DOT rest=INT -> {new CommonTree(new CommonToken(ID, $first.text+"."+$rest.text))}
 	| pe_value=PERCENT ->  $pe_value
 	;

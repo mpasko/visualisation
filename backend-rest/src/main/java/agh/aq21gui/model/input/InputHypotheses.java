@@ -21,7 +21,7 @@ public class InputHypotheses extends OutputHypotheses{
 			return "";
 		}
 		StringBuilder builder = new StringBuilder();
-		FormatterUtil.appendAll(builder, hypotheses);
+		FormatterUtil.appendAll(builder, hypotheses, 0);
 		return builder.toString();
 	}
 

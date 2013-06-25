@@ -26,8 +26,15 @@ public class FormatterUtil {
 		return builder;
 	}
 	
-	public static void appendAll(StringBuilder builder, List<? extends Object> items){
+	public static void intent(StringBuilder builder, int intent){
+		for(int i = 0; i<intent; ++i){
+			builder.append("  ");
+		}
+	}
+	
+	public static void appendAll(StringBuilder builder, List<? extends Object> items, int pade){
 		for(Object item : items){
+			intent(builder,pade);
 			builder.append(item.toString());
 		}
 	}

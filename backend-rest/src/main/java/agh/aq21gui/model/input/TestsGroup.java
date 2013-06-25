@@ -5,6 +5,7 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,16 +66,13 @@ public class TestsGroup {
 		if(empty&&runs.isEmpty()){
 			return "";
 		}
-		StringBuilder builder = new StringBuilder();
-		builder.append(this.LABEL).append("\n{\n");
+		StringBuilder builder = FormatterUtil.begin(LABEL);
 		if (globalLearningParameters != null) {
-			builder.append(globalLearningParameters.toString()).append('\n');
+			builder.append(globalLearningParameters.toString());
 		}
-		for (Test run : runs) {
-			builder.append(run.toString());
-		}
-		builder.append("}\n");
-		return builder.toString();
+		builder.append('\n');
+		FormatterUtil.appendAll(builder, runs, 1);
+		return FormatterUtil.terminate(builder);
 	}
 	
 }

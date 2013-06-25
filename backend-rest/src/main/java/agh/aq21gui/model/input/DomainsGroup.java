@@ -31,7 +31,7 @@ public class DomainsGroup implements IAQ21Serializable{
 			return "";
 		}
 		StringBuilder builder = FormatterUtil.begin(LABEL);
-		FormatterUtil.appendAll(builder, domains);
+		FormatterUtil.appendAll(builder, domains, 1);
 		return FormatterUtil.terminate(builder);
 	}
 

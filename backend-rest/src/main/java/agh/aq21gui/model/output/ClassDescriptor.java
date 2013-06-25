@@ -39,9 +39,9 @@ public class ClassDescriptor {
 		StringBuilder builder = new StringBuilder();
 		if(desc.tree().getChild(2).getType()==TParser.RANGE){
 			TreeNode range = desc.childAt(2, TParser.RANGE);
-			builder.append(range.childAt(0, TParser.ID).value());
+			builder.append(range.childAt(0, TreeNode.ANY_TYPE).value());
 			builder.append("..");
-			builder.append(range.childAt(1, TParser.ID).value());
+			builder.append(range.childAt(1, TreeNode.ANY_TYPE).value());
 			value = builder.toString();
 		}else if(desc.tree().getChild(2).getType()==TParser.VALUE_SET){
 			TreeNode set = desc.childAt(2, TParser.VALUE_SET);

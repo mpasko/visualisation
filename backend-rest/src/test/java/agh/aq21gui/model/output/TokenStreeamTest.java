@@ -81,10 +81,11 @@ public class TokenStreeamTest {
 	// TODO add test methods here.
 	// The methods must be annotated with annotation @Test. For example:
 	//
-	//@Test
+//	@Test
 	public void examineStream() throws IOException {
 		TLexer lexer = new TLexer();
-		FileInputStream stream = new FileInputStream("test_inputs/template1.txt");
+		//FileInputStream stream = new FileInputStream("test_inputs/template1.txt");
+		FileInputStream stream = new FileInputStream("test_inputs/output.log");
 		String out = Invoker.streamToString(stream);
 		lexer.setCharStream(new ANTLRStringStream(out));
 		lexer.reset();

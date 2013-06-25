@@ -33,7 +33,7 @@ public class AttributesGroup implements IAQ21Serializable{
 			return "";
 		}
 		StringBuilder builder = FormatterUtil.begin(LABEL);
-		FormatterUtil.appendAll(builder, attributes);
+		FormatterUtil.appendAll(builder, attributes, 1);
 		return FormatterUtil.terminate(builder);
 	}
 
