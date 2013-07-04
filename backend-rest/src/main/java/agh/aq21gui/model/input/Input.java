@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Input {
+	private long id=0;
 	
 	public RunsGroup runsGroup;
 	private AttributesGroup attributesGroup;
@@ -37,6 +38,14 @@ public class Input {
 		inputHypotheses = new InputHypotheses();
 	}
 	
+	public long getid(){
+		return id;
+	}
+	
+	public void setid(long id){
+		this.id = id;
+	}
+	
 	public AttributesGroup gAG(){
 		return attributesGroup;
 	}
@@ -51,29 +60,29 @@ public class Input {
 	}
 	
 	@XmlElement(name="attributes")
-	public void setAttributes(List<Attribute> attributes){
+	public void setattributes(List<Attribute> attributes){
 		attributesGroup.attributes=attributes;
 	}
 	
-	public List<Attribute> getAttributes(){
+	public List<Attribute> getattributes(){
 		return attributesGroup.attributes;
 	}
 	
 	@XmlElement(name="domains")
-	public void setDomains(List<Domain> domains){
+	public void setdomains(List<Domain> domains){
 		domainsGroup.domains=domains;
 	}
 	
-	public List<Domain> getDomains(){
+	public List<Domain> getdomains(){
 		return domainsGroup.domains;
 	}
 	
 	@XmlElement(name="events")
-	public void setEvents(List<Event> events){
+	public void setevents(List<Event> events){
 		eventsGroup.events=events;
 	}
 	
-	public List<Event> getEvents(){
+	public List<Event> getevents(){
 		return eventsGroup.events;
 	}
 	
@@ -106,17 +115,17 @@ public class Input {
 	
 	public void addDomain(String name, String subdomain, String parameters){
 		Domain d = new Domain();
-		d.name = name;
-		d.domain = subdomain;
-		d.parameters = parameters;
+		d.setname(name);
+		d.setdomain(subdomain);
+		d.setparameters(parameters);
 		this.domainsGroup.domains.add(d);
 	}
 	
 	public void addAttribute(String name, String domain, String parameters){
 		Attribute a = new Attribute();
-		a.name = name;
-		a.domain = domain;
-		a.parameters = parameters;
+		a.setname(name);
+		a.setdomain(domain);
+		a.setparameters(parameters);
 		this.attributesGroup.attributes.add(a);
 	}
 	

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="agh.aq21gui.model.management.Directory" table="Directory" lazy="false">
+		<id name="id" type="int" column="ID" >
+			<generator class="increment"/>
+		</id>
+		<list name="experiments" table="ExperimentList" cascade="all" lazy="false">
+			<key column="InputID" not-null="false"/>
+			<list-index column="InputPairID"/>
+			<one-to-many class="agh.aq21gui.model.management.InputPair"/>
+		</list>
+		<list name="results" table="ResultList" cascade="all" lazy="false">
+			<key column="OutputID" not-null="false"/>
+			<list-index column="OutputPairID"/>
+			<one-to-many class="agh.aq21gui.model.management.OutputPair"/>
+		</list>
+	</class>
+
+	<class name="agh.aq21gui.model.management.InputPair" table="Experiments" lazy="false">
+		<id name="id" type="long" column="ExperimentID" >
+			<generator class="increment"/>
+		</id>
+		
+		<property name="name" type="string" length="20" not-null="true" column="Name" lazy="false"/>
+		<!--<one-to-one class="agh.aq21gui.model.input.Input" name="value"/> -->
+
+		<component name="value" class="agh.aq21gui.model.input.Input" lazy="false">
+			<list name="events" table="Events" cascade="all" lazy="false">
+				<key column="ExpID"/>
+				<list-index column="EventPairID"/>
+				<one-to-many class="agh.aq21gui.model.input.Event"/>
+			</list>
+
+			<list name="attributes" table="Attributes" cascade="all" lazy="false">
+				<key column="ExpID"/>
+				<list-index column="AttributePairID"/>
+				<one-to-many class="agh.aq21gui.model.input.Attribute"/>
+			</list>
+
+			<list name="domains" table="Domains" cascade="all" lazy="false">
+				<key column="ExpID"/>
+				<list-index column="DomainPairID"/>
+				<one-to-many class="agh.aq21gui.model.input.Domain"/>
+			</list>
+		</component>
+	</class>
+
+	<class name="agh.aq21gui.model.management.OutputPair" table="Results" lazy="false">
+		<id name="id" type="long" column="ResultID" >
+			<generator class="increment"/>
+		</id>
+		<property name="name" type="string" length="20" not-null="true" column="Name" lazy="false"/>
+		<!--<one-to-one class="agh.aq21gui.model.output.Output" name="value"/>  -->
+	</class>
+
+	<class name="agh.aq21gui.model.input.Event" table="Events" lazy="false">
+		<id name="id" type="long" column="EventID" >
+			<generator class="increment"/>
+		</id>
+		
+		<list name="values" table="EventValues" cascade="all" lazy="false">
+			<key column="EvID"/>
+			<list-index column="ValueID"/>
+			<element type="text" />
+		</list>
+	</class>
+
+	<class name="agh.aq21gui.model.input.Attribute" table="Attributes" lazy="false">
+		<id name="id" type="long" column="AttributeID" >
+			<generator class="increment"/>
+		</id>
+		<property name="name" type="string" length="20" not-null="true" column="Name" lazy="false"/>
+		<property name="domain" type="string" length="20" not-null="true" column="Domain" lazy="false"/>
+		<property name="parameters" type="string" length="20" not-null="false" column="Parameters" lazy="false"/>
+	</class>
+
+	<class name="agh.aq21gui.model.input.Domain" table="Domains" lazy="false">
+		<id name="id" type="long" column="DomainID" >
+			<generator class="increment"/>
+		</id>
+		<property name="name" type="string" length="20" not-null="true" column="Name" lazy="false"/>
+		<property name="domain" type="string" length="20" not-null="true" column="Domain" lazy="false"/>
+		<property name="parameters" type="string" length="20" not-null="false" column="Parameters" lazy="false"/>
+	</class>
+
+<!--
+	<class name="agh.aq21gui.model.output.Output" table="Results">
+		<id name="id" type="long" column="ID" >
+			<generator class="increment"/>
+		</id>
+
+		<list name="outputHypotheses" table="Hypotheses">
+			<key column="ID"/>
+			<list-index column="HypoID"/>
+			<one-to-many class="agh.aq21gui.model.output.Hypothesis"/>
+		</list>
+	</class>
+
+	<class name="agh.aq21gui.model.output.Hypothesis" table="Hypotheses">
+		<id name="id" type="long" column="ID" >
+			<generator class="increment"/>
+		</id>
+
+		<property name="name" type="string" length="30" not-null="true" column="Name" />
+	</class>
+-->
+
+</hibernate-mapping>

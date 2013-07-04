@@ -1,9 +1,13 @@
 package agh.aq21gui;
 
 import agh.aq21gui.model.input.Input;
+import agh.aq21gui.model.management.Directory;
+import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.utils.CSVConverter;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.utils.OutputParser;
+import dataaccess.NoDatabaseConfiguredException;
+import dataaccess.Repository;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -89,6 +93,25 @@ public class Aq21Resource {
 		String pure = CSVConverter.dewebify(aq21);
 		Input out = parser.parse(pure);
 		return out;
+	}
+	
+	@GET
+	@Path("browse")
+    @Produces({MediaType.APPLICATION_JSON})
+	public Directory browseIt() throws NoDatabaseConfiguredException{
+		Repository repo = Repository.getRepository();
+		Directory dir = repo.getDirectory();
+		return dir;
+	}
+	
+	@POST
+	@Path("saveExperiment")
+	@Consumes({MediaType.APPLICATION_JSON})
+	public void saveExp(InputPair input) throws NoDatabaseConfiguredException{
+		Repository repo = Repository.getRepository();
+		System.out.println("To save in database:");
+		System.out.println(input.toString());
+		repo.saveExperiment(input);
 	}
 	
 	@POST

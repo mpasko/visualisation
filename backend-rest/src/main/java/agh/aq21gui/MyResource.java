@@ -4,6 +4,8 @@ package agh.aq21gui;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Run;
 import agh.aq21gui.model.input.RunsGroup;
+import agh.aq21gui.model.management.Directory;
+import agh.aq21gui.utils.OutputParser;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -116,6 +118,16 @@ public class MyResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Input getTemplate1JSON(){
 		return workingFactory();
+	}
+	
+	@GET
+	@Path("/templateDBResult")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Directory getDirectory() {
+		Directory dir = new Directory();
+		dir.putExperiment("mock", mockFactory());
+		dir.putExperiment("working", workingFactory());
+		return dir;
 	}
 	
 	@GET

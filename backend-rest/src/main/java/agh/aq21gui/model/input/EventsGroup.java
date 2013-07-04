@@ -37,7 +37,7 @@ public class EventsGroup {
 
 	public void addEvent(String... values) {
 		Event e = new Event();
-		e.values.addAll(Arrays.asList(values));
+		e.getvalues().addAll(Arrays.asList(values));
 		events.add(e);
 	}
 

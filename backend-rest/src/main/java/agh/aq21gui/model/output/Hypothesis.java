@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class Hypothesis {
+	private long id=0;
 	
 	@XmlElement
 	public String name;
