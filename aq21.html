@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>webAQ21</title>
+<script src="lib/dojo/dojo/dojo.js" data-dojo-config="'parseOnLoad':true,'async':true"></script>
+<script src="js/splash.js"></script>
+<style>@import url("themes/claro/document.css");</style>
+<style>@import url("themes/claro/claro.css");</style>
+<style>@import url("app.css");</style>
+<script src="js/app.js"></script>
+</head>
+<body class="claro" id="myapp">
+	<div data-dojo-id="dataStore" data-dojo-type="dojo/store/Memory"></div>
+	<div data-dojo-id="attributesStore" data-dojo-type="dojo/store/Memory"></div>
+	<div data-dojo-id="runConfigurationStore" data-dojo-type="dojo/store/Memory"></div>
+	<div data-dojo-type="dijit/layout/BorderContainer" design="headline" persist="false" gutters="true" 
+		style="min-width: 1em; min-height: 1px; z-index: 0; width: 100%; height: 100%;">
+		<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false" 
+			refreshonshow="false" region="center" splitter="false" maxsize="Infinity" dolayout="false" style="width: 40%;">
+			<span data-dojo-type="dijit/layout/TabContainer" tabstrip="false" persist="false" controllerwidget="dijit.layout.TabController" 
+				style="min-width: 1em; min-height: 1em; width: 100%; height: 100%;" tabposition="left">
+				<div data-dojo-type="dijit/layout/ContentPane" title="Data and attributes" extractcontent="false" preventcache="false" id="data"
+					preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
+					<div data-dojo-type="dijit/layout/BorderContainer" design="headline" persist="false" gutters="true" 
+					style="min-width: 1em; min-height: 1px; z-index: 0; width: 100%; height: 100%;">
+						<div id="data_sources" data-dojo-type="dijit/Toolbar" region="top">
+							<div data-dojo-type="dijit/form/Button" id="open_file" data-dojo-props="">Open from file...
+								<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+							        require(["dojo/dom"], function(dom){ dom.byId("load_files").click(); });
+							    </script>
+							</div>
+							
+							<div data-dojo-type="dijit/form/Button" id="open_url" data-dojo-props="">Open from URL...
+								<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+							        require(["dojo/dom"], function(dom){ alert("Not implemented yet!"); });
+							    </script>
+							</div>
+							
+							<div data-dojo-type="dijit/form/Button" id="edit" data-dojo-props="">View raw dataset
+								<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+							        gridView.show();
+							    </script>
+							</div>
+						</div>
+						<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false"  style="width:50%"
+							refreshonshow="false" region="left" splitter="false" maxsize="Infinity" dolayout="false" >
+							<div data-dojo-type="dijit/layout/BorderContainer" style="width: 100%; height: 100%">
+							     <div data-dojo-type="dijit/layout/ContentPane" style="width: 100%; height: 50%" data-dojo-props="region:'top'">
+							     	<div id="attributesGrid" style="width: auto; height : 100%;"></div>
+							     </div>
+							     <div data-dojo-type="dijit/layout/ContentPane" style="width: 100%; height: 50%" data-dojo-props="region:'center'">
+							     <table style="width: 100%; height: 25%" >
+									<tr>
+										<td style="width: 16%;">Name:</td>
+										<td id="current_name" style="width: 16%;"></td>
+										<td style="width: 16%;">Domain:</td>
+										<td id="current_domain" style="width: 16%;"></td>
+										<td style="width: 16%;">Parameters:</td>
+										<td id="current_parameters" style="width: 16%;"></td>
+										
+									</tr>
+								</table>
+							     </div>
+							</div>
+					    </div>
+						<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false" style="width:50%"
+							refreshonshow="false" region="center" splitter="false" maxsize="Infinity" dolayout="false" >
+							Visualization done by D3
+					    </div>
+					</div>
+				</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Run and test configuration" extractcontent="false" preventcache="false" 
+					preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
+						<span data-dojo-type="dijit/layout/TabContainer" data-dojo-id="runTabs" tabstrip="false" persist="false" 
+							controllerwidget="dijit.layout.TabController" style="min-width: 1em; min-height: 1em; width: 100%; height: 100%;" >
+							<div data-dojo-type="dijit/layout/ContentPane" title="Global" extractcontent="false" preventcache="false" 
+								preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
+								<div id="globalParameters" style="width: auto; height : 100%;"></div>
+							</div>
+						</span>
+				</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Visualize" extractcontent="false" preventcache="false" 
+					preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
+				</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Help" extractcontent="false" preventcache="false" 
+					preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
+					Authors:<br />
+					Michał Drzał<br />
+					Marcin Paśko<br />
+					Software developed as engineer diploma project for reasoning classifier algorithm output visualisation under:<br />
+					dr inż. Bartłomiej Śnieżyński
+				</div>
+			</span>
+		</div>
+	</div>
+</body>
+<input type="file" id="load_files" name="files[]" multiple />
+<div id="splash" style="position:absolute;left:0px;top:0px;width:100%;height:100%;background-color:white;background-image:url(AqAnimatedWhite.gif);background-repeat:no-repeat;background-position: 50% 50%;"></div>
+</html>
