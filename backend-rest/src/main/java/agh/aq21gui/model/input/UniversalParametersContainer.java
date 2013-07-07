@@ -18,9 +18,11 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
 public class UniversalParametersContainer {
 	
+	private String parent;
 	public List<Parameter> parameters;
 	
-	public UniversalParametersContainer(){
+	public UniversalParametersContainer(String parent){
+		this.parent = parent;
 		parameters = new LinkedList<Parameter>();
 	}
 	
@@ -33,7 +35,7 @@ public class UniversalParametersContainer {
 
 	void parseParams(TreeNode childAt) {
 		for(TreeNode paramNode : childAt.iterator(TParser.PARAMETER)){
-			Parameter param = new Parameter();
+			Parameter param = new Parameter(parent);
 			param.parseParam(paramNode);
 			parameters.add(param);
 		}

@@ -5,7 +5,9 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.model.output.Hypothesis;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -78,21 +80,21 @@ public class Input {
 	}
 	
 	@XmlElement(name="events")
-	public void setevents(List<Event> events){
-		eventsGroup.events=events;
+	public void setevents(List<Map<String, Object>> events){
+		eventsGroup.loadEvents(events,this.attributesGroup);
 	}
 	
-	public List<Event> getevents(){
-		return eventsGroup.events;
+	public List<Map<String, Object>> getevents(){
+		return eventsGroup.formatEvents(this.attributesGroup);
 	}
 	
 	@XmlElement(name="testingEvents")
-	public void setTestingEvents(List<Event> events){
-		testingEventsGroup.events=events;
+	public void setTestingEvents(List<Map<String, Object>> events){
+		testingEventsGroup.loadEvents(events,this.attributesGroup);
 	}
 	
-	public List<Event> getTestingEvents(){
-		return testingEventsGroup.events;
+	public List<Map<String, Object>>  getTestingEvents(){
+		return testingEventsGroup.formatEvents(this.attributesGroup);
 	}
 	
 	@XmlElement(name="runsGroup")

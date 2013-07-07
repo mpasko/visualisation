@@ -27,23 +27,6 @@ public class MyResource {
         return "Got it!";
     }
 	
-	private Input mockFactory(){
-		Input input = new Input();
-		input.addDomain("domain.name", "domain.sub", "domain.parameters");
-		input.addAttribute("attribute.name", "attribut.domain", "attribute.param");
-		
-		RunsGroup runsGroup = new RunsGroup();
-		runsGroup.addParameter("globalParam.name", "globalParam.value");
-		Run run = new Run();
-		run.addParameter("runParam.name", "runParam.value");
-		runsGroup.runs.add(run);
-		input.runsGroup = runsGroup;
-
-		input.addEvent("event1.value1","event1.value2");
-		input.addEvent("event2.value1","event2.value2");
-		return input;
-	}
-	
 	private Input workingFactory(){
 		//Based on template1.aq21
 		Input input = new Input();
@@ -107,13 +90,6 @@ public class MyResource {
 	}
 	
 	@GET
-	@Path("/sampleJSON")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Input getSampleInputJSON(){
-		return mockFactory();
-	}
-	
-	@GET
 	@Path("/template1JSON")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Input getTemplate1JSON(){
@@ -125,22 +101,7 @@ public class MyResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Directory getDirectory() {
 		Directory dir = new Directory();
-		dir.putExperiment("mock", mockFactory());
 		dir.putExperiment("working", workingFactory());
 		return dir;
-	}
-	
-	@GET
-	@Path("/sampleXML")
-	@Produces(MediaType.APPLICATION_XML)
-	public Input getSampleInputXML(){
-		return mockFactory();
-	}
-	
-	@GET
-	@Path("/sampleAQ21")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String getSampleAQ21(){
-		return mockFactory().toString();
 	}
 }

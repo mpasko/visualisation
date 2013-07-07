@@ -109,8 +109,8 @@ public class Aq21Resource {
 	@Consumes({MediaType.APPLICATION_JSON})
 	public void saveExp(InputPair input) throws NoDatabaseConfiguredException{
 		Repository repo = Repository.getRepository();
-		System.out.println("To save in database:");
-		System.out.println(input.toString());
+//		System.out.println("To save in database:");
+//		System.out.println(input.toString());
 		repo.saveExperiment(input);
 	}
 	

@@ -5,8 +5,11 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.utils.TreeNode;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import org.antlr.runtime.tree.CommonTree;
 
@@ -19,8 +22,22 @@ public class Event {
 	private long id=0;
 	private List<String> values;
 	
+	private static Long enumerator;
+	
+	static{
+		enumerator = new Long(0);
+	}
+	
 	public Event(){
 		values = new LinkedList<String>();
+	}
+
+	Event(Map<String, Object> event, AttributesGroup attributes) {
+		values = new LinkedList<String>();
+		for(Attribute attr : attributes.attributes){
+			String name = attr.getname();
+			values.add(event.get(name).toString());
+		}
 	}
 	
 	public long getid(){
@@ -60,5 +77,17 @@ public class Event {
 			CommonTree cell = (CommonTree) obj;
 			values.add(cell.getText());
 		}
+	}
+
+	Map<String, Object> formatEvent(AttributesGroup attributesGroup) {
+		Map<String, Object> workingMap = new HashMap<String, Object>();
+		workingMap.put("id", enumerator);
+		enumerator++;
+		Iterator<Attribute> attrIterator = attributesGroup.attributes.iterator();
+		for (String value:values){
+			Attribute attr = attrIterator.next();
+			workingMap.put(attr.getname(), value);
+		}
+		return workingMap;
 	}
 }

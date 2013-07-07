@@ -17,6 +17,7 @@ import org.antlr.runtime.tree.CommonTree;
 @XmlRootElement
 public class Domain {
 	private long id = 0;
+	private static long generator = 0;
 	
 	private String name;
 	private String domain;
@@ -56,6 +57,11 @@ public class Domain {
 	
 	public void setparameters(String name){
 		this.parameters = name;
+	}
+	
+	public Domain(){
+		this.id = generator;
+		generator++;
 	}
 	
 	private boolean estimate_brace(){
