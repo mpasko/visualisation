@@ -9,11 +9,11 @@ window.require(
 		"dojo/ready", "dojo/dom","dijit/registry", "dojo/_base/declare", 
 		"dgrid/OnDemandGrid", "dgrid/CellSelection", "dgrid/Keyboard", "dgrid/extensions/ColumnResizer", 
 		"dgrid/Selection","dgrid/extensions/DijitRegistry","dgrid/editor","dgrid/tree",
-		 "classes/dialogs/GridView", "classes/input/File"
+		 "classes/dialogs/GridView", "classes/input/File","dijit/layout/ContentPane"
 	], 
 	function( ready, dom, registry, declare, 
 			OnDemandGrid, CellSelection, Keyboard, ColumnResizer, Selection, DijitRegistry, editor, tree,
-			GridView, FileExtractor) {
+			GridView, FileExtractor,ContentPane) {
      ready(function(){
         // logic that requires that Dojo is fully initialized should go here
         
@@ -23,20 +23,10 @@ window.require(
             store : attributesStore
             },"attributesGrid");
             
-		 var configurationGrid = new CustomGrid({
-			columns : [tree({label: "Id", field:"id", sortable: false}), 
-					editor({label: "Value", field: "value", sortable: false}, "text", "dblclick")],
-			store : runConfigurationStore
-            }, "runConfigurationGrid");
+        var globalParametersGrid = new CustomGrid({ columns: { name : {label: "#"}, value: {label: "Value"} },
+		            store : runConfigurationStore, query : { parent : "global"}},"globalParameters");
+		            
         
-        runConfigurationStore.getChildren =  function(parent, options){
-			return parent.children;
-		};
-		
-		runConfigurationStore.mayHaveChildren = function(parent) {
-			return (parent.children && parent.children.length) || (parent.count !== 0 && parent.type !== 'parameter');
-		};
-
 		attributesGrid.on("dgrid-select", function(event){
 		    // Report the item from the selected row to the console.
 		    dom.byId("current_name").innerHTML = event.rows[0].data.name;
@@ -62,17 +52,26 @@ window.require(
 				attributesGrid.refresh();
 				extractor.getData().forEach(function (x) {dataStore.put(x);});
 				dataGrid.refresh();
-				
 				extractor.getConfiguration().forEach(function (x) {runConfigurationStore.put(x);});
-				console.log(runConfigurationStore);
-				configurationGrid.refresh();
+				extractor.getConfigurationNames().forEach(function (name) {
+					var contentPane = new dijit.layout.ContentPane({ title: name });
+					var grid = new CustomGrid({
+					columns: { name : {label: "#"}, value: {label: "Value"} },
+		            store : runConfigurationStore, query : { parent : name}});
+		            
+					contentPane.addChild(grid);
+					runTabs.addChild(contentPane);
+					grid.refresh();
+					});
+					
+				globalParametersGrid.refresh();
 			};
 			
 			reader.readAsText(f);
 			
 		}, false);
 		
-        
+        gridView = new GridView();
         
 	});
 });
