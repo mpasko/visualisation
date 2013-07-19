@@ -19,7 +19,8 @@ import org.antlr.runtime.tree.CommonTree;
  */
 //@XmlRootElement
 public class Event {
-	private long id=0;
+	private long dbid=0;
+	public int id=0;
 	private List<String> values;
 	
 	private static Long enumerator;
@@ -40,12 +41,12 @@ public class Event {
 		}
 	}
 	
-	public long getid(){
-		return id;
+	public long getdbid(){
+		return dbid;
 	}
 	
-	public void setid(long id){
-		this.id = id;
+	public void setdbid(long id){
+		this.dbid = id;
 	}
 	
 	@XmlElement(name="values")

@@ -16,7 +16,10 @@ import org.antlr.runtime.tree.CommonTree;
  */
 @XmlRootElement
 public class Domain {
-	private long id = 0;
+	private long dbid = 0;
+	
+	public long id;
+	
 	private static long generator = 0;
 	
 	private String name;
@@ -24,12 +27,12 @@ public class Domain {
 	private String parameters;
 	//private boolean brace=false;
 	
-	public long getid(){
-		return id;
+	public long getdbid(){
+		return dbid;
 	}
 	
-	public void setid(long id){
-		this.id = id;
+	public void setdbid(long id){
+		this.dbid = id;
 	}
 	
 	@XmlElement(name="name")

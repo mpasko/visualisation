@@ -41,11 +41,11 @@ public class Directory {
 		this.results = results;
 	}
 	
-	public int getid(){
+	public int getdbid(){
 		return id;
 	}
 	
-	public void setid(int id){
+	public void setdbid(int id){
 		this.id = id;
 	}
 	

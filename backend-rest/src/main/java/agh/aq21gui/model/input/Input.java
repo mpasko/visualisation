@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Input {
-	private long id=0;
+	private long dbid=0;
 	
 	public RunsGroup runsGroup;
 	private AttributesGroup attributesGroup;
@@ -29,6 +29,10 @@ public class Input {
 	private TestingEventsGroup testingEventsGroup;
 	public TestsGroup testsGroup;
 	private InputHypotheses inputHypotheses;
+	
+	private boolean attributesLoaded = false;
+	private boolean eventsLoaded = false;
+	private List<Map<String, Object>> eventsBackup;
 	
 	public Input(){
 		attributesGroup = new AttributesGroup();
@@ -40,12 +44,21 @@ public class Input {
 		inputHypotheses = new InputHypotheses();
 	}
 	
+	public long getdbid(){
+		return dbid;
+	}
+	
+	public void setdbid(long id){
+		this.dbid = id;
+	}
+	
+	@XmlElement(name="id")
 	public long getid(){
-		return id;
+		return 0;
 	}
 	
 	public void setid(long id){
-		this.id = id;
+		//this.dbid = id;
 	}
 	
 	public AttributesGroup gAG(){
@@ -64,6 +77,12 @@ public class Input {
 	@XmlElement(name="attributes")
 	public void setattributes(List<Attribute> attributes){
 		attributesGroup.attributes=attributes;
+		if(eventsLoaded){
+			eventsGroup.loadEvents(eventsBackup,this.attributesGroup);
+			eventsBackup = null;
+		}else{
+			this.attributesLoaded = true;
+		}
 	}
 	
 	public List<Attribute> getattributes(){
@@ -81,7 +100,12 @@ public class Input {
 	
 	@XmlElement(name="events")
 	public void setevents(List<Map<String, Object>> events){
-		eventsGroup.loadEvents(events,this.attributesGroup);
+		if(attributesLoaded){
+			eventsGroup.loadEvents(events,this.attributesGroup);
+		}else{
+			this.eventsBackup = events;
+			this.eventsLoaded = true;
+		}
 	}
 	
 	public List<Map<String, Object>> getevents(){

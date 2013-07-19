@@ -19,11 +19,11 @@ public class OutputPair {
 	@XmlElement
 	public Output value;
 	
-	public long getid(){
+	public long getdbid(){
 		return id;
 	}
 	
-	public void setid(long id){
+	public void setdbid(long id){
 		this.id = id;
 	}
 	

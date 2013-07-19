@@ -6,7 +6,7 @@
 <hibernate-mapping>
 
 	<class name="agh.aq21gui.model.management.Directory" table="Directory" lazy="false">
-		<id name="id" type="int" column="ID" >
+		<id name="dbid" type="int" column="ID" >
 			<generator class="increment"/>
 		</id>
 		<list name="experiments" table="ExperimentList" cascade="all" lazy="false">
@@ -22,7 +22,7 @@
 	</class>
 
 	<class name="agh.aq21gui.model.management.InputPair" table="Experiments" lazy="false">
-		<id name="id" type="long" column="ExperimentID" >
+		<id name="dbid" type="long" column="ExperimentID" >
 			<generator class="increment"/>
 		</id>
 		
@@ -51,7 +51,7 @@
 	</class>
 
 	<class name="agh.aq21gui.model.management.OutputPair" table="Results" lazy="false">
-		<id name="id" type="long" column="ResultID" >
+		<id name="dbid" type="long" column="ResultID" >
 			<generator class="increment"/>
 		</id>
 		<property name="name" type="string" length="20" not-null="true" column="Name" lazy="false"/>
@@ -59,7 +59,7 @@
 	</class>
 
 	<class name="agh.aq21gui.model.input.Event" table="Events" lazy="false">
-		<id name="id" type="long" column="EventID" >
+		<id name="dbid" type="long" column="EventID" >
 			<generator class="increment"/>
 		</id>
 		
@@ -71,7 +71,7 @@
 	</class>
 
 	<class name="agh.aq21gui.model.input.Attribute" table="Attributes" lazy="false">
-		<id name="id" type="long" column="AttributeID" >
+		<id name="dbid" type="long" column="AttributeID" >
 			<generator class="increment"/>
 		</id>
 		<property name="name" type="string" length="20" not-null="true" column="Name" lazy="false"/>
@@ -80,7 +80,7 @@
 	</class>
 
 	<class name="agh.aq21gui.model.input.Domain" table="Domains" lazy="false">
-		<id name="id" type="long" column="DomainID" >
+		<id name="dbid" type="long" column="DomainID" >
 			<generator class="increment"/>
 		</id>
 		<property name="name" type="string" length="20" not-null="true" column="Name" lazy="false"/>
@@ -90,7 +90,7 @@
 
 <!--
 	<class name="agh.aq21gui.model.output.Output" table="Results">
-		<id name="id" type="long" column="ID" >
+		<id name="dbid" type="long" column="ID" >
 			<generator class="increment"/>
 		</id>
 
@@ -102,7 +102,7 @@
 	</class>
 
 	<class name="agh.aq21gui.model.output.Hypothesis" table="Hypotheses">
-		<id name="id" type="long" column="ID" >
+		<id name="dbid" type="long" column="ID" >
 			<generator class="increment"/>
 		</id>
 
