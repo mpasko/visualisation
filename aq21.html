@@ -11,9 +11,11 @@
 <script src="js/app.js"></script>
 </head>
 <body class="claro" id="myapp">
-	<div data-dojo-id="dataStore" data-dojo-type="dojo/store/Memory"></div>
+	<div data-dojo-id="eventsStore" data-dojo-type="dojo/store/Memory"></div>
 	<div data-dojo-id="attributesStore" data-dojo-type="dojo/store/Memory"></div>
-	<div data-dojo-id="runConfigurationStore" data-dojo-type="dojo/store/Memory"></div>
+	<div data-dojo-id="parametersStore" data-dojo-type="dojo/store/Memory"></div>
+	<div data-dojo-id="statisticsStore" data-dojo-type="dojo/store/Memory"></div>
+	<div data-dojo-id="runsStore" data-dojo-type="dojo/store/Memory"></div>
 	<div data-dojo-type="dijit/layout/BorderContainer" design="headline" persist="false" gutters="true" 
 		style="min-width: 1em; min-height: 1px; z-index: 0; width: 100%; height: 100%;">
 		<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false" 
@@ -36,12 +38,6 @@
 							        require(["dojo/dom"], function(dom){ alert("Not implemented yet!"); });
 							    </script>
 							</div>
-							
-							<div data-dojo-type="dijit/form/Button" id="edit" data-dojo-props="">View raw dataset
-								<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
-							        gridView.show();
-							    </script>
-							</div>
 						</div>
 						<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false"  style="width:50%"
 							refreshonshow="false" region="left" splitter="false" maxsize="Infinity" dolayout="false" >
@@ -50,34 +46,25 @@
 							     	<div id="attributesGrid" style="width: auto; height : 100%;"></div>
 							     </div>
 							     <div data-dojo-type="dijit/layout/ContentPane" style="width: 100%; height: 50%" data-dojo-props="region:'center'">
-							     <table style="width: 100%; height: 25%" >
-									<tr>
-										<td style="width: 16%;">Name:</td>
-										<td id="current_name" style="width: 16%;"></td>
-										<td style="width: 16%;">Domain:</td>
-										<td id="current_domain" style="width: 16%;"></td>
-										<td style="width: 16%;">Parameters:</td>
-										<td id="current_parameters" style="width: 16%;"></td>
-										
-									</tr>
-								</table>
+							     	<div id="statisticsGrid" style="width: auto; height : 100%;"></div>
 							     </div>
 							</div>
 					    </div>
-						<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false" style="width:50%"
-							refreshonshow="false" region="center" splitter="false" maxsize="Infinity" dolayout="false" >
-							Visualization done by D3
+						<div data-dojo-type="dijit/layout/ContentPane" id=" extractcontent="false" preventcache="false" preload="false" style="width:50%"
+							refreshonshow="false" region="center" splitter="true" maxsize="Infinity" dolayout="false" >
+							<span data-dojo-type="dijit/layout/TabContainer" tabstrip="false" persist="false" controllerwidget="dijit.layout.TabController" 
+								style="min-width: 1em; min-height: 1em; width: 100%; height: 100%;"  tabposition="bottom">
+									<div data-dojo-type="dijit/layout/ContentPane" title="Raw data" id="raw_data">
+
+								    </div>
+							</span>
 					    </div>
 					</div>
 				</div>
 				<div data-dojo-type="dijit/layout/ContentPane" title="Run and test configuration" extractcontent="false" preventcache="false" 
 					preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
-						<span data-dojo-type="dijit/layout/TabContainer" data-dojo-id="runTabs" tabstrip="false" persist="false" 
+						<span data-dojo-type="dijit/layout/TabContainer" id="runTabs" tabstrip="false" persist="false" 
 							controllerwidget="dijit.layout.TabController" style="min-width: 1em; min-height: 1em; width: 100%; height: 100%;" >
-							<div data-dojo-type="dijit/layout/ContentPane" title="Global" extractcontent="false" preventcache="false" 
-								preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
-								<div id="globalParameters" style="width: auto; height : 100%;"></div>
-							</div>
 						</span>
 				</div>
 				<div data-dojo-type="dijit/layout/ContentPane" title="Visualize" extractcontent="false" preventcache="false" 

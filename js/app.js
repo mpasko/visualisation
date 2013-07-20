@@ -1,19 +1,19 @@
 /*global define window*/
 /*global define FileReader*/
 /*global define attributesStore*/
-/*global define runConfigurationStore*/
-/*global define dataStore*/
-/*global define gridView*/
+/*global define parametersStore*/
+/*global define eventsStore*/
+/*global define statisticsStore*/
 window.require(
 	[
 		"dojo/ready", "dojo/dom","dijit/registry", "dojo/_base/declare", 
 		"dgrid/OnDemandGrid", "dgrid/CellSelection", "dgrid/Keyboard", "dgrid/extensions/ColumnResizer", 
 		"dgrid/Selection","dgrid/extensions/DijitRegistry","dgrid/editor","dgrid/tree",
-		 "classes/dialogs/GridView", "classes/input/File","dijit/layout/ContentPane"
+		  "dijit/layout/ContentPane"
 	], 
 	function( ready, dom, registry, declare, 
 			OnDemandGrid, CellSelection, Keyboard, ColumnResizer, Selection, DijitRegistry, editor, tree,
-			GridView, FileExtractor,ContentPane) {
+			ContentPane) {
      ready(function(){
         // logic that requires that Dojo is fully initialized should go here
         
@@ -22,56 +22,68 @@ window.require(
 			columns: { id : {label: "#"}, name: {label: "Attribute name"} },
             store : attributesStore
             },"attributesGrid");
-            
-        var globalParametersGrid = new CustomGrid({ columns: { name : {label: "#"}, value: {label: "Value"} },
-		            store : runConfigurationStore, query : { parent : "global"}},"globalParameters");
-		            
         
+        // needs to have its store
+        var statisticsGrid = new CustomGrid({
+			columns: { id : {label: "Info"}, value: {label: "Value"} },store: statisticsStore
+            }, "statisticsGrid");
+
 		attributesGrid.on("dgrid-select", function(event){
 		    // Report the item from the selected row to the console.
-		    dom.byId("current_name").innerHTML = event.rows[0].data.name;
-		    dom.byId("current_domain").innerHTML = event.rows[0].data.domain;
-		    dom.byId("current_parameters").innerHTML = event.rows[0].data.parameters;
-		    
+		    var data = [{id:"Domain", value:event.rows[0].data.domain},{id:"Parameters",value: event.rows[0].data.parameters}];
+		    statisticsStore.setData(data);
+		    statisticsGrid.refresh();
 		});
 		attributesGrid.on("dgrid-deselect", function(event){
-		    dom.byId("current_name").innerHTML = "";
-		    dom.byId("current_domain").innerHTML = "";
-		    dom.byId("current_parameters").innerHTML = "";
+		    statisticsStore.setData([]);
+		    statisticsGrid.refresh();
 		});
+
 
 		dom.byId("load_files").addEventListener('change', 
 		function  (evt) {
 			var f   = evt.target.files[0];
 			var reader = new FileReader();
 			reader.onload = function(e) { 
-				var extractor = new FileExtractor({text: e.target.result});
-				var dataGrid = new CustomGrid({ store : dataStore, columns : extractor.getColumnsName()}, "dataGrid");
-
-				extractor.getAttributes().forEach(function (x) { attributesStore.put(x);});
+				registry.byId("raw_data").destroyDescendants(true);
+				registry.byId("runTabs").getChildren().forEach(function (child) {registry.byId("runTabs").removeChild(child); registry.byId(child.id).destroy(); });
+				
+				var input = JSON.parse(e.target.result);
+				attributesStore.setData(input.attributes);
+				eventsStore.setData(input.events);
+				
+				var parameters = [];
+				input.runsGroup.runs.forEach(function (run) { parameters = parameters.concat(run.runSpecificParameters);});
+				parameters = parameters.concat(input.runsGroup.globalLearningParameters);
+				parametersStore.setData(parameters);
+				
+				var eventsGrid = new CustomGrid(
+					{ 
+						store : eventsStore, 
+						columns : input.attributes.map(function(x) { return {field : x.name, label:x.name};})
+					});
+				registry.byId("raw_data").addChild(eventsGrid);
+				
 				attributesGrid.refresh();
-				extractor.getData().forEach(function (x) {dataStore.put(x);});
-				dataGrid.refresh();
-				extractor.getConfiguration().forEach(function (x) {runConfigurationStore.put(x);});
-				extractor.getConfigurationNames().forEach(function (name) {
-					var contentPane = new dijit.layout.ContentPane({ title: name });
+				
+				
+				
+				input.runsGroup.runsNames.concat(["global"]).forEach(function (name) {
+					var contentPane = new ContentPane({ title: name });
 					var grid = new CustomGrid({
 					columns: { name : {label: "#"}, value: {label: "Value"} },
-		            store : runConfigurationStore, query : { parent : name}});
+		            store : parametersStore, query : { parent : name}});
 		            
 					contentPane.addChild(grid);
-					runTabs.addChild(contentPane);
+					registry.byId("runTabs").addChild(contentPane);
 					grid.refresh();
 					});
-					
-				globalParametersGrid.refresh();
 			};
 			
 			reader.readAsText(f);
 			
 		}, false);
 		
-        gridView = new GridView();
         
 	});
 });
