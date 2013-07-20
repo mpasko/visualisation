@@ -25,6 +25,7 @@ import org.antlr.runtime.tree.CommonTree;
 @XmlRootElement
 //@XmlSeeAlso(OutputHypotheses.class)
 public class Output extends Input{
+	public long id=0;
 	
 	OutputHypotheses outHypo = new OutputHypotheses();
 	
@@ -41,13 +42,13 @@ public class Output extends Input{
 	
 	@XmlElement(name="domains")
 	@Override
-	public void setDomains(List<Domain> domains){
-		super.setDomains(domains);
+	public void setdomains(List<Domain> domains){
+		super.setdomains(domains);
 	}
 	
 	@Override
-	public List<Domain> getDomains(){
-		return super.getDomains();
+	public List<Domain> getdomains(){
+		return super.getdomains();
 	}
 	
 	public Output(){}

@@ -17,10 +17,48 @@ import org.antlr.runtime.tree.CommonTree;
  */
 @XmlRootElement
 public class Parameter {
+	
 	@XmlElement
 	public String name;
 	@XmlElement
 	public String value;
+	@XmlElement
+	public long id;
+	
+	private String parent="global";
+	private static Long generator;
+	private long dbid = 0;
+	
+	static{
+		generator = new Long(0);
+	}
+	
+	public void setdbid(long id){
+		this.dbid = id;
+	}
+	
+	public long getdb(){
+		return this.dbid; 
+	}
+	
+	@XmlElement(name="parent")
+	public String getparent(){
+		return parent;
+	}
+	
+	public void setparent(String parent){
+		this.parent = parent;
+	}
+	
+	public Parameter(){
+		this.id = generator;
+		generator++;
+	}
+	
+	public Parameter(String parent){
+		this();
+		this.parent = parent;
+	}
 	
 	@Override
 	public String toString(){

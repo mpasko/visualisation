@@ -16,13 +16,56 @@ import org.antlr.runtime.tree.CommonTree;
  */
 @XmlRootElement
 public class Domain {
-	@XmlElement
-	public String name;
-	@XmlElement
-	public String domain;
-	@XmlElement
-	public String parameters;
-	private boolean brace=false;
+	private long dbid = 0;
+	
+	public long id;
+	
+	private static long generator = 0;
+	
+	private String name;
+	private String domain;
+	private String parameters;
+	//private boolean brace=false;
+	
+	public long getdbid(){
+		return dbid;
+	}
+	
+	public void setdbid(long id){
+		this.dbid = id;
+	}
+	
+	@XmlElement(name="name")
+	public String getname(){
+		return name;
+	}
+	
+	public void setname(String name){
+		this.name = name;
+	}
+	
+	@XmlElement(name="domain")
+	public String getdomain(){
+		return domain;
+	}
+	
+	public void setdomain(String name){
+		this.domain = name;
+	}
+	
+	@XmlElement(name="parameters")
+	public String getparameters(){
+		return parameters;
+	}
+	
+	public void setparameters(String name){
+		this.parameters = name;
+	}
+	
+	public Domain(){
+		this.id = generator;
+		generator++;
+	}
 	
 	private boolean estimate_brace(){
 		boolean nobrace = domain.equalsIgnoreCase("continuous");

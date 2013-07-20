@@ -24,11 +24,11 @@ public class Test {
 	public UniversalParametersContainer runSpecificParameters;
 
 	public Test(){
-		runSpecificParameters = new UniversalParametersContainer();
+		runSpecificParameters = new UniversalParametersContainer(name);
 	}	
 	
 	public void addParameter(String name, String value) {
-		Parameter p = new Parameter();
+		Parameter p = new Parameter(this.name);
 		p.name = name;
 		p.value = value;
 		runSpecificParameters.parameters.add(p);

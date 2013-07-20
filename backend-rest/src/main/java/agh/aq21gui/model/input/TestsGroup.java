@@ -25,13 +25,26 @@ public class TestsGroup {
 	@XmlTransient
 	String LABEL = "Tests";
 	
+	@XmlElement(name="runsNames")
+	public List<String> getRunsNames(){
+		LinkedList<String> working = new LinkedList<String>();
+		for(Test run : runs){
+			working.add(run.name);
+		}
+		return working;
+	}
+	
+	public void setRunsNames(List<String> names){
+		/* Do nothing */
+	}
+	
 	public TestsGroup(){
-		globalLearningParameters = new UniversalParametersContainer();
+		globalLearningParameters = new UniversalParametersContainer("global");
 		runs = new LinkedList<Test>();
 	}
 
 	public void addParameter(String name, String value) {
-		Parameter p = new Parameter();
+		Parameter p = new Parameter("global");
 		p.name = name;
 		p.value = value;
 		globalLearningParameters.parameters.add(p);

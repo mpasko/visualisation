@@ -1,0 +1,4 @@
+CREATE USER 'java'@'localhost' IDENTIFIED BY 'ala123';
+GRANT ALL PRIVILEGES ON * . * TO 'java'@'localhost';
+FLUSH PRIVILEGES;
+CREATE DATABASE aq21;

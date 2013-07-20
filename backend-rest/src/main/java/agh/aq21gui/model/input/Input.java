@@ -5,7 +5,9 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.model.output.Hypothesis;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -18,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Input {
+	private long dbid=0;
 	
 	public RunsGroup runsGroup;
 	private AttributesGroup attributesGroup;
@@ -27,6 +30,10 @@ public class Input {
 	public TestsGroup testsGroup;
 	private InputHypotheses inputHypotheses;
 	
+	private boolean attributesLoaded = false;
+	private boolean eventsLoaded = false;
+	private List<Map<String, Object>> eventsBackup;
+	
 	public Input(){
 		attributesGroup = new AttributesGroup();
 		domainsGroup = new DomainsGroup();
@@ -35,6 +42,23 @@ public class Input {
 		testsGroup = new TestsGroup();
 		testingEventsGroup = new TestingEventsGroup();
 		inputHypotheses = new InputHypotheses();
+	}
+	
+	public long getdbid(){
+		return dbid;
+	}
+	
+	public void setdbid(long id){
+		this.dbid = id;
+	}
+	
+	@XmlElement(name="id")
+	public long getid(){
+		return 0;
+	}
+	
+	public void setid(long id){
+		//this.dbid = id;
 	}
 	
 	public AttributesGroup gAG(){
@@ -51,39 +75,50 @@ public class Input {
 	}
 	
 	@XmlElement(name="attributes")
-	public void setAttributes(List<Attribute> attributes){
+	public void setattributes(List<Attribute> attributes){
 		attributesGroup.attributes=attributes;
+		if(eventsLoaded){
+			eventsGroup.loadEvents(eventsBackup,this.attributesGroup);
+			eventsBackup = null;
+		}else{
+			this.attributesLoaded = true;
+		}
 	}
 	
-	public List<Attribute> getAttributes(){
+	public List<Attribute> getattributes(){
 		return attributesGroup.attributes;
 	}
 	
 	@XmlElement(name="domains")
-	public void setDomains(List<Domain> domains){
+	public void setdomains(List<Domain> domains){
 		domainsGroup.domains=domains;
 	}
 	
-	public List<Domain> getDomains(){
+	public List<Domain> getdomains(){
 		return domainsGroup.domains;
 	}
 	
 	@XmlElement(name="events")
-	public void setEvents(List<Event> events){
-		eventsGroup.events=events;
+	public void setevents(List<Map<String, Object>> events){
+		if(attributesLoaded){
+			eventsGroup.loadEvents(events,this.attributesGroup);
+		}else{
+			this.eventsBackup = events;
+			this.eventsLoaded = true;
+		}
 	}
 	
-	public List<Event> getEvents(){
-		return eventsGroup.events;
+	public List<Map<String, Object>> getevents(){
+		return eventsGroup.formatEvents(this.attributesGroup);
 	}
 	
 	@XmlElement(name="testingEvents")
-	public void setTestingEvents(List<Event> events){
-		testingEventsGroup.events=events;
+	public void setTestingEvents(List<Map<String, Object>> events){
+		testingEventsGroup.loadEvents(events,this.attributesGroup);
 	}
 	
-	public List<Event> getTestingEvents(){
-		return testingEventsGroup.events;
+	public List<Map<String, Object>>  getTestingEvents(){
+		return testingEventsGroup.formatEvents(this.attributesGroup);
 	}
 	
 	@XmlElement(name="runsGroup")
@@ -106,17 +141,17 @@ public class Input {
 	
 	public void addDomain(String name, String subdomain, String parameters){
 		Domain d = new Domain();
-		d.name = name;
-		d.domain = subdomain;
-		d.parameters = parameters;
+		d.setname(name);
+		d.setdomain(subdomain);
+		d.setparameters(parameters);
 		this.domainsGroup.domains.add(d);
 	}
 	
 	public void addAttribute(String name, String domain, String parameters){
 		Attribute a = new Attribute();
-		a.name = name;
-		a.domain = domain;
-		a.parameters = parameters;
+		a.setname(name);
+		a.setdomain(domain);
+		a.setparameters(parameters);
 		this.attributesGroup.attributes.add(a);
 	}
 	
