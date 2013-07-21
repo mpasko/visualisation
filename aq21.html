@@ -22,61 +22,17 @@
 			refreshonshow="false" region="center" splitter="false" maxsize="Infinity" dolayout="false" style="width: 40%;">
 			<span data-dojo-type="dijit/layout/TabContainer" tabstrip="false" persist="false" controllerwidget="dijit.layout.TabController" 
 				style="min-width: 1em; min-height: 1em; width: 100%; height: 100%;" tabposition="left">
-				<div data-dojo-type="dijit/layout/ContentPane" title="Data and attributes" extractcontent="false" preventcache="false" id="data"
-					preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
-					<div data-dojo-type="dijit/layout/BorderContainer" design="headline" persist="false" gutters="true" 
-					style="min-width: 1em; min-height: 1px; z-index: 0; width: 100%; height: 100%;">
-						<div id="data_sources" data-dojo-type="dijit/Toolbar" region="top">
-							<div data-dojo-type="dijit/form/Button" id="open_file" data-dojo-props="">Open from file...
-								<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
-							        require(["dojo/dom"], function(dom){ dom.byId("load_files").click(); });
-							    </script>
-							</div>
-							
-							<div data-dojo-type="dijit/form/Button" id="open_url" data-dojo-props="">Open from URL...
-								<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
-							        require(["dojo/dom"], function(dom){ alert("Not implemented yet!"); });
-							    </script>
-							</div>
-						</div>
-						<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false"  style="width:50%"
-							refreshonshow="false" region="left" splitter="false" maxsize="Infinity" dolayout="false" >
-							<div data-dojo-type="dijit/layout/BorderContainer" style="width: 100%; height: 100%">
-							     <div data-dojo-type="dijit/layout/ContentPane" style="width: 100%; height: 50%" data-dojo-props="region:'top'">
-							     	<div id="attributesGrid" style="width: auto; height : 100%;"></div>
-							     </div>
-							     <div data-dojo-type="dijit/layout/ContentPane" style="width: 100%; height: 50%" data-dojo-props="region:'center'">
-							     	<div id="statisticsGrid" style="width: auto; height : 100%;"></div>
-							     </div>
-							</div>
-					    </div>
-						<div data-dojo-type="dijit/layout/ContentPane" id=" extractcontent="false" preventcache="false" preload="false" style="width:50%"
-							refreshonshow="false" region="center" splitter="true" maxsize="Infinity" dolayout="false" >
-							<span data-dojo-type="dijit/layout/TabContainer" tabstrip="false" persist="false" controllerwidget="dijit.layout.TabController" 
-								style="min-width: 1em; min-height: 1em; width: 100%; height: 100%;"  tabposition="bottom">
-									<div data-dojo-type="dijit/layout/ContentPane" title="Raw data" id="raw_data">
-
-								    </div>
-							</span>
-					    </div>
-					</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Data and attributes" extractcontent="false" preventcache="false" id="dataPane"
+					preload="true" refreshonshow="false" selected="true" closable="false" dolayout="false" href="layout/dataPane.html">
 				</div>
-				<div data-dojo-type="dijit/layout/ContentPane" title="Run and test configuration" extractcontent="false" preventcache="false" 
-					preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
-						<span data-dojo-type="dijit/layout/TabContainer" id="runTabs" tabstrip="false" persist="false" 
-							controllerwidget="dijit.layout.TabController" style="min-width: 1em; min-height: 1em; width: 100%; height: 100%;" >
-						</span>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Run and test configuration" extractcontent="false" preventcache="false"  id="configurationPane"
+					preload="true" refreshonshow="false" selected="true" closable="false" dolayout="false" href="layout/configurationPane.html">	
 				</div>
 				<div data-dojo-type="dijit/layout/ContentPane" title="Visualize" extractcontent="false" preventcache="false" 
-					preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
+					preload="true" refreshonshow="false" selected="true" closable="false" dolayout="false" href="layout/visualizationPane.html">
 				</div>
 				<div data-dojo-type="dijit/layout/ContentPane" title="Help" extractcontent="false" preventcache="false" 
-					preload="false" refreshonshow="false" selected="true" closable="false" dolayout="false">
-					Authors:<br />
-					Michał Drzał<br />
-					Marcin Paśko<br />
-					Software developed as engineer diploma project for reasoning classifier algorithm output visualisation under:<br />
-					dr inż. Bartłomiej Śnieżyński
+					preload="true" refreshonshow="false" selected="true" closable="false" dolayout="false" href="layout/helpPane.html">
 				</div>
 			</span>
 		</div>
