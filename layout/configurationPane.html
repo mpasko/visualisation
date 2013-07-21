@@ -17,7 +17,6 @@
 					Select all
 					<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
 				        window.require(["dijit/registry"], function(registry){
-				        	console.log("Clicked select all");
 				        	runsStore.query({selected : false}).forEach(function (run) {runsStore.put({id : run.id, selected : true}); });
 				            registry.byId("runsGrid").refresh();
 				        });
@@ -27,7 +26,6 @@
 					Deselect all
 					<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
 				        window.require(["dijit/registry"], function(registry){
-				        	console.log("Clicked select all");
 				        	runsStore.query({selected : true}).forEach(function (run) {runsStore.put({id : run.id, selected : false}); });
 				            registry.byId("runsGrid").refresh();
 				        });
@@ -39,8 +37,6 @@
 			</div>
 		</div>
 		</div>
-		
-		
 		<span data-dojo-type="dijit/layout/TabContainer" id="runTabs" tabstrip="false" persist="false"  region="center"
 			controllerwidget="dijit.layout.TabController" style="min-width: 1em; min-height: 1em; width: 70%; height: 100%;" >
 		</span>
