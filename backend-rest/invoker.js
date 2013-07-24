@@ -6,10 +6,8 @@ var invokeAQ21 = function(query,callback,onerror) {
 		type: 'POST',
 		contentType: ourType,
 		dataType: 'json',
-		crossDomain: true,
 		url: resource,
 		data: ready,
-		headers: {'Access-Control-Allow-Origin:': '*'},
 		cache: false,
 		success: function(data) {
 			callback(data["outputHypotheses"]);
