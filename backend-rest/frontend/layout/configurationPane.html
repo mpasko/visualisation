@@ -49,19 +49,20 @@
                                 return { "name" : x ,"runSpecificParameters" : parametersStore.query({ "parent" : x })};
                             });
                             input["runsGroup"] = { 
-                                "runNames" : runNames, 
+                                "runsNames" : runNames, 
                                 "runs" : runs, 
                                 "globalLearningParameters" : parametersStore.query({ "parent" : "globalLearningParameters" })
                             };
                             input["id"] = 0;
-                            console.log(input);
+                            console.log(JSON.stringify(input));
                             request.post("http://localhost:9998/jersey/aq21/postIt", {
-                                data: input,
+                                data: JSON.stringify(input),
+                                handleAs: "json",
                                 headers : {
-                                    "Content-Type" : "application/json"
+                                    "Content-Type" : "application/json; charset=UTF-8"
                                 }
                             }).then(function(text){
-                                console.log("The server returned: ", text);
+                                console.log("The server returned: ", text["outputHypotheses"]);
                             });
                         });
                     </script>
@@ -75,16 +76,3 @@
 </div>
 </body>
 </html>
-require([], function(request){
-    request.post("post-content.php", {
-        data: {
-            color: "blue",
-            answer: 42
-        },
-        headers: {
-            "X-Something": "A value"
-        }
-    }).then(function(text){
-        console.log("The server returned: ", text);
-    });
-});
