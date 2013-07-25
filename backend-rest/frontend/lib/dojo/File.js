@@ -24,12 +24,13 @@ define([
 				var input = JSON.parse(e.target.result);
 				attributesStore.setData(input.attributes);
 				eventsStore.setData(input.events);
-				
+				domainsStore.setData(input.domains);
+                window.file = input;
 				var parameters = [];
 				input.runsGroup.runs.forEach(function (run) { parameters = parameters.concat(run.runSpecificParameters);});
 				parameters = parameters.concat(input.runsGroup.globalLearningParameters);
 				parametersStore.setData(parameters);
-				runsStore.setData(input.runsGroup.runsNames.concat(["Global"]).map(function (x) { return { id: x, selected : true };}));
+				runsStore.setData(input.runsGroup.runsNames.concat(["globalLearningParameters"]).map(function (x) { return { id: x, selected : true };}));
 				console.log("Finished updating data model...");
 			};
 			

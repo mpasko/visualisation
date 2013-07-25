@@ -67,7 +67,7 @@ public class Main {
 		server.getSelectorThread().setKeepAliveTimeoutInSeconds(0);
         server.start();
 		
-		URI uri= UriBuilder.fromUri("http://localhost/").port(9998).path(webadapter).path("tester.html").build();
+		URI uri= UriBuilder.fromUri("http://localhost/").port(9998).path(webadapter).path("frontend/index.html").build();
 		Thread.sleep(1000);
 		Desktop.getDesktop().browse(uri);
         ServiceStopper stopper = new ServiceStopper();
