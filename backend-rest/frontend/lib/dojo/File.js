@@ -27,41 +27,46 @@ define([
 			var reader = new FileReader();
 			reader.onload = function(e) { 
 				console.log("Updating data model...");
-				var file_content = e.target.result;
-				var input="";
-				if (extension.match(/\.(aq21|AQ21|a21|q21)$/))
-				{
-					request.post("http://localhost:9998/jersey/aq21/fromAQ21",
+				var converting = function (processing, file_content){
+					if (extension.match(/\.(aq21|AQ21|a21|q21)$/))
 					{
-						data: file_content,
-						handleAs: "json",
-						headers :
+						request.post("http://localhost:9998/jersey/aq21/fromAQ21",
 						{
-							"Content-Type" : "text/plain"
-						}
-					}).then(function(text)
+							data: file_content,
+							handleAs: "json",
+							headers :
+							{
+								"Content-Type" : "text/plain"
+							}
+						}).then(function(text)
+						{
+							//console.log(JSON.stringify(text));
+							processing(text);
+						});
+					}
+					else 
 					{
-						//console.log(JSON.stringify(text));
-						input = text;
-					});
+						processing(JSON.parse(file_content));
+					}
 				}
-				else 
-				{
-					input = JSON.parse(file_content);
+				var processing = function(input) {
+					//console.log("before attributes");
+					attributesStore.setData(input.attributes);
+					//console.log("before events");
+					eventsStore.setData(input.events);
+					//console.log("before domains");
+					domainsStore.setData(input.domains);
+					window.file = input;
+					var parameters = [];
+					input.runsGroup.runs.forEach(function (run) { 	parameters = parameters.concat(run.runSpecificParameters);});
+					parameters = parameters.concat(input.runsGroup.globalLearningParameters);
+					parametersStore.setData(parameters);
+					runsStore.setData(input.runsGroup.runsNames.concat(["globalLearningParameters"]).map(function (x) {
+						return { id: x, selected : true };
+					}));
+					console.log("Finished updating data model...");
 				}
-				//console.log("before attributes");
-				attributesStore.setData(input.attributes);
-				//console.log("before events");
-				eventsStore.setData(input.events);
-				//console.log("before domains");
-				domainsStore.setData(input.domains);
-				window.file = input;
-				var parameters = [];
-				input.runsGroup.runs.forEach(function (run) { parameters = parameters.concat(run.runSpecificParameters);});
-				parameters = parameters.concat(input.runsGroup.globalLearningParameters);
-				parametersStore.setData(parameters);
-				runsStore.setData(input.runsGroup.runsNames.concat(["globalLearningParameters"]).map(function (x) { return { id: x, selected : true };}));
-				console.log("Finished updating data model...");
+				converting(processing, e.target.result);
 			};
 			
 			reader.readAsText(f);
