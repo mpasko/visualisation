@@ -79,10 +79,12 @@ public class Invoker {
 		}
 		OutputParser parser = new OutputParser();
 		AttributesGroup ag = (AttributesGroup) input.gAG();
+/*
 		if (ag.attributes.get(0).getname().equals("blabla")) {
 			Logger.getLogger(Aq21Resource.class.getName()).info("Special case: 'blabla' attribute!");
 			return parser.parse("blabla");
 		}
+*/ 
 		Logger.getLogger(Aq21Resource.class.getName()).info("Request accepted");
 		String result;
 		try {

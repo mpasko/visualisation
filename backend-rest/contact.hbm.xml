@@ -59,7 +59,7 @@
 	</class>
 
 	<class name="agh.aq21gui.model.input.Event" table="Events" lazy="false">
-		<id name="dbid" type="long" column="EventID" >
+		<id name="dbid" type="int" column="EventID" >
 			<generator class="increment"/>
 		</id>
 		

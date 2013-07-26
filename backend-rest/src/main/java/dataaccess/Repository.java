@@ -38,7 +38,7 @@ public class Repository {
 	
 	private static Directory getMaxIDDirectory(Session session){
 		Criteria criteria = session.createCriteria(Directory.class);
-		criteria.addOrder(Order.desc("id"));
+		criteria.addOrder(Order.desc("dbid"));
 		criteria.setMaxResults(1);
 		Directory dir = (Directory)criteria.uniqueResult();
 		if(dir == null){
