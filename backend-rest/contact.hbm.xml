@@ -30,7 +30,7 @@
 		<!--<one-to-one class="agh.aq21gui.model.input.Input" name="value"/> -->
 
 		<component name="value" class="agh.aq21gui.model.input.Input" lazy="false">
-			<list name="events" table="Events" cascade="all" lazy="false">
+			<list name="dbevents" table="Events" cascade="all" lazy="false">
 				<key column="ExpID"/>
 				<list-index column="EventPairID"/>
 				<one-to-many class="agh.aq21gui.model.input.Event"/>

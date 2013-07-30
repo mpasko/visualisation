@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.xml.bind.annotation.XmlElement;
 import org.antlr.runtime.tree.CommonTree;
 
@@ -80,8 +81,8 @@ public class Event {
 		}
 	}
 
-	Map<String, Object> formatEvent(AttributesGroup attributesGroup) {
-		Map<String, Object> workingMap = new HashMap<String, Object>();
+	TreeMap<String, Object> formatEvent(AttributesGroup attributesGroup) {
+		TreeMap<String, Object> workingMap = new TreeMap<String, Object>();
 		workingMap.put("id", enumerator);
 		enumerator++;
 		Iterator<Attribute> attrIterator = attributesGroup.attributes.iterator();

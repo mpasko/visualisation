@@ -15,9 +15,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Run extends Test{
 	
+	public Run(){
+		this.ID = TParser.RUNS_PARAMS;
+	}
+	
 	void parseRun(TreeNode runNode) {
-		name = runNode.childAt(0, TParser.ID).value();
-		TreeNode runParams = runNode.childAt(1, TParser.RUNS_PARAMS);
-		runSpecificParameters.parseParams(runParams);
+		parseTest(runNode);
 	}
 }

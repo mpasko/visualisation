@@ -40,4 +40,8 @@ public class UniversalParametersContainer {
 			parameters.add(param);
 		}
 	}
+
+	void sName(String name) {
+		parent = name;
+	}
 }

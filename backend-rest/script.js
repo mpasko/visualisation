@@ -268,10 +268,30 @@ jQuery(document).ready(function() {
 		});
 		return false;
 	});
-	
+	jQuery('#SaveDB').click(function(){
+		jQuery('#Response').empty();
+		var pair={
+			name:"test1",
+			value:query
+		}
+		saveToDB(pair,function(){
+			jQuery('#Response').append("Request failed");
+		})
+	});
+	jQuery('#Browse').click(function(){
+		jQuery('#Response').empty();
+		browseDB(function(result){
+			//On success
+			var text = JSON.stringify(result).replace(/\n/g, "<br>");
+			jQuery('#Response').append(text);
+		}, function(){
+			//On error
+			jQuery('#Response').append("Request failed");
+		})
+	});
 	document.getElementById('fileinput')
 	.addEventListener('change', readSingleFile, false);
-	
+/*	
 	jQuery(window).bind('beforeunload', function(){
 		stopService();
 	});
@@ -279,7 +299,7 @@ jQuery(document).ready(function() {
 	jQuery(window).bind('onunload', function(){
 		stopService();
 	});
-	
+*/	
 //	window.onbeforeunload = function (e){
 		
 //		return true;

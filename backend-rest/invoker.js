@@ -65,6 +65,46 @@ var convertFromAQ21 = function(query,callback,onerror) {
 	});
 };
 
+var saveToDB = function(query,onerror) {
+		var ready = JSON.stringify(query);
+	var resource = 'http://localhost:9998/jersey/aq21/saveExperiment';
+	var ourType = 'application/json';
+	jQuery.ajax({
+		type: 'POST',
+		contentType: ourType,
+		crossDomain: true,
+		url: resource,
+		data: ready,
+		headers: {'Access-Control-Allow-Origin:': '*'},
+		cache: false,
+		processData: false,
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			onerror();
+		}
+	});
+}
+
+var browseDB = function(callback,onerror) {
+	ready = "";
+	var resource = 'http://localhost:9998/jersey/aq21/browse';
+	var ourType = 'application/json';
+	jQuery.ajax({
+		type: 'POST',
+		contentType: ourType,
+		dataType: 'json',
+		url: resource,
+		data: ready,
+		cache: false,
+		success: function(data) {
+			callback(data);
+		},
+		processData: false,
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			onerror();
+		}
+	});
+};
+
 var stopService = function() {
 	var resource = 'http://localhost:9998/jersey/aq21/stop';
 	jQuery.ajax({

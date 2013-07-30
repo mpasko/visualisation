@@ -95,7 +95,7 @@ public class Aq21Resource {
 		return out;
 	}
 	
-	@GET
+	@POST
 	@Path("browse")
     @Produces({MediaType.APPLICATION_JSON})
 	public Directory browseIt() throws NoDatabaseConfiguredException{

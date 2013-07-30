@@ -69,7 +69,7 @@ public class Main {
 		
 		URI uri= UriBuilder.fromUri("http://localhost/").port(9998).path(webadapter).path("frontend/index.html").build();
 		Thread.sleep(1000);
-		Desktop.getDesktop().browse(uri);
+//		Desktop.getDesktop().browse(uri);
         ServiceStopper stopper = new ServiceStopper();
 		stopper.waitForUserInput();
 		server.stop();
