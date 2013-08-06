@@ -3,12 +3,12 @@
 /*global define parametersStore*/
 /*global define runsStore*/
 
-define(["dijit/registry",  "CustomGrid","dgrid/editor", "dijit/layout/ContentPane", "dojo/aspect", "dojo/dom-style","dojo/_base/fx"],
-	function( registry, CustomGrid, editor, ContentPane, aspect,domStyle, fx){
+define(["dijit/registry",  "CustomGrid","Columns", "dijit/layout/ContentPane", "dojo/aspect", "Splash"],
+	function( registry, CustomGrid, columns, ContentPane, aspect,splash){
     return {
         setup: function() {
             var runsGrid = new CustomGrid({
-				columns: { id : {label: "Run"}, value: editor({name: "CheckBox",label: "Selected", field: "selected",  autoSave : true}, "checkbox") },
+				columns: columns.runNames,
 				store: runsStore, autosave: true
 	            }, "runsGrid");
 			console.log("Created runs grid");
@@ -34,14 +34,7 @@ define(["dijit/registry",  "CustomGrid","dgrid/editor", "dijit/layout/ContentPan
 				});
 				console.log("Created new tabs");
 			});
-			
-			domStyle.set("splash_agh", "opacity", "1");
-			domStyle.set("load_files", { display: "none"  });
-			var fadeArgs = { node: "splash_agh", duration : 3000 };
-		    var animation = fx.fadeOut(fadeArgs);
-		    animation.onEnd = function(){domStyle.set("splash_agh", {   display: "none"  });};
-		    animation.play();
-			
+			splash.play("splash_agh");			
         }
     };
 });

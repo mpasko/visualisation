@@ -46,6 +46,7 @@ define([
 					}
 					else 
 					{
+                        console.log(file_content);
 						processing(JSON.parse(file_content));
 					}
 				}
@@ -60,6 +61,7 @@ define([
 					var parameters = [];
 					input.runsGroup.runs.forEach(function (run) { 	parameters = parameters.concat(run.runSpecificParameters);});
 					parameters = parameters.concat(input.runsGroup.globalLearningParameters);
+                    console.log(parameters);
 					parametersStore.setData(parameters);
 					runsStore.setData(input.runsGroup.runsNames.concat(["globalLearningParameters"]).map(function (x) {
 						return { id: x, selected : true };

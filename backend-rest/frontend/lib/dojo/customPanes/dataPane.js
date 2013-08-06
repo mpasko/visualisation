@@ -4,42 +4,33 @@
 /*global define eventsStore*/
 /*global define statisticsStore*/
 
-define(["dijit/registry", "CustomGrid","dgrid/editor", "dijit/layout/ContentPane", "dojo/aspect", "dojo/dom-style","dojo/_base/fx" ],
-	function( registry, CustomGrid, editor, ContentPane, aspect,domStyle, fx) {
+define(["dijit/registry", "CustomGrid","Columns", "dijit/layout/ContentPane", "dojo/aspect", "Splash" ],
+	function( registry, CustomGrid, columns, ContentPane, aspect,splash) {
     return {
         setup: function(){
-            var attributesGrid = new CustomGrid({
-				columns: { id : {label: "#"}, name: {label: "Attribute name"} },
-			    store : attributesStore
-			},"attributesGrid");
-            console.log("Finished creating attributes grid");
             
-			var statisticsGrid = new CustomGrid({
-				columns: { id : {label: "Info"}, value: {label: "Value"} },
-				store: statisticsStore
-			}, "statisticsGrid");
-			console.log("Finished creating statistics grid");
-			
-			
-			aspect.after(attributesStore, "setData", function() { registry.byId("attributesGrid").refresh();});
-			console.log("Added updates after changes in attributesStore");
-			// when we select attribute, we display info in a grid
-			attributesGrid.on("dgrid-select", function(event){
+            var statisticsGrid = new CustomGrid({columns: columns.statistics, store: statisticsStore}, "statisticsGrid");
+            var attributesGrid = new CustomGrid({columns: columns.attributes,  store : attributesStore	},"attributesGrid");
+            aspect.after(attributesStore, "setData", function() { attributesGrid.refresh();});
+            
+            attributesGrid.on("dgrid-select", function(event){
 			    var data = [{id:"Domain", value:event.rows[0].data.domain},{id:"Parameters",value: event.rows[0].data.parameters}];
 			    statisticsStore.setData(data);
 			    statisticsGrid.refresh();
-			    console.log("Refreshed statistics grid");
 			});
-			
-			attributesGrid.on("dgrid-deselect", function(event){
+            
+            attributesGrid.on("dgrid-deselect", function(event){
 			    statisticsStore.setData([]);
 			    statisticsGrid.refresh();
-			    console.log("Cleared statistics grid");
 			});
-			// we destroy old grid with data
-			aspect.before(eventsStore, "setData", function() { registry.byId("raw_data").destroyDescendants(true);console.log("cleared events grid"); });
-			console.log("Added updates before changes in eventsStore");
-			// we destroy old grid with data
+
+			
+            var domainsGrid = new CustomGrid({	columns: columns.domains, store: domainsStore}, "domainsGrid");
+			aspect.after(domainsStore, "setData", function() { domainsGrid.refresh();});
+                        
+
+			aspect.before(eventsStore, "setData", function() { registry.byId("raw_data").destroyDescendants(true);console.log("Cleared events grid"); });
+
 			aspect.after(eventsStore, "setData", function() { 
 				var eventsGrid = new CustomGrid(
 				{ 
@@ -49,15 +40,8 @@ define(["dijit/registry", "CustomGrid","dgrid/editor", "dijit/layout/ContentPane
 				registry.byId("raw_data").addChild(eventsGrid); 
 				console.log("Created new event grid");
 			});
-			console.log("Added updates after changes in eventsStore");
 			
-			
-			domStyle.set("splash_aq21", "opacity", "1");
-			domStyle.set("load_files", { display: "none"  });
-			var fadeArgs = { node: "splash_aq21", duration : 1000 };
-		    var animation = fx.fadeOut(fadeArgs);
-		    animation.onEnd = function(){domStyle.set("splash_aq21", {   display: "none"  });};
-		    animation.play();
+			splash.play("splash_aq21");
         }
     };
 });
