@@ -37,7 +37,7 @@ public class Parameter {
 		this.dbid = id;
 	}
 	
-	public long getdb(){
+	public long getdbid(){
 		return this.dbid; 
 	}
 	

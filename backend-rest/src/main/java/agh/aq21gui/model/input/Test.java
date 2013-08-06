@@ -19,11 +19,13 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 public class Test {
 	public String name = "";
+	protected int ID = TParser.TESTS_PARAMS;
 	
 	@XmlTransient
 	public UniversalParametersContainer runSpecificParameters;
 
 	public Test(){
+	//	this.name = name;
 		runSpecificParameters = new UniversalParametersContainer(name);
 	}	
 	
@@ -46,17 +48,24 @@ public class Test {
 
 	void parseTest(TreeNode testNode) {
 		name = testNode.childAt(0, TParser.ID).value();
-		TreeNode runParams = testNode.childAt(1, TParser.TESTS_PARAMS);
+		runSpecificParameters.sName(name);
+		TreeNode runParams = testNode.childAt(1, ID);
 		runSpecificParameters.parseParams(runParams);
 	}
 
+	public boolean isNotEmpty(){
+		return runSpecificParameters != null && !runSpecificParameters.parameters.isEmpty();
+	}
+	
 	@Override
 	public String toString() {
-		StringBuilder builder = FormatterUtil.begin(name);
-		if (runSpecificParameters != null) {
-			builder.append(runSpecificParameters);
+		if (isNotEmpty()) {
+			StringBuilder builder = FormatterUtil.begin(name);
+			builder.append(runSpecificParameters.toString());
+			return FormatterUtil.terminate(builder);
+		}else{
+			return  "";
 		}
-		return FormatterUtil.terminate(builder);
 	}
 	
 }

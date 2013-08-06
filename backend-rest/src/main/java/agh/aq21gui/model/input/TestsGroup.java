@@ -72,15 +72,23 @@ public class TestsGroup {
 
 	@Override
 	public String toString() {
-		boolean empty=true;
+		boolean emptyGlobParams=true;
 		if(globalLearningParameters!=null){
-			empty=globalLearningParameters.parameters.isEmpty();
+			emptyGlobParams=globalLearningParameters.parameters.isEmpty();
 		}
-		if(empty&&runs.isEmpty()){
+		boolean emptyRuns=true;
+		if(!runs.isEmpty()){
+			for(Test test: runs){
+				if (test.isNotEmpty()){
+					emptyRuns = false;
+				}
+			}
+		}
+		if(emptyGlobParams&&emptyRuns){
 			return "";
 		}
 		StringBuilder builder = FormatterUtil.begin(LABEL);
-		if (globalLearningParameters != null) {
+		if (!emptyGlobParams) {
 			builder.append(globalLearningParameters.toString());
 		}
 		builder.append('\n');

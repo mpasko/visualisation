@@ -8,10 +8,12 @@ import agh.aq21gui.model.output.Hypothesis;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -112,6 +114,15 @@ public class Input {
 		return eventsGroup.formatEvents(this.attributesGroup);
 	}
 	
+	@XmlTransient
+	public void setdbevents(List<Event> events){
+		eventsGroup.events = events;
+	}
+	
+	public List<Event> getdbevents(){
+		return this.eventsGroup.events;
+	}
+	
 	@XmlElement(name="testingEvents")
 	public void setTestingEvents(List<Map<String, Object>> events){
 		testingEventsGroup.loadEvents(events,this.attributesGroup);
@@ -119,6 +130,15 @@ public class Input {
 	
 	public List<Map<String, Object>>  getTestingEvents(){
 		return testingEventsGroup.formatEvents(this.attributesGroup);
+	}
+	
+	@XmlTransient
+	public void setdbtestingevents(List<Event> events){
+		testingEventsGroup.events = events;
+	}
+	
+	public List<Event> getdbtestingevents(){
+		return this.testingEventsGroup.events;
 	}
 	
 	@XmlElement(name="runsGroup")

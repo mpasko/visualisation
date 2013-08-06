@@ -11,7 +11,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.xml.bind.annotation.XmlTransient;
+import org.jboss.logging.Logger;
 
 /**
  *
@@ -62,6 +64,10 @@ public class EventsGroup {
 
 	public void loadEvents(List<Map<String, Object>> events, AttributesGroup attrs) {
 		this.events = new LinkedList<Event>();
+		if(events==null){
+			Logger.getLogger("JAXB").error("Error! events in EventsGroup.loadEvents is null");
+			return;
+		}
 		for(Map<String, Object> event : events){
 			this.events.add(new Event(event,attrs));
 		}
