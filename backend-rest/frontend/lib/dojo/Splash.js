@@ -8,15 +8,18 @@
 /*global define runsStore*/
 
 define([
-	 "dojo/dom","dijit/registry", "dojo/_base/declare","dojo/dom-style","dojo/_base/fx"
-],function( dom, registry, declare,domStyle, fx){
+	 "dojo/dom","dijit/registry", "dojo/_base/declare","dojo/dom-style","dojo/_base/fx","dojo/fx"
+],function( dom, registry, declare,domStyle, fx,coreFx){
 	return {
-		play: function  (name) {
-			domStyle.set(name, "opacity", "1");
-			var fadeArgs = { node: name, duration : 1000 };
-		    var animation = fx.fadeOut(fadeArgs);
-		    animation.onEnd = function(){domStyle.set(name, {   display: "none"  });};
-		    animation.play();
+		play: function  (names) {
+            var anims = names.map(function(name) {
+                domStyle.set(name, "opacity", "1");
+                var fadeArgs = { node: name, duration : 1000 };
+                var animation = fx.fadeOut(fadeArgs);
+                animation.onEnd = function(){domStyle.set(name, {   display: "none"  });};
+                return animation;
+            });
+            coreFx.chain(anims).play();
 		}
 	};
 });

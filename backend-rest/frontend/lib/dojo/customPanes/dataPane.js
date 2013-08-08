@@ -23,8 +23,6 @@ define(["dijit/registry", "CustomGrid","Columns", "dijit/layout/ContentPane", "d
                 eventsGrid.refresh();
 				console.log("Created new event grid");
 			});
-			
-			splash.play("splash_aq21");
         }
     };
 });

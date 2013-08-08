@@ -31,7 +31,7 @@ define(["dijit/registry",  "CustomGrid","Columns", "dijit/layout/ContentPane", "
 				console.log("Created new tabs");
 			});
             
-			splash.play("splash_agh");			
+			splash.play(["splash_aq21","splash_agh"]);			
         }
     };
 });
