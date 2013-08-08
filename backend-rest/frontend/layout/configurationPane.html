@@ -6,69 +6,69 @@
 	<div data-dojo-type="dijit/layout/BorderContainer" design="headline" gutters="true"  region="left"
 		style="width: 30%; height: 100%;">
 		<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false" 
-			refreshonshow="false"  splitter="false" maxsize="Infinity" dolayout="false" style="height: 80%;" region="top">
+			refreshonshow="false"  splitter="false" maxsize="Infinity" dolayout="false" region="center">
 			<div id="runsGrid" style="height : 100%;"></div>
 		</div>
-		<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false" 
-			refreshonshow="false"  splitter="false" dolayout="false" style="height: 20%;" region="center">
-			<div id="toolbar1" data-dojo-type="dijit/Toolbar" >
-				<div data-dojo-type="dijit/form/Button" id="select_all">
-					Select all
-					<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
-						/*global define runsStore*/
-				        window.require(["dijit/registry"], function(registry){
-							runsStore.query({selected : false}).forEach(function (run) {runsStore.put({id : run.id, selected : true}); });
-				            registry.byId("runsGrid").refresh();
-				        });
-				    </script>
-				</div>
-				<div data-dojo-type="dijit/form/Button" id="unselect_all">
-					Deselect all
-					<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
-                        window.require(["dijit/registry"], function(registry){
-                            runsStore.query({selected : true}).forEach(function (run) {runsStore.put({id : run.id, selected : false}); });
-                            registry.byId("runsGrid").refresh();
+        <div id="toolbar1" data-dojo-type="dijit/Toolbar" region="top">
+            <div data-dojo-type="dijit/form/Button" id="select_all">
+                Select all
+                <script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+                    /*global define runsStore*/
+                    window.require(["dijit/registry"], function(registry){
+                        runsStore.query({selected : false}).forEach(function (run) {runsStore.put({id : run.id, selected : true}); });
+                        registry.byId("runsGrid").refresh();
+                    });
+                </script>
+            </div>
+            <div data-dojo-type="dijit/form/Button" id="unselect_all">
+                Deselect all
+                <script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+                    window.require(["dijit/registry"], function(registry){
+                        runsStore.query({selected : true}).forEach(function (run) {runsStore.put({id : run.id, selected : false}); });
+                        registry.byId("runsGrid").refresh();
+                    });
+                    
+                </script>
+            </div>
+          
+            <div data-dojo-type="dijit/form/Button" id="run">
+                Run
+                <script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+                    window.require(["dijit/registry", "dojo/request"], function(registry, request){
+                        var input = {};
+                        input["attributes"] = attributesStore.query({});
+                        input["events"] = eventsStore.query({});
+                        input["domains"] = domainsStore.query({});
+                        
+                        var runNames = runsStore.query({"selected" : true}).map(function (x) { return x.id});
+                        runNames.splice(runNames.indexOf("globalLearningParameters"),1);
+                        
+                        
+                        var runs = runNames.map(function (x) { 
+                            return { "name" : x ,"runSpecificParameters" : parametersStore.query({ "parent" : x })};
                         });
-				    </script>
-				</div>
-              
-                <div data-dojo-type="dijit/form/Button" id="run">
-                    Run
-                    <script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
-                        window.require(["dijit/registry", "dojo/request"], function(registry, request){
-                            var input = {};
-                            input["attributes"] = attributesStore.query({});
-                            input["events"] = eventsStore.query({});
-                            input["domains"] = domainsStore.query({});
-                            
-                            var runNames = runsStore.query({"selected" : true}).map(function (x) { return x.id});
-                            runNames.splice(runNames.indexOf("globalLearningParameters"),1);
-                            
-                            
-                            var runs = runNames.map(function (x) { 
-                                return { "name" : x ,"runSpecificParameters" : parametersStore.query({ "parent" : x })};
-                            });
-                            input["runsGroup"] = { 
-                                "runsNames" : runNames, 
-                                "runs" : runs, 
-                                "globalLearningParameters" : parametersStore.query({ "parent" : "globalLearningParameters" })
-                            };
-                            input["id"] = 0;
-                            console.log(JSON.stringify(input));
-                            request.post("http://localhost:9998/jersey/aq21/postIt", {
-                                data: JSON.stringify(input),
-                                handleAs: "json",
-                                headers : {
-                                    "Content-Type" : "application/json; charset=UTF-8"
-                                }
-                            }).then(function(text){
-                                console.log("The server returned: ", text["outputHypotheses"]);
-                            });
+                        input["runsGroup"] = { 
+                            "runsNames" : runNames, 
+                            "runs" : runs, 
+                            "globalLearningParameters" : parametersStore.query({ "parent" : "globalLearningParameters" })
+                        };
+                        input["id"] = 0;
+                        console.log(JSON.stringify(input));
+                        request.post("http://localhost:9998/jersey/aq21/postIt", {
+                            data: JSON.stringify(input),
+                            handleAs: "json",
+                            headers : {
+                                "Content-Type" : "application/json; charset=UTF-8"
+                            }
+                        }).then(function(text){
+                            toastr.success('Output hypotheses is ready!');
+                            console.log("The server returned: ", text["outputHypotheses"]);
+                            registry.byId("tabs").selectChild(registry.byId("visualize"));
                         });
-                    </script>
-				</div>
-			</div>
-		</div>
+                    });
+                </script>
+            </div>
+        </div>
 	</div>
 	<span data-dojo-type="dijit/layout/TabContainer" id="runTabs" tabstrip="false" persist="false"  region="center"
 		controllerwidget="dijit.layout.TabController" style="width: 70%; height: 100%;" >

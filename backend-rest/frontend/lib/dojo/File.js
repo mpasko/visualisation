@@ -40,13 +40,11 @@ define([
 							}
 						}).then(function(text)
 						{
-							//console.log(JSON.stringify(text));
 							processing(text);
 						});
 					}
 					else 
 					{
-                        console.log(file_content);
 						processing(JSON.parse(file_content));
 					}
 				}
@@ -61,12 +59,11 @@ define([
 					var parameters = [];
 					input.runsGroup.runs.forEach(function (run) { 	parameters = parameters.concat(run.runSpecificParameters);});
 					parameters = parameters.concat(input.runsGroup.globalLearningParameters);
-                    console.log(parameters);
 					parametersStore.setData(parameters);
 					runsStore.setData(input.runsGroup.runsNames.concat(["globalLearningParameters"]).map(function (x) {
 						return { id: x, selected : true };
 					}));
-					console.log("Finished updating data model...");
+					toastr.success('Data successfully loaded');
 				}
 				converting(processing, e.target.result);
 			};

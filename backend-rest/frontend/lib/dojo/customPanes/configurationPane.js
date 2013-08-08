@@ -7,12 +7,8 @@ define(["dijit/registry",  "CustomGrid","Columns", "dijit/layout/ContentPane", "
 	function( registry, CustomGrid, columns, ContentPane, aspect,splash){
     return {
         setup: function() {
-            var runsGrid = new CustomGrid({
-				columns: columns.runNames,
-				store: runsStore, autosave: true
-	            }, "runsGrid");
-			console.log("Created runs grid");
-			aspect.after(runsStore, "setData", function() { registry.byId("runsGrid").refresh();});
+            var runsGrid = new CustomGrid({columns: columns.runNames, store: runsStore, autosave: true}, "runsGrid");
+			aspect.after(runsStore, "setData", function() { runsGrid.refresh();});
 			
 			// we destroy old tabs and grids with configuration data
 			aspect.before(runsStore, "setData", function() { 
@@ -26,7 +22,7 @@ define(["dijit/registry",  "CustomGrid","Columns", "dijit/layout/ContentPane", "
 				runsStore.query({}).forEach(function (run) {
 						var contentPane = new ContentPane({ title: run.id });
 						var grid = new CustomGrid({
-						columns: { name : {label: "#"}, value: {label: "Value"} },
+						columns: columns.runs,
 			            store : parametersStore, query : { parent : run.id}});
 			            
 						contentPane.addChild(grid);
@@ -34,6 +30,7 @@ define(["dijit/registry",  "CustomGrid","Columns", "dijit/layout/ContentPane", "
 				});
 				console.log("Created new tabs");
 			});
+            
 			splash.play("splash_agh");			
         }
     };

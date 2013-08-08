@@ -13,8 +13,6 @@ define([
 	return {
 		play: function  (name) {
 			domStyle.set(name, "opacity", "1");
-			"splash_aq21"
-            "splash_agh"
 			var fadeArgs = { node: name, duration : 1000 };
 		    var animation = fx.fadeOut(fadeArgs);
 		    animation.onEnd = function(){domStyle.set(name, {   display: "none"  });};

@@ -3,50 +3,8 @@
 </head>
 <body>
 <div data-dojo-type="dijit/layout/BorderContainer" design="headline" gutters="true" style="width: 100%; height: 100%;">	
-	<div id="data_sources" data-dojo-type="dijit/Toolbar" region="top">
-		<div data-dojo-type="dijit/form/Button" id="open_file" data-dojo-props="">Open from file...
-			<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
-		        /*global define window*/
-		        window.require(["dojo/dom"], function(dom){ dom.byId("load_files").click(); });
-		    </script>
-		</div>
-		
-		<div data-dojo-type="dijit/form/Button" id="open_url" data-dojo-props="">Open from URL...
-			<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
-		        /*global define alert*/
-		        window.require(["dojo/dom"], function(dom){ alert("Not implemented yet!"); });
-		    </script>
-		</div>
-	</div>
-	<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false"  style="width:50%;"
-		refreshonshow="false" region="left" splitter="false" dolayout="false" >
-		<div data-dojo-type="dijit/layout/BorderContainer" style="width: 100%; height: 100%;">
-              <span data-dojo-type="dijit/layout/TabContainer" tabstrip="false" persist="false" controllerwidget="dijit.layout.TabController" 
-                style="width: 100%; height: 50%;"  tabposition="bottom" region="top">   
-                 <div data-dojo-type="dijit/layout/ContentPane"  title="Attributes">
-                    <div id="attributesGrid" style="height : 100%;"></div>
-                 </div>
-                 <div data-dojo-type="dijit/layout/ContentPane"  title="Domains">
-                    <div id="domainsGrid" style="height : 100%;"></div>
-                 </div>
-             </span>
-             <span data-dojo-type="dijit/layout/TabContainer" tabstrip="false" persist="false" controllerwidget="dijit.layout.TabController" 
-                style="width: 100%; height: 50%;"  tabposition="bottom" region="center">
-                 <div data-dojo-type="dijit/layout/ContentPane" style="width: 100%; height: 50%;" Title="Statistics">
-                    <div id="statisticsGrid" style="height : 100%;"></div>
-                 </div>
-                 <div data-dojo-type="dijit/layout/ContentPane" style="width: 100%; height: 50%;" Title="Visualisation">
-                    <svg id="attributes_vis" w="100%" h="100%"></svg>
-                 </div>
-             </span>
-		</div>
-    </div>
-	<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false" style="width:50%;"
-		refreshonshow="false" region="center" splitter="true" dolayout="false" >
-		<span data-dojo-type="dijit/layout/TabContainer" tabstrip="false" persist="false" controllerwidget="dijit.layout.TabController" 
-			style="width: 100%; height: 100%;"  tabposition="bottom">
-				<div data-dojo-type="dijit/layout/ContentPane" title="Raw data" id="raw_data"></div>
-		</span>
+	<div data-dojo-type="dijit/layout/ContentPane" extractcontent="false" preventcache="false" preload="false" style="width: 100%; height: 100%;"
+		refreshonshow="false" region="center" splitter="true" dolayout="false" id="events">
     </div>
 </div>
 </body>
