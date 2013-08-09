@@ -3,18 +3,19 @@
 <head>
 <meta charset="utf-8"/>
 <title>webAQ21</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/MathJax/MathJax.js?config=TeX-AMS-MML_SVG-full"></script>
+<script src="lib/jquery/jquery-1.10.2.js"></script>
 <script src="lib/toastr/toastr.js"></script>
 <script src="lib/dojo/dojo/dojo.js" data-dojo-config="'parseOnLoad':true,'async':true"></script>
 <script src="lib/d3/d3.v3.min.js"></script>
 <link href="lib/toastr/toastr.css" rel="stylesheet"/>
-<style>@import url("themes/claro/document.css");</style>
-<style>@import url("themes/claro/claro.css");</style>
-<style>@import url("app.css");</style>
+<link href="themes/claro/document.css" rel="stylesheet"/>
+<link href="themes/claro/claro.css" rel="stylesheet"/>
+<link href="app.css" rel="stylesheet"/>
 <script src="lib/dojo/main.js"></script>
 </head>
 <body class="claro">
-	<div id="lololo" data-dojo-id="eventsStore" data-dojo-type="dojo/store/Memory"></div>
+	<div data-dojo-id="eventsStore" data-dojo-type="dojo/store/Memory"></div>
 	<div data-dojo-id="attributesStore" data-dojo-type="dojo/store/Memory"></div>
 	<div data-dojo-id="parametersStore" data-dojo-type="dojo/store/Memory"></div>
 	<div data-dojo-id="statisticsStore" data-dojo-type="dojo/store/Memory"></div>
@@ -34,8 +35,8 @@
 				<div data-dojo-type="dijit/layout/ContentPane" title="Configuration" extractcontent="false" preventcache="false"  
 					id="configurationPane" preload="true" refreshonshow="false" dolayout="false" href="layout/configurationPane.html">	
 				</div>
-				<div data-dojo-type="dijit/layout/ContentPane" id="visualize" title="Visualize" extractcontent="false" preventcache="false" 
-					preload="true" refreshonshow="false" dolayout="false" href="layout/visualizationPane.html">
+				<div data-dojo-type="dijit/layout/ContentPane"  title="Output" extractcontent="false" preventcache="false" 
+					id="visualisationPane" preload="true" refreshonshow="false" dolayout="false" href="layout/visualizationPane.html">
 				</div>
 				<div data-dojo-type="dijit/layout/ContentPane" title="Help" extractcontent="false" preventcache="false" 
 					preload="true" refreshonshow="false" dolayout="false" href="layout/helpPane.html">

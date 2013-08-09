@@ -7,13 +7,13 @@
 		<div data-dojo-type="dijit/form/Button" id="open_file" data-dojo-props="">Open from file...
 			<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
 		        /*global define window*/
+                /*global define console*/
 		        window.require(["dojo/dom"], function(dom){ dom.byId("load_files").click(); });
 		    </script>
 		</div>
 		
 		<div data-dojo-type="dijit/form/Button" id="open_url" data-dojo-props="">Open from URL...
 			<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
-		        /*global define alert*/
 		        window.require(["dojo/dom"], function(dom){ alert("Not implemented yet!"); });
 		    </script>
 		</div>
@@ -37,8 +37,6 @@
 		refreshonshow="false" region="bottom" splitter="true" dolayout="false" >
 		<svg id="attributes_vis" w="100%" h="100%"></svg>
     </div>
-	
-    
 </div>
 </body>
 </html>
