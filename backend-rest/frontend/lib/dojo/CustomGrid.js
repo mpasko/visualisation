@@ -1,4 +1,6 @@
 /*global define window*/
+/*global define console*/
+
 window.define(
 	[
 		"dojo/_base/declare", "dgrid/OnDemandGrid", "dgrid/CellSelection", "dgrid/Keyboard", "dgrid/extensions/ColumnResizer", 

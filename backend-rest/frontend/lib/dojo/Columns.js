@@ -1,9 +1,7 @@
 /*global define window*/
-window.define(
-	[
-		"dgrid/editor"
-	],
-	function(editor) {
+/*global define console*/
+
+window.define(["dgrid/editor"],	function(editor) {
 		return {
             runs : { name : {label: "Number"}, value: {label: "Value"} },
             runNames : { id : {label: "Run"}, value: editor({name: "CheckBox",label: "Selected", field: "selected",  autoSave : true}, "checkbox") },

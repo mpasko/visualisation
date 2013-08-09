@@ -7,21 +7,14 @@
 /*global define statisticsStore*/
 /*global define runsStore*/
 
-define([
-	 "dojo/dom","dijit/registry", "dojo/_base/declare", 
-		"dgrid/OnDemandGrid", "dgrid/CellSelection", "dgrid/Keyboard", "dgrid/extensions/ColumnResizer", 
-		"dgrid/Selection","dgrid/extensions/DijitRegistry","dgrid/editor","dgrid/tree",
-		"dijit/layout/ContentPane", "dojo/aspect", "customPanes/dataPane", "dojo/request"
-],function( dom, registry, declare, 
-			OnDemandGrid, CellSelection, Keyboard, ColumnResizer, Selection, DijitRegistry, editor, tree,
-			ContentPane, aspect,dataPane, request){
+define(["Backend"], function(backend){
 	return {
 		eventHandler: function  (evt) {
 			var f   = evt.target.files[0];
-			var extension="";
-			if(evt.target.files[0].fileName){
+			var extension = "";
+			if(evt.target.files[0].fileName) {
 				extension = evt.target.files[0].fileName;
-			}else{
+			} else {
 				extension = evt.target.files[0].name;
 			}
 			var reader = new FileReader();
@@ -30,18 +23,7 @@ define([
 				var converting = function (processing, file_content){
 					if (extension.match(/\.(aq21|AQ21|a21|q21)$/))
 					{
-						request.post("http://localhost:9998/jersey/aq21/fromAQ21",
-						{
-							data: file_content,
-							handleAs: "json",
-							headers :
-							{
-								"Content-Type" : "text/plain"
-							}
-						}).then(function(text)
-						{
-							processing(text);
-						});
+                        backend.convertAQ21(file_content, processing);
 					}
 					else 
 					{
@@ -65,6 +47,7 @@ define([
 					}));
 					toastr.success('Data successfully loaded');
 				}
+                
 				converting(processing, e.target.result);
 			};
 			

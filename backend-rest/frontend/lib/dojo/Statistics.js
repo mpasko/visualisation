@@ -1,9 +1,10 @@
 /*global define window*/
-window.define(
-	[
-		
-	],
-	function() {
+/*global define console*/
+/*global define attributesStore*/
+/*global define eventsStore*/
+/*global define domainsStore*/
+
+window.define([	], function() {
 		return {
             computeStats : function(item) {
                 var parameters = null;
