@@ -14,7 +14,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 
 /**
  * Root resource (exposed at "aq21" path)
@@ -22,6 +24,9 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("aq21")
 public class Aq21Resource {
+	
+	@Context
+    private SecurityContext security;
 	/**
      * Method handling HTTP POST requests. The returned object will be sent
      * to the client as "text/plain" media type.

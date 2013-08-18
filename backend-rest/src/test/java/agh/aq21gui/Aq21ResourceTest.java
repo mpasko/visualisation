@@ -6,7 +6,6 @@ import agh.aq21gui.model.input.AttributesGroup;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.OutputHypotheses;
-import com.sun.grizzly.http.SelectorThread;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
@@ -16,7 +15,7 @@ import junit.framework.TestCase;
 
 public class Aq21ResourceTest extends TestCase {
 
-    private SelectorThread threadSelector;
+//    private SelectorThread threadSelector;
     
     private WebResource r;
 
@@ -28,7 +27,7 @@ public class Aq21ResourceTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         
-        threadSelector = Main.startServer();
+//        threadSelector = Main.startServer();
 
         Client c = Client.create();
         r = c.resource(Main.BASE_URI);
@@ -38,7 +37,7 @@ public class Aq21ResourceTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        threadSelector.stopEndpoint();
+//        threadSelector.stopEndpoint();
     }
 
     /**
