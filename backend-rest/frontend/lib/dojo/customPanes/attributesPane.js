@@ -3,14 +3,16 @@
 /*global define attributesStore*/
 /*global define statisticsStore*/
 
-define(["dijit/registry", "CustomGrid","Columns", "dijit/layout/ContentPane", "dojo/aspect",  "Statistics"],
-	function( registry, CustomGrid, columns, ContentPane, aspect, stats) {
+define(["dijit/registry", "CustomGrid", "dijit/layout/ContentPane", "dojo/aspect",  "Statistics"],
+	function( registry, CustomGrid,  ContentPane, aspect, stats) {
     return {
         setup: function(){
             // grid for displaying statistical data about attributes
-            var statisticsGrid = new CustomGrid({columns: columns.statistics, store: statisticsStore}, "statisticsGrid");
+            var statisticsGrid = new CustomGrid({columns: { id : { label : "Statistic" }, value : { label : "Value" }}, 
+                store: statisticsStore}, "statisticsGrid");
             // grid for displaying attributes with their numbers
-            var attributesGrid = new CustomGrid({columns: columns.attributes,  store : attributesStore	},"attributesGrid");
+            var attributesGrid = new CustomGrid({columns: { id : { label : "Attribute number" }, name : { label : "Attribute name" }},  
+                store : attributesStore	},"attributesGrid");
             aspect.after(attributesStore, "setData", function() { attributesGrid.refresh();});
             
             attributesGrid.on("dgrid-select", function(event){
@@ -28,7 +30,8 @@ define(["dijit/registry", "CustomGrid","Columns", "dijit/layout/ContentPane", "d
 			});
 
 			// grid for displaying domains of attributes
-            var domainsGrid = new CustomGrid({	columns: columns.domains, store: domainsStore}, "domainsGrid");
+            var domainsGrid = new CustomGrid({	columns: { name : { label : "Name" }, domain : { label : "Domain" }, parameters : { label : "Parameters" } }, 
+                store: domainsStore}, "domainsGrid");
 			aspect.after(domainsStore, "setData", function() { domainsGrid.refresh();});
 
         }

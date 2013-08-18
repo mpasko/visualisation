@@ -11,9 +11,9 @@ define([],	function(){
             window.UpdateMath = function (id, TeX) {
                 document.getElementById(id).innerHTML = TeX;
                 MathJax.Hub.Queue(["Typeset", MathJax.Hub, id]);
-            }
+            };
             
-            UpdateMath("MathOutput", '$$ (background = red) \\lor (background = blue) \\implies b$$');
+            
         }
     };
 });

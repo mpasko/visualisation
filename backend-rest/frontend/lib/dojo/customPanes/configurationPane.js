@@ -6,12 +6,13 @@
 /*global define eventsStore*/
 /*global define domainsStore*/
 
-define(["dijit/registry",  "CustomGrid","Columns", "dijit/layout/ContentPane", "dojo/aspect", "Splash"],
-	function( registry, CustomGrid, columns, ContentPane, aspect,splash){
+define(["dijit/registry",  "CustomGrid", "dijit/layout/ContentPane", "dojo/aspect", "Splash", "dgrid/editor","dijit/form/TextBox"],
+	function( registry, CustomGrid, ContentPane, aspect,splash, editor,TextBox){
     return {
         setup: function() {
             // grid containing run names and info whether its selected
-            var runsGrid = new CustomGrid({columns: columns.runNames, store: runsStore, autosave: true}, "runsGrid");
+            var runsGrid = new CustomGrid({columns:  { id : { label : "Run" }, value : editor({ name : "CheckBox", label : "Selected", field : "selected", autoSave : true}, "checkbox")}, 
+                store: runsStore, autosave: true}, "runsGrid");
 			aspect.after(runsStore, "setData", function() { runsGrid.refresh();});
 			
 			// destroy old tabs and grids with configuration data
@@ -26,7 +27,7 @@ define(["dijit/registry",  "CustomGrid","Columns", "dijit/layout/ContentPane", "
 				runsStore.query({}).forEach(function (run) {
 						var contentPane = new ContentPane({ title: run.id });
 						var grid = new CustomGrid({
-						columns: columns.runs,
+						columns: { name : { label : "Number" }, value : editor({ label : "Value", field : "value" , autoSave : true}, TextBox,"click") },
 			            store : parametersStore, query : { parent : run.id}});
 			            
 						contentPane.addChild(grid);
@@ -46,7 +47,7 @@ define(["dijit/registry",  "CustomGrid","Columns", "dijit/layout/ContentPane", "
             input["events"] = eventsStore.query({});
             input["domains"] = domainsStore.query({});
             
-            var runNames = runsStore.query({"selected" : true}).map(function (x) { return x.id});
+            var runNames = runsStore.query({"selected" : true}).map(function (x) { return x.id;});
             runNames.splice(runNames.indexOf("globalLearningParameters"),1);
             
             input["runsGroup"] = { 
