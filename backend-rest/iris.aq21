@@ -16,7 +16,7 @@ Runs
   Run_c1
 {
       Mode = TF
-      Consequent = [class=Iris-setosa]
+      Consequent = [class=*]
       Ambiguity = IncludeInPos
       Trim = Optimal
       Compute_alternative_covers = True
