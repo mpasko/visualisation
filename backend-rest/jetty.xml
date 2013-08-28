@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+ 
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+    <Call name="addConnector">
+        <Arg>
+            <New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <Set name="host">localhost</Set>
+              <Set name="port">80</Set>
+            </New>
+        </Arg>
+    </Call>
+    <Call name="addConnector">
+        <Arg>
+            <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
+                <Arg>
+                    <New class="org.eclipse.jetty.util.ssl.SslContextFactory">
+                        <Set name="keyStorePath">keystore</Set>
+                        <Set name="keyStorePassword">pijmleko18+</Set>
+                    </New>
+                </Arg>
+                <Set name="host">localhost</Set>
+              <Set name="port">8080</Set>
+            </New>
+        </Arg>
+    </Call>
+    <Set name="handler">
+        <New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
+            <Set name="handlers">
+                <Array type="org.eclipse.jetty.server.Handler">
+                  <Item>
+                      <New id="web" class="org.eclipse.jetty.server.handler.ContextHandler">
+                          <Arg>/web</Arg>
+                          <Set name="handler">
+                              <New id="resource" class="org.eclipse.jetty.server.handler.ResourceHandler">
+                                  <Set name="welcomeFiles">
+                                      <Array type="java.lang.String">
+                                          <Item>connector</Item>
+                                      </Array>
+                                  </Set> 
+                                  <Set name="resourceBase">.</Set> 
+                              </New>
+                          </Set>
+                      </New>
+                  </Item>
+                  <Item>
+                      <New id="servlet" class="org.eclipse.jetty.servlet.ServletContextHandler">
+                          <Set name="contextPath">/jersey</Set>
+                          <Call name="addServlet">
+                              <Arg>
+                                  <New class="org.eclipse.jetty.servlet.ServletHolder">
+                                    <Arg>
+                                      <New class="com.sun.jersey.spi.container.servlet.ServletContainer">
+                                        <Arg>
+                                            <New class="com.sun.jersey.api.core.PackagesResourceConfig">
+                                              <Arg>
+                                                <Map>
+                                                  <Entry>
+                                                    <Item>com.sun.jersey.api.json.POJOMappingFeature</Item>
+                                                    <Item>true</Item>
+                                                  </Entry>
+                                                  <Entry>
+                                                    <Item>com.sun.jersey.config.property.packages</Item>
+                                                    <Item>agh.aq21gui</Item>
+                                                  </Entry>
+                                                </Map>
+                                              </Arg>
+                                            </New>
+                                          </Arg>    
+                                      </New>
+                                    </Arg>
+                                  </New>
+                              </Arg>
+                              <Arg>/*</Arg>
+                          </Call>
+                      </New>
+                  </Item>
+                </Array>
+              </Set>
+        </New>
+    </Set>
+</Configure>

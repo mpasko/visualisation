@@ -3,7 +3,7 @@
 
 define(["dojo/request"], function(request) {
 			return {
-				hostname : "http://localhost:9998/jersey/aq21/",
+				hostname : window.location.origin + "/jersey/aq21/",
 				runExperiment : function(message, processing) {
 					request.post(this.hostname + "postIt", {
 								data : JSON.stringify(message),

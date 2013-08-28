@@ -1,40 +1,32 @@
-/*global define window*/
-/*global define console*/
-/*global define attributesStore*/
-/*global define statisticsStore*/
-
-define(["dijit/registry", "CustomGrid", "dijit/layout/ContentPane", "dojo/aspect",  "Statistics"],
-	function( registry, CustomGrid,  ContentPane, aspect, stats) {
-    return {
-        setup: function(){
-            // grid for displaying statistical data about attributes
-            var statisticsGrid = new CustomGrid({columns: { id : { label : "Statistic" }, value : { label : "Value" }}, 
-                store: statisticsStore}, "statisticsGrid");
-            // grid for displaying attributes with their numbers
-            var attributesGrid = new CustomGrid({columns: { id : { label : "Attribute number" }, name : { label : "Attribute name" }},  
-                store : attributesStore	},"attributesGrid");
-            aspect.after(attributesStore, "setData", function() { attributesGrid.refresh();});
-            
-            attributesGrid.on("dgrid-select", function(event){
-                var item = event.rows[0].data;
-                var data = [{id:"Domain", value:item.domain}];
+window.define(["dijit/registry", "CustomGrid", "dojo/aspect",  "Statistics", "util"],
+    function( registry, CustomGrid,  aspect, stats, util) {
+        return {
+            setup: function(){
+                aspect.after(attributesStore, "setData", function() { attributesGrid.refresh();});
+                aspect.after(domainsStore, "setData", function() { domainsGrid.refresh();});
+                aspect.after(statisticsStore, "setData", function() { statisticsGrid.refresh();});
                 
+                attributesGrid.on("dgrid-select", function(event){
+                    var item = event.rows[0].data;
+                    var data = [{id:"Domain", value:item.domain}];
+                    statisticsStore.setData(data.concat(stats.computeStats(item)));
+                    
+                    if (stats.getRawDomain(item) == "continuous") {
+                        var values = eventsStore.query({}).map(function(x) {
+                            return parseFloat(x[item.name]);
+                        });
+                        
+                        var params = stats.getRawParameters(item);
+                        
+                        
+                        
+                    }
+                });
 
-			    statisticsStore.setData(data.concat(stats.computeStats(item)));
-			    statisticsGrid.refresh();
-			});
-            
-            attributesGrid.on("dgrid-deselect", function(event){
-			    statisticsStore.setData([]);
-			    statisticsGrid.refresh();
-			});
-
-			// grid for displaying domains of attributes
-            var domainsGrid = new CustomGrid({	columns: { name : { label : "Name" }, domain : { label : "Domain" }, parameters : { label : "Parameters" } }, 
-                store: domainsStore}, "domainsGrid");
-			aspect.after(domainsStore, "setData", function() { domainsGrid.refresh();});
-
-        }
+                attributesGrid.on("dgrid-deselect", function(event){
+                    statisticsStore.setData([]);
+                });
+            }
     };
 });
 
