@@ -66,4 +66,10 @@ public class Rule {
 		}
 	}
 /* */	
+
+	void traverse() {
+		for(Selector s : selectors){
+			s.traverse();
+		}
+	}
 }

@@ -9,6 +9,8 @@ import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -18,10 +20,10 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author marcin
  */
 @XmlRootElement
-public class TestsGroup {
+public class TestsGroup implements IAQ21Serializable {
 	@XmlTransient
-	public UniversalParametersContainer globalLearningParameters;
-	public LinkedList<Test> runs;
+	protected transient UniversalParametersContainer globalLearningParameters;
+	public List<Test> runs;
 	@XmlTransient
 	String LABEL = "Tests";
 	
@@ -52,6 +54,7 @@ public class TestsGroup {
 
 	@XmlElement(name = "globalLearningParameters")
 	public void setGlobalLearningParameters(List<Parameter> parameters) {
+		Logger.getLogger("Serialization").log(Level.INFO, "class name:{0}", parameters.getClass().getCanonicalName());
 		globalLearningParameters.parameters = parameters;
 	}
 
@@ -94,6 +97,13 @@ public class TestsGroup {
 		builder.append('\n');
 		FormatterUtil.appendAll(builder, runs, 1);
 		return FormatterUtil.terminate(builder);
+	}
+
+	void traverse() {
+		for(Test t : runs){
+			t.traverse();
+		}
+		globalLearningParameters.traverse();
 	}
 	
 }

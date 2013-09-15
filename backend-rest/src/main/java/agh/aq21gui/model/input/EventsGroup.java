@@ -11,16 +11,15 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlTransient;
-import org.jboss.logging.Logger;
 
 /**
  *
  * @author marcin
  */
 @XmlTransient
-public class EventsGroup {
+public class EventsGroup implements IAQ21Serializable {
 	public List<Event> events;
 	String LABEL = "Events";
 	
@@ -65,11 +64,25 @@ public class EventsGroup {
 	public void loadEvents(List<Map<String, Object>> events, AttributesGroup attrs) {
 		this.events = new LinkedList<Event>();
 		if(events==null){
-			Logger.getLogger("JAXB").error("Error! events in EventsGroup.loadEvents is null");
+			Logger.getLogger("JAXB").severe("Error! events in EventsGroup.loadEvents is null");
 			return;
 		}
 		for(Map<String, Object> event : events){
 			this.events.add(new Event(event,attrs));
+		}
+	}
+
+	void updateEvents(List<Event> events, AttributesGroup attrs) {
+		this.events = new LinkedList<Event>(events);
+	}
+
+	List<Event> retrieveEvents(AttributesGroup attrs) {
+		return this.events;
+	}
+
+	void traverse() {
+		for(Event e : this.events){
+			e.traverse();
 		}
 	}
 }

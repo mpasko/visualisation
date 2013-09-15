@@ -42,4 +42,10 @@ public class OutputHypotheses implements IAQ21Deserializable{
 
 	@Deprecated
 	public String content;
+
+	public void traverse() {
+		for(Hypothesis h : this.hypotheses){
+			h.traverse();
+		}
+	}
 }

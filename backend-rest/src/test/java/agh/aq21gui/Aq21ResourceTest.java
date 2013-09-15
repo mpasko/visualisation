@@ -17,7 +17,7 @@ public class Aq21ResourceTest extends TestCase {
 
 //    private SelectorThread threadSelector;
     
-    private WebResource r;
+    //private WebResource r;
 
     public Aq21ResourceTest(String testName) {
         super(testName);
@@ -30,7 +30,7 @@ public class Aq21ResourceTest extends TestCase {
 //        threadSelector = Main.startServer();
 
         Client c = Client.create();
-        r = c.resource(Main.BASE_URI);
+        //r = c.resource(Main.BASE_URI);
     }
 
     @Override

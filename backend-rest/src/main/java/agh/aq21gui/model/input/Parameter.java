@@ -16,7 +16,7 @@ import org.antlr.runtime.tree.CommonTree;
  * @author marcin
  */
 @XmlRootElement
-public class Parameter {
+public class Parameter implements IAQ21Serializable {
 	
 	@XmlElement
 	public String name;
@@ -87,5 +87,9 @@ public class Parameter {
 			}
 			value = builder.toString();
 		}
+	}
+
+	void traverse() {
+		if(id==-1);
 	}
 }

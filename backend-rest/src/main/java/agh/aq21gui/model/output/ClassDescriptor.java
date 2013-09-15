@@ -80,4 +80,8 @@ public class ClassDescriptor {
 	@XmlElement
 	public String value;
 	 */
+
+	void traverse() {
+		if(name.isEmpty());
+	}
 }

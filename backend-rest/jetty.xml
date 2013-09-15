@@ -2,6 +2,11 @@
 <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
  
 <Configure id="Server" class="org.eclipse.jetty.server.Server">
+	<Call class="org.eclipse.jetty.util.log.Log" name="getRootLogger">
+		<Call name="setDebugEnabled">
+			<Arg type="boolean">true</Arg>
+		</Call>
+	</Call>
     <Call name="addConnector">
         <Arg>
             <New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
@@ -75,8 +80,22 @@
                           </Call>
                       </New>
                   </Item>
+				  <Item>
+						<New id="RequestLog" class="org.eclipse.jetty.server.handler.RequestLogHandler"/>
+				  </Item>
                 </Array>
               </Set>
+			  <Ref id="RequestLog">
+				  <Set name="requestLog">
+				    <New id="RequestLogImpl" class="org.eclipse.jetty.server.NCSARequestLog">
+				      <Arg><SystemProperty name="jetty.logs" default="./logs"/>/yyyy_mm_dd.request.log</Arg>
+				      <Set name="retainDays">90</Set>
+				      <Set name="append">true</Set>
+				      <Set name="extended">false</Set>
+				      <Set name="LogTimeZone">GMT</Set>
+				    </New>
+				  </Set>
+			  </Ref>
         </New>
     </Set>
 </Configure>

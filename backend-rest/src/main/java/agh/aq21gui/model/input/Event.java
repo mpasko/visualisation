@@ -19,7 +19,7 @@ import org.antlr.runtime.tree.CommonTree;
  * @author marcin
  */
 //@XmlRootElement
-public class Event {
+public class Event implements IAQ21Serializable {
 	private int dbid=0;
 	public int id=0;
 	private List<String> values;
@@ -56,7 +56,7 @@ public class Event {
 	}
 	
 	public void setvalues(List<String> values){
-		this.values = values;
+		this.values = new LinkedList<String>(values);
 	}
 	
 	@Override
@@ -91,5 +91,9 @@ public class Event {
 			workingMap.put(attr.getname(), value);
 		}
 		return workingMap;
+	}
+
+	void traverse() {
+		this.values.contains("ala 123");
 	}
 }

@@ -44,4 +44,8 @@ public class OutputPair {
 		this.name=name;
 		this.value=value;
 	}
+
+	void traverse() {
+		this.value.traverse();
+	}
 }

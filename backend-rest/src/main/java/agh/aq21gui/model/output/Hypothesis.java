@@ -86,5 +86,12 @@ public class Hypothesis {
 		FormatterUtil.appendAll(builder, rules, 1);
 		return FormatterUtil.terminate(builder);
 	}
+
+	void traverse() {
+		this.classes.traverse();
+		for(Rule r : rules){
+			r.traverse();
+		}
+	}
 	
 }

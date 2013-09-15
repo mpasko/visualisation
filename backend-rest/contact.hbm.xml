@@ -27,7 +27,6 @@
 		</id>
 		
 		<property name="name" type="string" length="20" not-null="true" column="Name" lazy="false"/>
-		<!--<one-to-one class="agh.aq21gui.model.input.Input" name="value"/> -->
 
 		<component name="value" class="agh.aq21gui.model.input.Input" lazy="false">
 			<list name="dbevents" table="Events" cascade="all" lazy="false">
@@ -35,7 +34,7 @@
 				<list-index column="EventPairID"/>
 				<one-to-many class="agh.aq21gui.model.input.Event"/>
 			</list>
-
+<!--
 			<list name="attributes" table="Attributes" cascade="all" lazy="false">
 				<key column="ExpID"/>
 				<list-index column="AttributePairID"/>
@@ -47,6 +46,7 @@
 				<list-index column="DomainPairID"/>
 				<one-to-many class="agh.aq21gui.model.input.Domain"/>
 			</list>
+-->
 		</component>
 	</class>
 
@@ -55,7 +55,6 @@
 			<generator class="increment"/>
 		</id>
 		<property name="name" type="string" length="20" not-null="true" column="Name" lazy="false"/>
-		<!--<one-to-one class="agh.aq21gui.model.output.Output" name="value"/>  -->
 	</class>
 
 	<class name="agh.aq21gui.model.input.Event" table="Events" lazy="false">
@@ -69,6 +68,8 @@
 			<element type="text" />
 		</list>
 	</class>
+
+<!--
 
 	<class name="agh.aq21gui.model.input.Attribute" table="Attributes" lazy="false">
 		<id name="dbid" type="long" column="AttributeID" >
@@ -88,26 +89,6 @@
 		<property name="parameters" type="string" length="20" not-null="false" column="Parameters" lazy="false"/>
 	</class>
 
-<!--
-	<class name="agh.aq21gui.model.output.Output" table="Results">
-		<id name="dbid" type="long" column="ID" >
-			<generator class="increment"/>
-		</id>
-
-		<list name="outputHypotheses" table="Hypotheses">
-			<key column="ID"/>
-			<list-index column="HypoID"/>
-			<one-to-many class="agh.aq21gui.model.output.Hypothesis"/>
-		</list>
-	</class>
-
-	<class name="agh.aq21gui.model.output.Hypothesis" table="Hypotheses">
-		<id name="dbid" type="long" column="ID" >
-			<generator class="increment"/>
-		</id>
-
-		<property name="name" type="string" length="30" not-null="true" column="Name" />
-	</class>
 -->
 
 </hibernate-mapping>

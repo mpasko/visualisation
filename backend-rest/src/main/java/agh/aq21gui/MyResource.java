@@ -27,7 +27,7 @@ public class MyResource {
         return "Got it!";
     }
 	
-	private Input workingFactory(){
+	public static Input workingFactory(){
 		//Based on template1.aq21
 		Input input = new Input();
 		input.addDomain("color", "nominal", "{red, green, blue}");

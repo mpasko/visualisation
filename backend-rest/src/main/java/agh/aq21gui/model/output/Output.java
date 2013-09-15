@@ -42,13 +42,13 @@ public class Output extends Input{
 	
 	@XmlElement(name="domains")
 	@Override
-	public void setdomains(List<Domain> domains){
-		super.setdomains(domains);
+	public void setDomains(List<Domain> domains){
+		super.setDomains(domains);
 	}
 	
 	@Override
-	public List<Domain> getdomains(){
-		return super.getdomains();
+	public List<Domain> getDomains(){
+		return super.getDomains();
 	}
 	
 	public Output(){}
@@ -93,5 +93,11 @@ public class Output extends Input{
 			}
 		}
 /* */
+	}
+		
+	@Override
+	public void traverse(){
+		super.traverse();
+		this.outHypo.traverse();
 	}
 }

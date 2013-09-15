@@ -5,15 +5,12 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.model.output.Hypothesis;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -21,7 +18,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class Input {
+public class Input implements IAQ21Serializable {
 	private long dbid=0;
 	
 	public RunsGroup runsGroup;
@@ -45,7 +42,7 @@ public class Input {
 		testingEventsGroup = new TestingEventsGroup();
 		inputHypotheses = new InputHypotheses();
 	}
-	
+/* *x/		
 	public long getdbid(){
 		return dbid;
 	}
@@ -53,13 +50,13 @@ public class Input {
 	public void setdbid(long id){
 		this.dbid = id;
 	}
-	
+/* */		
 	@XmlElement(name="id")
-	public long getid(){
+	public long getId(){
 		return 0;
 	}
 	
-	public void setid(long id){
+	public void setId(long id){
 		//this.dbid = id;
 	}
 	
@@ -77,7 +74,7 @@ public class Input {
 	}
 	
 	@XmlElement(name="attributes")
-	public void setattributes(List<Attribute> attributes){
+	public void setAttributes(List<Attribute> attributes){
 		attributesGroup.attributes=attributes;
 		if(eventsLoaded){
 			eventsGroup.loadEvents(eventsBackup,this.attributesGroup);
@@ -87,21 +84,21 @@ public class Input {
 		}
 	}
 	
-	public List<Attribute> getattributes(){
+	public List<Attribute> getAttributes(){
 		return attributesGroup.attributes;
 	}
 	
 	@XmlElement(name="domains")
-	public void setdomains(List<Domain> domains){
+	public void setDomains(List<Domain> domains){
 		domainsGroup.domains=domains;
 	}
 	
-	public List<Domain> getdomains(){
+	public List<Domain> getDomains(){
 		return domainsGroup.domains;
 	}
 	
 	@XmlElement(name="events")
-	public void setevents(List<Map<String, Object>> events){
+	public void setEvents(List<Map<String, Object>> events){
 		if(attributesLoaded){
 			eventsGroup.loadEvents(events,this.attributesGroup);
 		}else{
@@ -110,19 +107,19 @@ public class Input {
 		}
 	}
 	
-	public List<Map<String, Object>> getevents(){
+	public List<Map<String, Object>> getEvents(){
 		return eventsGroup.formatEvents(this.attributesGroup);
 	}
-	
+/* *x/		
 	@XmlTransient
 	public void setdbevents(List<Event> events){
-		eventsGroup.events = events;
+		eventsGroup.updateEvents(events,this.attributesGroup);
 	}
 	
 	public List<Event> getdbevents(){
-		return this.eventsGroup.events;
+		return this.eventsGroup.retrieveEvents(this.attributesGroup);
 	}
-	
+/* */		
 	@XmlElement(name="testingEvents")
 	public void setTestingEvents(List<Map<String, Object>> events){
 		testingEventsGroup.loadEvents(events,this.attributesGroup);
@@ -131,7 +128,7 @@ public class Input {
 	public List<Map<String, Object>>  getTestingEvents(){
 		return testingEventsGroup.formatEvents(this.attributesGroup);
 	}
-	
+/* *x/	
 	@XmlTransient
 	public void setdbtestingevents(List<Event> events){
 		testingEventsGroup.events = events;
@@ -140,7 +137,7 @@ public class Input {
 	public List<Event> getdbtestingevents(){
 		return this.testingEventsGroup.events;
 	}
-	
+/* */		
 	@XmlElement(name="runsGroup")
 	public void setRunsGroup(RunsGroup runs){
 		runsGroup=runs;
@@ -216,5 +213,15 @@ public class Input {
 
 	protected void sOutputHypho(InputHypotheses inHypho) {
 		this.inputHypotheses = inHypho;
+	}
+
+	public void traverse() {
+		this.attributesGroup.traverse();
+		this.domainsGroup.traverse();
+		this.eventsGroup.traverse();
+		this.runsGroup.traverse();
+		this.testsGroup.traverse();
+		this.inputHypotheses.traverse();
+		this.testingEventsGroup.traverse();
 	}
 }

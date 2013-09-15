@@ -24,20 +24,20 @@ public class Directory {
 	private List<OutputPair> results;
 	
 	@XmlElement(name="experiments")
-	public List<InputPair> getexperiments(){
+	public List<InputPair> getExperiments(){
 		return experiments;
 	}
 	
-	public void setexperiments(List<InputPair> experiments){
+	public void setExperiments(List<InputPair> experiments){
 		this.experiments = experiments;
 	}
 	
 	@XmlElement(name="results")
-	public List<OutputPair> getresults(){
+	public List<OutputPair> getResults(){
 		return results;
 	}
 	
-	public void setresults(List<OutputPair> results){
+	public void setResults(List<OutputPair> results){
 		this.results = results;
 	}
 	
@@ -60,5 +60,15 @@ public class Directory {
 	public Directory(){
 		experiments = new LinkedList<InputPair>();
 		results = new LinkedList<OutputPair>();
+	}
+	
+	public void traverse(){
+		for(InputPair exp : this.experiments){
+			exp.traverse();
+		}
+		
+		for(OutputPair out : this.results){
+			out.traverse();
+		}
 	}
 }

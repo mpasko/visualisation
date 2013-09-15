@@ -44,4 +44,10 @@ public class AttributesGroup implements IAQ21Serializable{
 			this.attributes.add(attribute);
 		}
 	}
+
+	void traverse() {
+		for(Attribute a : attributes){
+			a.traverse();
+		}
+	}
 }
