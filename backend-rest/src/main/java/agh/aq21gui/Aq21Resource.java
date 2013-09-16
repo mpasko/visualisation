@@ -3,6 +3,7 @@ package agh.aq21gui;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
+import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.utils.CSVConverter;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.utils.OutputParser;
@@ -133,6 +134,23 @@ public class Aq21Resource {
 	//		System.out.println("To save in database:");
 	//		System.out.println(input.toString());
 			repo.saveExperiment(input);
+		}catch (Exception e) {
+			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
+            //e.printStackTrace();
+            //System.exit(100);
+			throw e;
+		}
+	}
+	
+	@POST
+	@Path("saveResult")
+	@Consumes({MediaType.APPLICATION_JSON})
+	public void saveRes(OutputPair output) throws Exception{
+		try{
+			Repository repo = Repository.getRepository();
+	//		System.out.println("To save in database:");
+	//		System.out.println(input.toString());
+			repo.saveResult(output);
 		}catch (Exception e) {
 			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
             //e.printStackTrace();

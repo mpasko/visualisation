@@ -53,7 +53,8 @@ public class Test implements IAQ21Serializable {
 		runSpecificParameters.parseParams(runParams);
 	}
 
-	public boolean isNotEmpty(){
+	@XmlTransient
+	boolean isNotEmpty(){
 		return runSpecificParameters != null && !runSpecificParameters.parameters.isEmpty();
 	}
 	

@@ -8,10 +8,9 @@ import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.antlr.runtime.tree.CommonTree;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -20,13 +19,22 @@ import org.antlr.runtime.tree.CommonTree;
 @XmlRootElement
 public class Rule {
 	
-	@XmlElement
-	public List<Selector> selectors = new LinkedList<Selector>();
+	@XmlTransient
+	private transient List<Selector> selectors = new LinkedList<Selector>();
 
 //	@XmlElement
 //	public String bulkData = "nevermind :)";
 	
-	Rule(){
+	@XmlElement
+	public void setSelectors(List<Selector> selectors){
+		this.selectors = selectors;
+	}
+	
+	public List<Selector> getSelectors(){
+		return selectors;
+	}
+	
+	public Rule(){
 		
 	}
 	
@@ -56,7 +64,7 @@ public class Rule {
 	}
 	
 /* now */
-	void parseRule(TreeNode ruleNode) {
+	public void parseRule(TreeNode ruleNode) {
 		
 		TreeNode selectorsTree = ruleNode.childAt(0, TParser.SELECTORS);
 		for(TreeNode selectorNode : selectorsTree.iterator(TParser.SELECTOR)){
@@ -67,7 +75,7 @@ public class Rule {
 	}
 /* */	
 
-	void traverse() {
+	public void traverse() {
 		for(Selector s : selectors){
 			s.traverse();
 		}

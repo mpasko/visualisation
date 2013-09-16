@@ -10,7 +10,7 @@ var invokeAQ21 = function(query,callback,onerror) {
 		data: ready,
 		cache: false,
 		success: function(data) {
-			callback(data["outputHypotheses"]);
+			callback(data);
 		},
 		processData: false,
 		error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -68,6 +68,25 @@ var convertFromAQ21 = function(query,callback,onerror) {
 var saveToDB = function(query,onerror) {
 		var ready = JSON.stringify(query);
 	var resource = 'http://localhost/jersey/aq21/saveExperiment';
+	var ourType = 'application/json';
+	jQuery.ajax({
+		type: 'POST',
+		contentType: ourType,
+		crossDomain: true,
+		url: resource,
+		data: ready,
+		headers: {'Access-Control-Allow-Origin:': '*'},
+		cache: false,
+		processData: false,
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			onerror();
+		}
+	});
+}
+
+var saveResultToDB = function(query,onerror) {
+		var ready = JSON.stringify(query);
+	var resource = 'http://localhost/jersey/aq21/saveResult';
 	var ourType = 'application/json';
 	jQuery.ajax({
 		type: 'POST',

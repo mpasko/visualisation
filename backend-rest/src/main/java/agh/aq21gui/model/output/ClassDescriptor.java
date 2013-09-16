@@ -28,7 +28,7 @@ public class ClassDescriptor {
 	@XmlElement
 	public String range_end="";
 	@XmlElement
-	public List<String> set_elements=null;
+	public List<String> set_elements=new LinkedList<String>();
 	
 	
 	@Override

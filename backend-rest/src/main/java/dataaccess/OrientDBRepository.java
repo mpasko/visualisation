@@ -68,15 +68,26 @@ public class OrientDBRepository extends Repository {
 		try {
 			//Logger.getLogger("database").info("before browseClass");
 			for (InputPair experiment : db.browseClass(InputPair.class).setFetchPlan("*:-1")){
+				/*
 				if(experiment == null){
 					Logger.getLogger("database").severe("Error: experiment is null!");
 				}else if(experiment.getValue()==null){
 					Logger.getLogger("database").severe("Error: experiment.value is null!");
-				}else{
+				}else{ */
 					experiment=db.detachAll(experiment, true);
 					dir.getExperiments().add(experiment);
+					/*
 					Logger.getLogger("database").info("new experiment added:");
 					System.out.println(experiment.toString());
+				}
+				*/ 
+			}
+			for(OutputPair result : db.browseClass(OutputPair.class).setFetchPlan("*:-1")){
+				if(result == null){
+					Logger.getLogger("database").severe("Error: experiment is null!");
+				}else{
+					result = db.detachAll(result, true);
+					dir.getResults().add(result);
 				}
 			}
 		} catch(Exception e) {
@@ -106,15 +117,15 @@ public class OrientDBRepository extends Repository {
 	
 	@Override
 	public void saveResult(OutputPair result){
-		/*
-		Session session = this.sessionFactory.openSession();
-		Transaction transaction = session.beginTransaction();
-		Directory dir = getMaxIDDirectory(session);
-		dir.getresults().add(result);
-		session.saveOrUpdate(dir);
-		transaction.commit();
-		session.close();
-		*/ 
+		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
+  
+		generateSchemaForAll(db);
+  
+		try {
+			db.save(result);
+		} finally {
+			db.close();
+		}
 	}
 	
 	@Override

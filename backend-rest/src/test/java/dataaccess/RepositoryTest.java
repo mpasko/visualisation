@@ -4,11 +4,13 @@
  */
 package dataaccess;
 
+import agh.aq21gui.Invoker;
 import agh.aq21gui.MyResource;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
+import agh.aq21gui.model.output.Output;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -84,8 +86,10 @@ public class RepositoryTest {
 	@Test
 	public void testSaveResult() {
 		System.out.println("saveResult");
-		OutputPair result_2 = null;
-		instance.saveResult(result_2);
+		Input input = MyResource.workingFactory();
+		Output output = new Invoker().invoke(input);
+		OutputPair result = new OutputPair("componetn_test_case_02", output);
+		instance.saveResult(result);
 		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 	}

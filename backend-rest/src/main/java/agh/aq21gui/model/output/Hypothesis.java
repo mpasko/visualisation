@@ -23,7 +23,7 @@ public class Hypothesis {
 	@XmlElement
 	public String name;
 	
-	private ClassesGroup classes=null;
+	private ClassesGroup classes=new ClassesGroup();
 	protected String LABEL;
 	
 	@XmlElement(name="classes")
