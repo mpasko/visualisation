@@ -1,0 +1,30 @@
+<html>
+<head>
+</head>
+<body>
+<script type="dojo/require">
+    dom : "dojo/dom"
+</script>
+<div data-dojo-type="dijit/layout/BorderContainer"  design="headline">	
+    <div data-dojo-type="dijit/Toolbar" region="top">
+        <div data-dojo-type="dijit/form/Button"> Open from file...
+            <script type="dojo/on" data-dojo-event="click">
+                dom.byId("load_files").click();
+            </script>
+        </div>
+    </div>
+    <span data-dojo-type="dijit/layout/TabContainer" style="width: 50%;"  tabposition="bottom" region="left">   
+        <div data-dojo-type="dijit/layout/ContentPane" title="Attributes">
+            <div id="attributes" style="height : 100%;"></div>
+        </div>
+        <div data-dojo-type="dijit/layout/ContentPane" title="Domains">
+            <div id="domains" style="height : 100%;"></div>
+        </div>
+    </span>
+    <div data-dojo-type="dijit/layout/ContentPane" style="width:50%;" region="center">
+        <div id="statistics" style="height : 100%;"></div>
+    </div>
+    <div data-dojo-type="dijit/layout/ContentPane" style="height:50%;" region="bottom"></div>
+</div>
+</body>
+</html>

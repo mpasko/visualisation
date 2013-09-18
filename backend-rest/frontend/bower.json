@@ -1,0 +1,14 @@
+{
+  "name": "webAQ21",
+  "version": "0.1.3",
+  "dependencies": {
+    "dojo": null,
+    "dijit": null,
+    "dgrid": null,
+    "put-selector" : null,
+    "xstyle" : null,
+    "MathJax" : null,
+    "d3" : null,
+    "humane-js" : null
+  }
+}

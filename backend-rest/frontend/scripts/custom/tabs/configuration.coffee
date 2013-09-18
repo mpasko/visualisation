@@ -1,0 +1,103 @@
+define [
+  "dojo/aspect", "dojo/topic","dojo/store/Memory",
+  "dijit/registry",  "dijit/layout/ContentPane", "dijit/form/TextBox", 
+  "dgrid/editor",
+  "custom/backend", "custom/grid"
+], (aspect, topic, Memory, registry, ContentPane, 
+TextBox, editor, backend, grid) ->
+  # private
+  internal =
+    removeTab : (tab) ->
+      registry.byId("runTabs").removeChild tab
+      registry.byId(tab.id).destroy()
+    createTab : (tab, params_store) ->
+        contentPane = new ContentPane(title: tab)
+        params_grid = new grid(
+          columns:
+            name:
+              label: "Name"
+
+            value: editor(
+              label: "Value"
+              field: "value"
+              autoSave: true
+            , TextBox, "click")
+
+          store: params_store
+          query: parent: tab
+        )
+        contentPane.addChild params_grid
+        registry.byId("runTabs").addChild contentPane
+    toggle : (isOn) ->
+      @runs_store.put(
+        id : run.id 
+        selected : isOn
+      ) for run in @runs_store.query(selected : not isOn)
+      registry.byId("runs").refresh()
+  
+  # public    
+  module =
+    setup : ->
+      conf_grid = grid(
+          columns: [
+            field: "id"
+            label: "Run"
+          ,
+          editor(
+            field: "selected"
+            label: "Selected"
+            autoSave: true, 
+            'checkbox'
+          )
+          ], "runs")
+      
+      topic.subscribe "experiment loaded", (input) ->
+        runs = input.runsGroup
+        parameters = runs.runs.reduce(
+          ((x,y) -> x.concat(y.runSpecificParameters)), [])
+        parameters = parameters.concat(runs.globalLearningParameters)
+        
+        internal.params_store = new Memory(data: parameters)
+        internal.runs_store = new Memory(
+          data : (id: x, selected: true for x in runs.runsNames.concat(["globalLearningParameters"]))
+        )
+        conf_grid.set("store", internal.runs_store);
+        
+        internal.removeTab(child) for child in registry.byId("runTabs").getChildren()
+        internal.createTab(run.id, internal.params_store) for run in internal.runs_store.query({})
+        conf_grid.refresh()
+        
+      topic.subscribe "collect experiment data",  ->
+        console.log "configuration"
+        runsStore = internal.runs_store
+        parametersStore = internal.params_store
+        console.log parametersStore
+        runNames = (x.id for x in runsStore.query(selected: true) when x.id isnt "globalLearningParameters")
+        input =
+          runsGroup:
+            runsNames: runNames
+            runs: (
+              name: x
+              runSpecificParameters: parametersStore.query(parent: x)
+            ) for x in runNames
+            globalLearningParameters: parametersStore.query(parent: "globalLearningParameters")
+         
+        topic.publish "respond experiment data", input
+
+
+
+    selectAll: ->
+      internal.toggle true
+      
+    deselectAll: ->
+      internal.toggle false
+      
+    runExperiment: ->
+      backend.runExperiment()
+       
+  module
+      
+      
+        
+      
+     
