@@ -1,6 +1,6 @@
 var invokeAQ21 = function(query,callback,onerror) {
 	var ready = JSON.stringify(query);
-	var resource = 'http://localhost:9998/jersey/aq21/postIt';
+	var resource = 'http://localhost/jersey/aq21/postIt';
 	var ourType = 'application/json';
 	jQuery.ajax({
 		type: 'POST',
@@ -10,7 +10,7 @@ var invokeAQ21 = function(query,callback,onerror) {
 		data: ready,
 		cache: false,
 		success: function(data) {
-			callback(data["outputHypotheses"]);
+			callback(data);
 		},
 		processData: false,
 		error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -21,7 +21,7 @@ var invokeAQ21 = function(query,callback,onerror) {
 
 var convertFromCSV = function(query,callback,onerror) {
 	var ready = JSON.stringify(query);
-	var resource = 'http://localhost:9998/jersey/aq21/fromCSV';
+	var resource = 'http://localhost/jersey/aq21/fromCSV';
 	var ourType = 'text/plain';
 	jQuery.ajax({
 		type: 'POST',
@@ -44,7 +44,7 @@ var convertFromCSV = function(query,callback,onerror) {
 
 var convertFromAQ21 = function(query,callback,onerror) {
 	var ready = JSON.stringify(query);
-	var resource = 'http://localhost:9998/jersey/aq21/fromAQ21';
+	var resource = 'http://localhost/jersey/aq21/fromAQ21';
 	var ourType = 'text/plain';
 	jQuery.ajax({
 		type: 'POST',
@@ -67,7 +67,26 @@ var convertFromAQ21 = function(query,callback,onerror) {
 
 var saveToDB = function(query,onerror) {
 		var ready = JSON.stringify(query);
-	var resource = 'http://localhost:9998/jersey/aq21/saveExperiment';
+	var resource = 'http://localhost/jersey/aq21/saveExperiment';
+	var ourType = 'application/json';
+	jQuery.ajax({
+		type: 'POST',
+		contentType: ourType,
+		crossDomain: true,
+		url: resource,
+		data: ready,
+		headers: {'Access-Control-Allow-Origin:': '*'},
+		cache: false,
+		processData: false,
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			onerror();
+		}
+	});
+}
+
+var saveResultToDB = function(query,onerror) {
+		var ready = JSON.stringify(query);
+	var resource = 'http://localhost/jersey/aq21/saveResult';
 	var ourType = 'application/json';
 	jQuery.ajax({
 		type: 'POST',
@@ -86,7 +105,7 @@ var saveToDB = function(query,onerror) {
 
 var browseDB = function(callback,onerror) {
 	ready = "";
-	var resource = 'http://localhost:9998/jersey/aq21/browse';
+	var resource = 'http://localhost/jersey/aq21/browse';
 	var ourType = 'application/json';
 	jQuery.ajax({
 		type: 'POST',
@@ -106,7 +125,7 @@ var browseDB = function(callback,onerror) {
 };
 
 var stopService = function() {
-	var resource = 'http://localhost:9998/jersey/aq21/stop';
+	var resource = 'http://localhost/jersey/aq21/stop';
 	jQuery.ajax({
 		type: 'GET',
 		dataType: 'text/plain',

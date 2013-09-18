@@ -16,8 +16,7 @@ public class OutputPair {
 	private long id=0;
 	
 	private String name;
-	@XmlElement
-	public Output value;
+	private Output value;
 	
 	public long getdbid(){
 		return id;
@@ -28,12 +27,21 @@ public class OutputPair {
 	}
 	
 	@XmlElement(name="name")
-	public String getname(){
+	public String getName(){
 		return name;
 	}
 	
-	public void setname(String name){
+	public void setName(String name){
 		this.name=name;
+	}
+	
+	@XmlElement(name="value")
+	public Output getValue(){
+		return value;
+	}
+	
+	public void setValue(Output value){
+		this.value = value;
 	}
 	
 	public OutputPair(){
@@ -43,5 +51,9 @@ public class OutputPair {
 	public OutputPair(String name, Output value) {
 		this.name=name;
 		this.value=value;
+	}
+
+	void traverse() {
+		this.value.traverse();
 	}
 }

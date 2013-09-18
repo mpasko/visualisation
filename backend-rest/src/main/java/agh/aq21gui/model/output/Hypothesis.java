@@ -23,7 +23,7 @@ public class Hypothesis {
 	@XmlElement
 	public String name;
 	
-	private ClassesGroup classes=null;
+	private ClassesGroup classes=new ClassesGroup();
 	protected String LABEL;
 	
 	@XmlElement(name="classes")
@@ -85,6 +85,13 @@ public class Hypothesis {
 		StringBuilder builder = FormatterUtil.begin(LABEL, name);
 		FormatterUtil.appendAll(builder, rules, 1);
 		return FormatterUtil.terminate(builder);
+	}
+
+	void traverse() {
+		this.classes.traverse();
+		for(Rule r : rules){
+			r.traverse();
+		}
 	}
 	
 }

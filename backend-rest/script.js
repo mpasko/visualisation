@@ -1,5 +1,6 @@
 ﻿
 var query;
+var response;
 
 function updateQuery(result){
 	query = result;
@@ -260,6 +261,7 @@ jQuery(document).ready(function() {
 		jQuery('#Response').empty();
 		invokeAQ21(query, function(result){
 			//On success
+			response=result;
 			var text = JSON.stringify(result).replace(/\n/g, "<br>");
 			jQuery('#Response').append(text);
 		}, function(){
@@ -275,6 +277,16 @@ jQuery(document).ready(function() {
 			value:query
 		}
 		saveToDB(pair,function(){
+			jQuery('#Response').append("Request failed");
+		})
+	});
+	jQuery('#SaveR').click(function(){
+		jQuery('#Response').empty();
+		var pair={
+			name:"test2",
+			value:response
+		}
+		saveResultToDB(pair,function(){
 			jQuery('#Response').append("Request failed");
 		})
 	});

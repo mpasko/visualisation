@@ -16,14 +16,26 @@ import javax.xml.bind.annotation.XmlAttribute;
  *
  * @author marcin
  */
-public class UniversalParametersContainer {
+public class UniversalParametersContainer implements IAQ21Serializable {
 	
 	private String parent;
 	public List<Parameter> parameters;
 	
+	public UniversalParametersContainer(){
+		
+	}
+	
 	public UniversalParametersContainer(String parent){
 		this.parent = parent;
 		parameters = new LinkedList<Parameter>();
+	}
+	
+	public void setparent(String parent){
+		this.parent = parent;
+	}
+	
+	public String getparent(){
+		return parent;
 	}
 	
 	@Override
@@ -43,5 +55,11 @@ public class UniversalParametersContainer {
 
 	void sName(String name) {
 		parent = name;
+	}
+
+	void traverse() {
+		for(Parameter p : parameters){
+			p.traverse();
+		}
 	}
 }

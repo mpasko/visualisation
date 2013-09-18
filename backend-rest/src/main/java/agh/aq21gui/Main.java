@@ -10,7 +10,11 @@ public class Main {
                     XmlConfiguration configuration = new XmlConfiguration(Resource.newResource("jetty.xml").getInputStream());
                     Server server = (Server)configuration.configure();
                     server.start();
-                    server.join();
+					ServiceStopper stopper = new ServiceStopper();
+					stopper.waitForUserInput();
+					server.stop();
+					System.exit(0);
+                    //server.join();
 		} catch (Exception e) {
                     e.printStackTrace();
                     System.exit(100);

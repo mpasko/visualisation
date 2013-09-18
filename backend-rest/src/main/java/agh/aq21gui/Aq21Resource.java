@@ -3,11 +3,13 @@ package agh.aq21gui;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
+import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.utils.CSVConverter;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.utils.OutputParser;
 import dataaccess.NoDatabaseConfiguredException;
 import dataaccess.Repository;
+import java.util.logging.Level;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -17,6 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
+import java.util.logging.Logger;
 
 /**
  * Root resource (exposed at "aq21" path)
@@ -103,20 +106,57 @@ public class Aq21Resource {
 	@POST
 	@Path("browse")
     @Produces({MediaType.APPLICATION_JSON})
-	public Directory browseIt() throws NoDatabaseConfiguredException{
-		Repository repo = Repository.getRepository();
-		Directory dir = repo.getDirectory();
-		return dir;
+	public Directory browseIt() throws Exception{
+		Logger.getLogger("database").info("browse start");
+		try{
+			Repository repo = Repository.getRepository();
+			Logger.getLogger("database").info("get repo");
+			Directory dir = repo.getDirectory();
+			Logger.getLogger("database").info("get dir");
+			if(dir==null){
+				Logger.getLogger("database").severe("Error: dir is null!");
+			}
+			return dir;
+		}catch (Exception e) {
+			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
+            //System.exit(100);
+			throw e;
+		}
+		//return null;
 	}
 	
 	@POST
 	@Path("saveExperiment")
 	@Consumes({MediaType.APPLICATION_JSON})
-	public void saveExp(InputPair input) throws NoDatabaseConfiguredException{
-		Repository repo = Repository.getRepository();
-//		System.out.println("To save in database:");
-//		System.out.println(input.toString());
-		repo.saveExperiment(input);
+	public void saveExp(InputPair input) throws Exception{
+		try{
+			Repository repo = Repository.getRepository();
+	//		System.out.println("To save in database:");
+	//		System.out.println(input.toString());
+			repo.saveExperiment(input);
+		}catch (Exception e) {
+			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
+            //e.printStackTrace();
+            //System.exit(100);
+			throw e;
+		}
+	}
+	
+	@POST
+	@Path("saveResult")
+	@Consumes({MediaType.APPLICATION_JSON})
+	public void saveRes(OutputPair output) throws Exception{
+		try{
+			Repository repo = Repository.getRepository();
+	//		System.out.println("To save in database:");
+	//		System.out.println(input.toString());
+			repo.saveResult(output);
+		}catch (Exception e) {
+			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
+            //e.printStackTrace();
+            //System.exit(100);
+			throw e;
+		}
 	}
 	
 	@POST

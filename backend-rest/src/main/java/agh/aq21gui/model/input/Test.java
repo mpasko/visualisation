@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author marcin
  */
 @XmlRootElement
-public class Test {
+public class Test implements IAQ21Serializable {
 	public String name = "";
 	protected int ID = TParser.TESTS_PARAMS;
 	
@@ -53,7 +53,8 @@ public class Test {
 		runSpecificParameters.parseParams(runParams);
 	}
 
-	public boolean isNotEmpty(){
+	@XmlTransient
+	boolean isNotEmpty(){
 		return runSpecificParameters != null && !runSpecificParameters.parameters.isEmpty();
 	}
 	
@@ -66,6 +67,10 @@ public class Test {
 		}else{
 			return  "";
 		}
+	}
+
+	void traverse() {
+		if(name.isEmpty());
 	}
 	
 }

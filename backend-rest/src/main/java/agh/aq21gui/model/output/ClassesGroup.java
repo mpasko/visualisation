@@ -41,4 +41,10 @@ public class ClassesGroup {
 		}
 		/* */
 	}
+
+	void traverse() {
+		for(ClassDescriptor d : descriptors){
+			d.traverse();
+		}
+	}
 }

@@ -18,7 +18,7 @@ public class OutputHypotheses implements IAQ21Deserializable{
 	public List<Hypothesis> hypotheses=new LinkedList<Hypothesis> ();
 	
 	public OutputHypotheses(){
-		content = "Raw string content is deprecated. Use json fields!";
+		//content = "Raw string content is deprecated. Use json fields!";
 	}
 	
 	public void parseHypothesis(TreeNode tree){
@@ -40,6 +40,12 @@ public class OutputHypotheses implements IAQ21Deserializable{
 		/* */
 	}
 
-	@Deprecated
-	public String content;
+	//@Deprecated
+	//public String content;
+
+	public void traverse() {
+		for(Hypothesis h : this.hypotheses){
+			h.traverse();
+		}
+	}
 }

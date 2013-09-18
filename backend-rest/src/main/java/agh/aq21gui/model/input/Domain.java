@@ -15,7 +15,7 @@ import org.antlr.runtime.tree.CommonTree;
  * @author marcin
  */
 @XmlRootElement
-public class Domain {
+public class Domain implements IAQ21Serializable{
 	private long dbid = 0;
 	
 	public long id;
@@ -112,5 +112,9 @@ public class Domain {
 			pbuild.append(arg.getText());
 		}
 		return pbuild.toString();
+	}
+
+	void traverse() {
+		if(name.isEmpty());
 	}
 }

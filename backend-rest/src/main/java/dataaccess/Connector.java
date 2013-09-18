@@ -4,21 +4,12 @@
  */
 package dataaccess;
 
-
-import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
-
 /**
  *
  * @author marcin
  */
 public class Connector {
+	/*
 	static Logger log = Logger.getLogger("Hibernate");
 	Configuration configuration = null;
 	SessionFactory sessionFactory = null;
@@ -50,7 +41,8 @@ public class Connector {
 	    for(StackTraceElement e: t.getStackTrace()) {
 			log.severe(e.toString());
 		}
-		/* */
+		/* *x/
 		t.printStackTrace();
 	}
+	*/ 
 }

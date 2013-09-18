@@ -42,4 +42,10 @@ public class DomainsGroup implements IAQ21Serializable{
 			domains.add(domain);
 		}
 	}
+
+	void traverse() {
+		for(Domain d : this.domains){
+			d.traverse();
+		}
+	}
 }

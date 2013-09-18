@@ -28,20 +28,20 @@ public class InputPair {
 	}
 	
 	@XmlElement(name="value")
-	public Input getvalue(){
+	public Input getValue(){
 		return value;
 	}
 	
-	public void setvalue(Input value){
+	public void setValue(Input value){
 		this.value = value;
 	}
 	
 	@XmlElement(name="name")
-	public String getname(){
+	public String getName(){
 		return name;
 	}
 	
-	public void setname(String name){
+	public void setName(String name){
 		this.name=name;
 	}
 	
@@ -61,5 +61,9 @@ public class InputPair {
 		build.append("value:");
 		build.append(value.toString());
 		return build.toString();
+	}
+
+	void traverse() {
+		this.value.traverse();
 	}
 }
