@@ -9,6 +9,7 @@
     "xstyle" : null,
     "MathJax" : null,
     "d3" : null,
+    "nvd3" : null,
     "humane-js" : null
   }
 }

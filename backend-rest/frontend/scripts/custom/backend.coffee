@@ -8,19 +8,17 @@ define [
     sendMessage : (onEnd)->
       message = {id:0}
       counter = 0
-      
-      topic.subscribe "respond experiment data", (input) ->
-        message = lang.mixin message, input
-        counter = counter + 1
-        onEnd(JSON.stringify message) if counter == 3
-        
-      topic.publish "collect experiment data", null
+              
+      topic.publish "collect experiment data", 
+        (input) ->
+          message = lang.mixin message, input
+          counter = counter + 1
+          onEnd(JSON.stringify message) if counter == 3
       
   # public 
   module = 
     runExperiment: () ->
       callback = (message) ->
-        console.log message
         request.post(internal.hostname + "postIt",
           data:  message
           handleAs: "json"

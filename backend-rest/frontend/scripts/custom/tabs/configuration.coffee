@@ -67,11 +67,9 @@ TextBox, editor, backend, grid) ->
         internal.createTab(run.id, internal.params_store) for run in internal.runs_store.query({})
         conf_grid.refresh()
         
-      topic.subscribe "collect experiment data",  ->
-        console.log "configuration"
+      topic.subscribe "collect experiment data",  (collect) ->
         runsStore = internal.runs_store
         parametersStore = internal.params_store
-        console.log parametersStore
         runNames = (x.id for x in runsStore.query(selected: true) when x.id isnt "globalLearningParameters")
         input =
           runsGroup:
@@ -81,10 +79,7 @@ TextBox, editor, backend, grid) ->
               runSpecificParameters: parametersStore.query(parent: x)
             ) for x in runNames
             globalLearningParameters: parametersStore.query(parent: "globalLearningParameters")
-         
-        topic.publish "respond experiment data", input
-
-
+        collect input
 
     selectAll: ->
       internal.toggle true

@@ -8,21 +8,19 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang", "humane-js/humane"], fu
         id: 0
       };
       counter = 0;
-      topic.subscribe("respond experiment data", function(input) {
+      return topic.publish("collect experiment data", function(input) {
         message = lang.mixin(message, input);
         counter = counter + 1;
         if (counter === 3) {
           return onEnd(JSON.stringify(message));
         }
       });
-      return topic.publish("collect experiment data", null);
     }
   };
   module = {
     runExperiment: function() {
       var callback;
       callback = function(message) {
-        console.log(message);
         return request.post(internal.hostname + "postIt", {
           data: message,
           handleAs: "json",

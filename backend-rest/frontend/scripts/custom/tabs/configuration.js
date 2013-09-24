@@ -97,12 +97,10 @@ define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dij
         }
         return conf_grid.refresh();
       });
-      return topic.subscribe("collect experiment data", function() {
+      return topic.subscribe("collect experiment data", function(collect) {
         var input, parametersStore, runNames, runsStore, x;
-        console.log("configuration");
         runsStore = internal.runs_store;
         parametersStore = internal.params_store;
-        console.log(parametersStore);
         runNames = (function() {
           var _i, _len, _ref, _results;
           _ref = runsStore.query({
@@ -139,7 +137,7 @@ define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dij
             })
           }
         };
-        return topic.publish("respond experiment data", input);
+        return collect(input);
       });
     },
     selectAll: function() {
