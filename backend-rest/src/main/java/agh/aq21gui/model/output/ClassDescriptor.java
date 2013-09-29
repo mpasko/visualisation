@@ -17,19 +17,67 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class ClassDescriptor {
-	@XmlElement
+
 	public String name;
-	@XmlElement
 	public String comparator;
-	@XmlElement
 	public String value;
-	@XmlElement
 	public String range_begin="";
-	@XmlElement
 	public String range_end="";
-	@XmlElement
 	public List<String> set_elements=new LinkedList<String>();
+		
+	@XmlElement(name="name")
+	public void setName(String nm){
+		this.name = nm;
+	}
 	
+	public String getName(){
+		return this.name; 
+	}
+	
+	@XmlElement(name="comparator")
+	public void setComparator(String comp){
+		this.comparator = comp;
+	}
+	
+	public String getComparator(){
+		return this.comparator; 
+	}
+	
+	@XmlElement(name="value")
+	public void setValue(String val){
+		this.value = val;
+	}
+	
+	public String getValue(){
+		return this.value; 
+	}
+	
+	@XmlElement(name="range_begin")
+	public void setRange_begin(String r_b){
+		this.range_begin = r_b;
+	}
+	
+	public String getRange_begin(){
+		return this.range_begin; 
+	}
+	
+	@XmlElement(name="range_end")
+	public void setRange_end(String r_e){
+		this.range_end = r_e;
+	}
+	
+	public String getRange_end(){
+		return this.range_end; 
+	}
+	
+	@XmlElement(name="set_elements")
+	public List<String> getSet_elements(){
+		return set_elements;
+	}
+	
+	public void setSet_elements(List<String> values){
+		this.set_elements = new LinkedList<String>(values);
+	}
 	
 	@Override
 	public String toString(){
@@ -72,14 +120,6 @@ public class ClassDescriptor {
 			value = desc.childAt(2, TreeNode.ANY_TYPE).value();
 		}
 	}
-	/*
-	@XmlElement
-	public String name;
-	@XmlElement
-	public String comparator;
-	@XmlElement
-	public String value;
-	 */
 
 	void traverse() {
 		if(name.isEmpty());

@@ -41,7 +41,7 @@ public class EventsGroup implements IAQ21Serializable {
 
 	public void addEvent(String... values) {
 		Event e = new Event();
-		e.getvalues().addAll(Arrays.asList(values));
+		e.getValues().addAll(Arrays.asList(values));
 		events.add(e);
 	}
 

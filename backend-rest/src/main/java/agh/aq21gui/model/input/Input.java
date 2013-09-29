@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.model.input;
 
+import agh.aq21gui.rubbish.MapAdapter;
 import agh.aq21gui.model.output.Hypothesis;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+//import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -98,6 +100,7 @@ public class Input implements IAQ21Serializable {
 	}
 	
 	@XmlElement(name="events")
+//	@XmlJavaTypeAdapter(MapAdapter.class)
 	public void setEvents(List<Map<String, Object>> events){
 		if(attributesLoaded){
 			eventsGroup.loadEvents(events,this.attributesGroup);
@@ -121,6 +124,7 @@ public class Input implements IAQ21Serializable {
 	}
 /* */		
 	@XmlElement(name="testingEvents")
+//	@XmlJavaTypeAdapter(MapAdapter.class)
 	public void setTestingEvents(List<Map<String, Object>> events){
 		testingEventsGroup.loadEvents(events,this.attributesGroup);
 	}

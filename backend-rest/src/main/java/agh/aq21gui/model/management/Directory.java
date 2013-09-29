@@ -18,7 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Directory {
-	private int id=0;
+	private static int id_gen=0;
+	private int id=id_gen++;
 	
 	private List<InputPair> experiments;
 	private List<OutputPair> results;
@@ -41,11 +42,11 @@ public class Directory {
 		this.results = results;
 	}
 	
-	public int getdbid(){
+	public int getId(){
 		return id;
 	}
 	
-	public void setdbid(int id){
+	public void setId(int id){
 		this.id = id;
 	}
 	

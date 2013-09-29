@@ -27,12 +27,13 @@ public class Domain implements IAQ21Serializable{
 	private String parameters;
 	//private boolean brace=false;
 	
-	public long getdbid(){
-		return dbid;
+	@XmlElement(name="id")
+	public long getId(){
+		return id;
 	}
 	
-	public void setdbid(long id){
-		this.dbid = id;
+	public void setId(long id){
+		this.id = id;
 	}
 	
 	@XmlElement(name="name")

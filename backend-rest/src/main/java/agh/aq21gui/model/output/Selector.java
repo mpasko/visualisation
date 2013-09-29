@@ -12,12 +12,5 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class Selector extends ClassDescriptor{
-	/*
-	@XmlElement
-	public String name;
-	@XmlElement
-	public String comparator;
-	@XmlElement
-	public String value;
-	*/
+
 }

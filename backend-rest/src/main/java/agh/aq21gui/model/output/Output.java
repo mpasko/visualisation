@@ -40,6 +40,15 @@ public class Output extends Input{
 		return this.outHypo.hypotheses;
 	}
 	
+	@XmlElement(name="id")
+	public void setId(long id){
+		this.id = id;
+	}
+	
+	public long getId(){
+		return this.id; 
+	}
+	
 	@XmlElement(name="domains")
 	@Override
 	public void setDomains(List<Domain> domains){

@@ -19,13 +19,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 public class Rule {
 	
-	@XmlTransient
+//	@XmlTransient
 	private transient List<Selector> selectors = new LinkedList<Selector>();
-
-//	@XmlElement
-//	public String bulkData = "nevermind :)";
 	
-	@XmlElement
+	@XmlElement(name="selectors")
 	public void setSelectors(List<Selector> selectors){
 		this.selectors = selectors;
 	}

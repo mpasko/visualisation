@@ -4,9 +4,11 @@
  */
 package dataaccess;
 
+import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
+import agh.aq21gui.model.output.Output;
 
 /**
  *
@@ -61,6 +63,16 @@ public class HibernateRepository extends Repository{
 
 	@Override
 	public void onStop() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public Input getExperiment(String name) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public Output getResult(String name) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 	

@@ -29,6 +29,15 @@ public class Test implements IAQ21Serializable {
 		runSpecificParameters = new UniversalParametersContainer(name);
 	}	
 	
+	@XmlElement(name = "name")
+	public void setName(String nm){
+		this.name = nm;
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
 	public void addParameter(String name, String value) {
 		Parameter p = new Parameter(this.name);
 		p.name = name;

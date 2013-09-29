@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlRootElement
 public class TestsGroup implements IAQ21Serializable {
-	@XmlTransient
+	//@XmlTransient
 	protected transient UniversalParametersContainer globalLearningParameters;
 	public List<Test> runs;
 	@XmlTransient
@@ -38,6 +38,15 @@ public class TestsGroup implements IAQ21Serializable {
 	
 	public void setRunsNames(List<String> names){
 		/* Do nothing */
+	}
+	
+	@XmlElement(name = "runs")
+	public void setRuns(List<Test> runs){
+		this.runs = runs;
+	}
+	
+	public List<Test> getRuns(){
+		return runs;
 	}
 	
 	public TestsGroup(){
