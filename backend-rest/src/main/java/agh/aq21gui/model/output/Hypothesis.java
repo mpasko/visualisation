@@ -18,13 +18,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class Hypothesis {
+	
 	private long id=0;
-	
-	@XmlElement
 	public String name;
-	
 	private ClassesGroup classes=new ClassesGroup();
 	protected String LABEL;
+	public List<Rule> rules = new LinkedList<Rule>();
 	
 	@XmlElement(name="classes")
 	public void setClasses(List<ClassDescriptor> classesDescriptors){
@@ -35,8 +34,23 @@ public class Hypothesis {
 		return classes.descriptors;
 	}
 	
-	@XmlElement
-	public List<Rule> rules = new LinkedList<Rule>();
+	@XmlElement(name="name")
+	public void setName(String nm){
+		this.name = nm;
+	}
+	
+	public String getName(){
+		return this.name; 
+	}
+	
+	@XmlElement(name="rules")
+	public void setRules(List<Rule> rules){
+		rules=rules;
+	}
+	
+	public List<Rule> getRules(){
+		return rules;
+	}
 	
 	public Hypothesis(){
 		LABEL = "Output_hypotheses";

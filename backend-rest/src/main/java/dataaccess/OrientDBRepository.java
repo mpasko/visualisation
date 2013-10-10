@@ -4,9 +4,11 @@
  */
 package dataaccess;
 
+import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
+import agh.aq21gui.model.output.Output;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import java.util.logging.Logger;
@@ -24,7 +26,7 @@ public class OrientDBRepository extends Repository {
 		starter = new OrientDBServerStarter();
 		starter.start();
 		//sessionFactory=null;
-		this.starter = starter;
+		//this.starter = starter;
 	}
 	
 	public void generateSchemaForAll(OObjectDatabaseTx db){
@@ -109,7 +111,17 @@ public class OrientDBRepository extends Repository {
 		generateSchemaForAll(db);
   
 		try {
-			db.save(experiment);
+			boolean exists=false;
+			for (InputPair exp : db.browseClass(InputPair.class).setFetchPlan("*:-1")){
+				if(exp.getName().equals(experiment.getName())){
+					exp.setValue(experiment.getValue());
+					db.save(exp);
+					exists=true;
+				}
+			}
+			if(!exists){
+				db.save(experiment);
+			}
 		} finally {
 			db.close();
 		}
@@ -118,11 +130,20 @@ public class OrientDBRepository extends Repository {
 	@Override
 	public void saveResult(OutputPair result){
 		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
-  
 		generateSchemaForAll(db);
   
 		try {
-			db.save(result);
+			boolean exists=false;
+			for (OutputPair res : db.browseClass(OutputPair.class).setFetchPlan("*:-1")){
+				if(res.getName().equals(result.getName())){
+					res.setValue(result.getValue());
+					db.save(res);
+					exists=true;
+				}
+			}
+			if(!exists){
+				db.save(result);
+			}
 		} finally {
 			db.close();
 		}
@@ -131,5 +152,33 @@ public class OrientDBRepository extends Repository {
 	@Override
 	public void onStop(){
 		this.starter.stop();
+	}
+
+	@Override
+	public Input getExperiment(String name) {
+		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
+		generateSchemaForAll(db);
+		Input value = null;
+		for (InputPair exp : db.browseClass(InputPair.class).setFetchPlan("*:-1")){
+				if(exp.getName().equals(name)){
+					value=exp.getValue();
+					value = db.detachAll(value, true);
+				}
+		}
+		return value;
+	}
+
+	@Override
+	public Output getResult(String name) {
+		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
+		generateSchemaForAll(db);
+		Output value = null;
+		for (OutputPair exp : db.browseClass(OutputPair.class).setFetchPlan("*:-1")){
+				if(exp.getName().equals(name)){
+					value=exp.getValue();
+					value = db.detachAll(value, true);
+				}
+		}
+		return value;
 	}
 }

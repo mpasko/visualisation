@@ -20,6 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import java.util.logging.Logger;
+import javax.ws.rs.PathParam;
 
 /**
  * Root resource (exposed at "aq21" path)
@@ -103,7 +104,7 @@ public class Aq21Resource {
 		return out;
 	}
 	
-	@POST
+	@GET
 	@Path("browse")
     @Produces({MediaType.APPLICATION_JSON})
 	public Directory browseIt() throws Exception{
@@ -123,6 +124,32 @@ public class Aq21Resource {
 			throw e;
 		}
 		//return null;
+	}
+	
+	@GET
+	@Path("browseExperiment/{name}")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Input getExperiment(@PathParam("name")String name) throws Exception{
+		try {
+			Repository repo = Repository.getRepository();
+			return repo.getExperiment(name);
+		} catch (Exception ex) {
+			Logger.getLogger(Aq21Resource.class.getName()).log(Level.SEVERE, null, ex);
+			throw ex;
+		}
+	}
+	
+	@GET
+	@Path("browseResult/{name}")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Output getResult(@PathParam("name")String name) throws Exception{
+		try {
+			Repository repo = Repository.getRepository();
+			return repo.getResult(name);
+		} catch (Exception ex) {
+			Logger.getLogger(Aq21Resource.class.getName()).log(Level.SEVERE, null, ex);
+			throw ex;
+		}
 	}
 	
 	@POST

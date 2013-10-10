@@ -97,6 +97,13 @@ public class MyResource {
 	}
 	
 	@GET
+	@Path("/template1XML")
+	@Produces(MediaType.APPLICATION_XML)
+	public Input getTemplate1XML(){
+		return workingFactory();
+	}
+	
+	@GET
 	@Path("/templateDBResult")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Directory getDirectory() {

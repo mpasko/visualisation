@@ -6,6 +6,8 @@ package agh.aq21gui.model.management;
 import agh.aq21gui.model.output.Output;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
@@ -13,16 +15,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class OutputPair {
-	private long id=0;
+	private static long id_gen=0;
+	private long id=id_gen++;
 	
 	private String name;
 	private Output value;
+	private String description;
 	
-	public long getdbid(){
+	public long getId(){
 		return id;
 	}
 	
-	public void setdbid(long id){
+	public void setId(long id){
 		this.id = id;
 	}
 	
@@ -35,13 +39,34 @@ public class OutputPair {
 		this.name=name;
 	}
 	
-	@XmlElement(name="value")
+	@JsonProperty("value")
+	public void setLink(Output value){
+		this.value = value;
+	}
+	
+	public String getLink(){
+		StringBuilder build = new StringBuilder("localhost/jersey/aq21/browseResult/");
+		build.append(name);
+		return build.toString();
+	}
+	
+	@JsonIgnore
 	public Output getValue(){
 		return value;
 	}
 	
+	@JsonIgnore
 	public void setValue(Output value){
 		this.value = value;
+	}
+	
+	@XmlElement(name="description")
+	public void setDescription(String d){
+		this.description = d;
+	}
+	
+	public String getDescription(){
+		return description;
 	}
 	
 	public OutputPair(){

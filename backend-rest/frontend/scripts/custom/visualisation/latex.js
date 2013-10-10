@@ -14,7 +14,7 @@ define(["dojo/dom", "dijit/registry"], function(dom, registry) {
     renderSelector: function(selector) {
       var index, output;
       if (!this.isEmpty(selector.range_begin) && !this.isEmpty(selector.range_end)) {
-        return ["(", selector.name, "\\in\\langle", selector.range_begin, "\\ ", selector.range_end, "\\rangle", ")"].join(" ");
+        return ["(", selector.name, "\\in\\langle", selector.range_begin, ",\\ ", selector.range_end, "\\rangle", ")"].join(" ");
       } else if (!this.isEmpty(selector.set_elements)) {
         index = 0;
         output = ["(", selector.name, "\\in\\{"];

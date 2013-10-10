@@ -108,7 +108,7 @@ var browseDB = function(callback,onerror) {
 	var resource = 'http://localhost/jersey/aq21/browse';
 	var ourType = 'application/json';
 	jQuery.ajax({
-		type: 'POST',
+		type: 'GET',
 		contentType: ourType,
 		dataType: 'json',
 		url: resource,

@@ -4,9 +4,11 @@
  */
 package dataaccess;
 
+import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
+import agh.aq21gui.model.output.Output;
 //import org.hibernate.SessionFactory;
 
 /**
@@ -30,6 +32,10 @@ public abstract class Repository {
 	public abstract void saveExperiment(InputPair experiment);
 	
 	public abstract void saveResult(OutputPair result);
+	
+	public abstract Input getExperiment(String name);
+	
+	public abstract Output getResult(String name);
 	
 	public abstract void onStop();
 }

@@ -42,20 +42,20 @@ public class Event implements IAQ21Serializable {
 		}
 	}
 	
-	public int getdbid(){
-		return dbid;
+	public int getId(){
+		return id;
 	}
 	
-	public void setdbid(int id){
-		this.dbid = id;
+	public void setId(int id){
+		this.id = id;
 	}
 	
 	@XmlElement(name="values")
-	public List<String> getvalues(){
+	public List<String> getValues(){
 		return values;
 	}
 	
-	public void setvalues(List<String> values){
+	public void setValues(List<String> values){
 		this.values = new LinkedList<String>(values);
 	}
 	

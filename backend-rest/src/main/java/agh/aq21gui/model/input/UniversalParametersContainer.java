@@ -10,12 +10,14 @@ import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 //import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author marcin
  */
+@XmlTransient
 public class UniversalParametersContainer implements IAQ21Serializable {
 	
 	private String parent;

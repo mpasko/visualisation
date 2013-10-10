@@ -4,9 +4,14 @@
  */
 package agh.aq21gui.model.management;
 
+import agh.aq21gui.adapters.InputPairAdapter;
 import agh.aq21gui.model.input.Input;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
@@ -14,24 +19,38 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class InputPair {
-	private long id=0;
+	private static long id_gen=0;
+	private long id=id_gen++;
 	
 	private String name;
 	private Input value;
+	private String description;
 	
-	public long getdbid(){
+	public long getId(){
 		return id;
 	}
 	
-	public void setdbid(long id){
+	public void setId(long id){
 		this.id = id;
 	}
 	
-	@XmlElement(name="value")
+	@JsonProperty("value")
+	public void setLink(Input value){
+		this.value = value;
+	}
+	
+	public String getLink(){
+		StringBuilder build = new StringBuilder("localhost/jersey/aq21/browseExperiment/");
+		build.append(name);
+		return build.toString();
+	}
+	
+	@JsonIgnore
 	public Input getValue(){
 		return value;
 	}
 	
+	@JsonIgnore
 	public void setValue(Input value){
 		this.value = value;
 	}
@@ -43,6 +62,15 @@ public class InputPair {
 	
 	public void setName(String name){
 		this.name=name;
+	}
+	
+	@XmlElement(name="description")
+	public void setDescription(String d){
+		this.description = d;
+	}
+	
+	public String getDescription(){
+		return description;
 	}
 	
 	public InputPair(){

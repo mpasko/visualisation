@@ -18,35 +18,53 @@ import org.antlr.runtime.tree.CommonTree;
 @XmlRootElement
 public class Parameter implements IAQ21Serializable {
 	
-	@XmlElement
+	
 	public String name;
-	@XmlElement
+	
 	public String value;
-	@XmlElement
+	
 	public long id;
 	
 	private String parent="global";
 	private static Long generator;
-	private long dbid = 0;
 	
 	static{
 		generator = new Long(0);
 	}
 	
-	public void setdbid(long id){
-		this.dbid = id;
+	@XmlElement(name="id")
+	public void setId(long id){
+		this.id = id;
 	}
 	
-	public long getdbid(){
-		return this.dbid; 
+	public long getId(){
+		return this.id; 
+	}
+	
+	@XmlElement(name="name")
+	public void setName(String nm){
+		this.name = nm;
+	}
+	
+	public String getName(){
+		return this.name; 
+	}
+	
+	@XmlElement(name="value")
+	public void setValue(String val){
+		this.value = val;
+	}
+	
+	public String getValue(){
+		return this.value; 
 	}
 	
 	@XmlElement(name="parent")
-	public String getparent(){
+	public String getParent(){
 		return parent;
 	}
 	
-	public void setparent(String parent){
+	public void setParent(String parent){
 		this.parent = parent;
 	}
 	
