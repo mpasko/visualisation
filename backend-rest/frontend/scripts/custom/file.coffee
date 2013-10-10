@@ -4,7 +4,7 @@ define [
   eventHandler: (evt) ->
     f = evt.target.files[0]
     extension = if f.fileName? then f.fileName else f.name
-    
+    console.log URL.createObjectURL f
     reader = new FileReader()
     reader.onload = (e) ->
       converting = (file_content) ->

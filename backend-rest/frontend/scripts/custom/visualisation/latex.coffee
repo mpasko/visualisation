@@ -1,6 +1,6 @@
 define [
-  "dojo/dom"
-], (dom) ->
+  "dojo/dom", "dijit/registry"
+], (dom, registry) ->
   # private
   internal = 
     isEmpty : (str) ->
@@ -48,11 +48,17 @@ define [
           inlineMath: [["$$","$$"]] 
         imageFont:null
       )
-      
+    
+    convertToLaTex : (hypotheses) ->
+      (internal.renderHypotheses(hyp) for hyp in hypotheses).join " "
+    
     renderMath : (id, hypotheses) ->
       console.log "The server returned: ", hypotheses
-      output = (internal.renderHypotheses(hyp) for hyp in hypotheses).join " "
-      internal.updateMath id, output 
+      text = @convertToLaTex hypotheses 
+      internal.updateMath id, text
+      textbox = registry.byId "LatexCode"    
+      textbox.set "value", text
+      
   
   module
   

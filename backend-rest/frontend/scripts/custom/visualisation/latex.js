@@ -1,4 +1,4 @@
-define(["dojo/dom"], function(dom) {
+define(["dojo/dom", "dijit/registry"], function(dom, registry) {
   var internal, module;
   internal = {
     isEmpty: function(str) {
@@ -72,10 +72,9 @@ define(["dojo/dom"], function(dom) {
         imageFont: null
       });
     },
-    renderMath: function(id, hypotheses) {
-      var hyp, output;
-      console.log("The server returned: ", hypotheses);
-      output = ((function() {
+    convertToLaTex: function(hypotheses) {
+      var hyp;
+      return ((function() {
         var _i, _len, _results;
         _results = [];
         for (_i = 0, _len = hypotheses.length; _i < _len; _i++) {
@@ -84,7 +83,14 @@ define(["dojo/dom"], function(dom) {
         }
         return _results;
       })()).join(" ");
-      return internal.updateMath(id, output);
+    },
+    renderMath: function(id, hypotheses) {
+      var text, textbox;
+      console.log("The server returned: ", hypotheses);
+      text = this.convertToLaTex(hypotheses);
+      internal.updateMath(id, text);
+      textbox = registry.byId("LatexCode");
+      return textbox.set("value", text);
     }
   };
   return module;

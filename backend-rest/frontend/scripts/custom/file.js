@@ -4,6 +4,7 @@ define(["custom/backend", "humane-js/humane"], function(backend, humane) {
       var extension, f, reader;
       f = evt.target.files[0];
       extension = f.fileName != null ? f.fileName : f.name;
+      console.log(URL.createObjectURL(f));
       reader = new FileReader();
       reader.onload = function(e) {
         var converting;
