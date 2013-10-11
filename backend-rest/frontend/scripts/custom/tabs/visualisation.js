@@ -1,4 +1,4 @@
-define(["dojo/topic", "dojo/store/Memory", "custom/visualisation/latex"], function(topic, Memory, latex) {
+define(["dojo/topic", "dojo/store/Memory", "custom/visualisation/latex", "custom/visualisation/raw"], function(topic, Memory, latex, raw) {
   var internal, module;
   internal = {
     output_store: new Memory()
@@ -8,7 +8,8 @@ define(["dojo/topic", "dojo/store/Memory", "custom/visualisation/latex"], functi
       latex.setup();
       return topic.subscribe("visualise results", function(results) {
         internal.output_store.setData(results);
-        return latex.renderMath("MathOutput", results);
+        latex.renderMath("MathOutput", results);
+        return raw.setup();
       });
     }
   };

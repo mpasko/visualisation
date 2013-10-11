@@ -15,7 +15,7 @@ define [
       
     renderSelector : (selector) ->
       if not @isEmpty(selector.range_begin) and not @isEmpty(selector.range_end)
-        ["(", selector.name, "\\in\\langle", selector.range_begin, "\\ ", selector.range_end, "\\rangle", ")"].join " "
+        ["(", selector.name, "\\in\\langle", selector.range_begin, ",\\ ", selector.range_end, "\\rangle", ")"].join " "
       else unless @isEmpty(selector.set_elements)
         index = 0
         output = ["(", selector.name, "\\in\\{"]

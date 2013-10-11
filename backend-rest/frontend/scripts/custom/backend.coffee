@@ -27,6 +27,7 @@ define [
         ).then ((output) ->
           humane.log "Experiment completed"
           topic.publish "visualise results", output["outputHypotheses"]
+          topic.publish "raw format", output["raw_aq21"]
         ), (error) ->
           console.log "Couldn't run experiment"
           

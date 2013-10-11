@@ -17,6 +17,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.antlr.runtime.tree.CommonTree;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
@@ -28,6 +29,7 @@ public class Output extends Input{
 	public long id=0;
 	
 	OutputHypotheses outHypo = new OutputHypotheses();
+	private RawAq21Container raw_aq21 = null;
 	
 	@XmlElement(name="outputHypotheses")
 	@Override
@@ -49,7 +51,21 @@ public class Output extends Input{
 		return this.id; 
 	}
 	
-	@XmlElement(name="domains")
+	@JsonProperty("raw_aq21")
+	public String getRaw(){
+		if(raw_aq21!=null){
+			return this.raw_aq21.getRaw();
+		} else {
+			return "";
+		}
+	}
+	
+	@JsonProperty("raw_aq21")
+	public void setRaw(String raw){
+		this.raw_aq21 = new RawAq21Container(raw);
+	}
+	
+	@JsonProperty("domains")
 	@Override
 	public void setDomains(List<Domain> domains){
 		super.setDomains(domains);
@@ -62,7 +78,10 @@ public class Output extends Input{
 	
 	public Output(){}
 	
-	public Output(CommonTree tree){
+	
+	
+	public Output(CommonTree tree, String raw_data){
+		this.raw_aq21 = new RawAq21Container(raw_data);
 /*after refactor *x/
 		TreeNode childTree = new TreeNode(tree, TParser.OUTPUT).childOf(TParser.HYPOTHESES);
 		outHypo.parseHypothesis(childTree);

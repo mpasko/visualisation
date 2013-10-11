@@ -29,7 +29,8 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang", "humane-js/humane"], fu
           }
         }).then((function(output) {
           humane.log("Experiment completed");
-          return topic.publish("visualise results", output["outputHypotheses"]);
+          topic.publish("visualise results", output["outputHypotheses"]);
+          return topic.publish("raw format", output["raw_aq21"]);
         }), function(error) {
           return console.log("Couldn't run experiment");
         });
