@@ -13,7 +13,6 @@ define [
       console.log "Raw module init"
       topic.subscribe "raw format", (results)->
         internal.output_store.setData results
-        console.log "The server returned raw format: ", results
         rawtextbox = registry.byId "RawAq21"   
         rawtextbox.set "value", results
   module

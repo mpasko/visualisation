@@ -114,7 +114,7 @@ define(["dojo/dom", "dojo/aspect", "dojo/dom-construct", "dojo/_base/window", "d
     setup: function() {
       var attr_grid, domains_grid, statistics_grid;
       internal.createFileLoader();
-      attr_grid = new grid({
+      attr_grid = new grid.onDemand({
         store: internal.attr_store,
         columns: [
           {
@@ -126,7 +126,7 @@ define(["dojo/dom", "dojo/aspect", "dojo/dom-construct", "dojo/_base/window", "d
           }
         ]
       }, "attributes");
-      domains_grid = new grid({
+      domains_grid = new grid.onDemand({
         store: internal.domains_store,
         columns: [
           {
@@ -141,7 +141,7 @@ define(["dojo/dom", "dojo/aspect", "dojo/dom-construct", "dojo/_base/window", "d
           }
         ]
       }, "domains");
-      statistics_grid = new grid({
+      statistics_grid = new grid.onDemand({
         store: internal.stats_store,
         columns: [
           {

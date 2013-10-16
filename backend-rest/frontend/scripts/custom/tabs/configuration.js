@@ -10,7 +10,7 @@ define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dij
       contentPane = new ContentPane({
         title: tab
       });
-      params_grid = new grid({
+      params_grid = new grid.onDemand({
         columns: {
           name: {
             label: "Name"
@@ -47,7 +47,7 @@ define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dij
   module = {
     setup: function() {
       var conf_grid;
-      conf_grid = grid({
+      conf_grid = grid.onDemand({
         columns: [
           {
             field: "id",

@@ -12,7 +12,7 @@ TextBox, editor, backend, grid) ->
       registry.byId(tab.id).destroy()
     createTab : (tab, params_store) ->
         contentPane = new ContentPane(title: tab)
-        params_grid = new grid(
+        params_grid = new grid.onDemand(
           columns:
             name:
               label: "Name"
@@ -38,7 +38,7 @@ TextBox, editor, backend, grid) ->
   # public    
   module =
     setup : ->
-      conf_grid = grid(
+      conf_grid = grid.onDemand(
           columns: [
             field: "id"
             label: "Run"

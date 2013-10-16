@@ -91,7 +91,7 @@ define [
   module = 
     setup : ->
       internal.createFileLoader()
-      attr_grid = new grid(
+      attr_grid = new grid.onDemand(
         store : internal.attr_store
         columns: [
           field: "id"
@@ -101,7 +101,7 @@ define [
           label: "Attribute value"
         ], "attributes")
 
-      domains_grid = new grid(
+      domains_grid = new grid.onDemand(
         store : internal.domains_store
         columns: [
           field: "name"
@@ -114,7 +114,7 @@ define [
           label: "Parameters"
         ], "domains")
 
-      statistics_grid = new grid(
+      statistics_grid = new grid.onDemand(
         store : internal.stats_store
         columns: [
           field: "id"

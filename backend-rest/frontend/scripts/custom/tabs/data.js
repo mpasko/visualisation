@@ -15,7 +15,7 @@ define(["dojo/dom-construct", "dojo/topic", "dojo/store/Memory", "dijit/registry
           id: "raw_data",
           style: "height : 100%;"
         }, "events");
-        events_grid = new grid({
+        events_grid = new grid.paginated({
           store: internal.events_store,
           columns: (function() {
             var _i, _len, _results;
@@ -25,7 +25,10 @@ define(["dojo/dom-construct", "dojo/topic", "dojo/store/Memory", "dijit/registry
               _results.push(editor(column, TextBox, "click"));
             }
             return _results;
-          })()
+          })(),
+          pagingLinks: 3,
+          firstLastArrows: true,
+          pageSizeOptions: [20, 50, 100]
         }, "raw_data");
         return events_grid.refresh();
       });

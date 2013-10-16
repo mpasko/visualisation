@@ -1,7 +1,8 @@
 define [
   "dojo/_base/declare", 
-  "dgrid/OnDemandGrid", "dgrid/Keyboard", "dgrid/extensions/ColumnResizer", 
-  "dgrid/Selection", "dgrid/extensions/DijitRegistry"
+  "dgrid/Grid", "dgrid/Keyboard", "dgrid/extensions/ColumnResizer", 
+  "dgrid/Selection", "dgrid/extensions/DijitRegistry","dgrid/extensions/Pagination", "dgrid/OnDemandGrid"
 ],
-    (declare, OnDemandGrid, Keyboard, ColumnResizer, Selection, DijitRegistry) ->
-        declare [OnDemandGrid, Selection, Keyboard, ColumnResizer, DijitRegistry]
+    (declare, Grid, Keyboard, ColumnResizer, Selection, DijitRegistry,Pagination,OnDemandGrid) ->
+      paginated : declare [Grid, Selection, Keyboard, ColumnResizer, DijitRegistry,Pagination]
+      onDemand : declare [OnDemandGrid, Selection, Keyboard, ColumnResizer, DijitRegistry]

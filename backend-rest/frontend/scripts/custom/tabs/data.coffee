@@ -22,9 +22,12 @@ define [
         style :"height : 100%;"
        , "events")
        
-       events_grid = new grid(
+       events_grid = new grid.paginated(
          store : internal.events_store, 
          columns : editor(column, TextBox, "click") for column in columns
+         pagingLinks: 3
+         firstLastArrows: true
+         pageSizeOptions: [20, 50, 100]
          , "raw_data")
 
        events_grid.refresh()
