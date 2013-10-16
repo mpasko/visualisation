@@ -80,8 +80,11 @@ define [
           if val < 33 then color = "#3FFF00"
           else if val < 66 then color = "#FFD300"
           else color = "#ED1C24"
-          div.style = "text-align: center;background-color:" + color + ";border-radius: 15px;width:" + val + "%;"
-          
+          div.style.backgroundColor = color
+          div.style.width = val + "%"
+          console.log div
+          div.style.textAlign = "center"
+          div.style.borderRadius = "15px"
           div.innerHTML = object[attr_name]
           div
       
