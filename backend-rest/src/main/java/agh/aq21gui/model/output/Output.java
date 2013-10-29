@@ -29,7 +29,7 @@ public class Output extends Input{
 	public long id=0;
 	
 	OutputHypotheses outHypo = new OutputHypotheses();
-	private RawAq21Container raw_aq21 = null;
+	private transient RawAq21Container raw_aq21 = null;
 	
 	@XmlElement(name="outputHypotheses")
 	@Override
