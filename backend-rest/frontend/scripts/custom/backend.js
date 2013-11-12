@@ -1,4 +1,4 @@
-define(["dojo/request", "dojo/topic", "dojo/_base/lang", "humane-js/humane"], function(request, topic, lang, humane) {
+define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topic, lang) {
   var internal, module;
   internal = {
     hostname: window.location.origin + "/jersey/aq21/",

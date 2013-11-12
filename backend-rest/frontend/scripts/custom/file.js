@@ -1,4 +1,4 @@
-define(["custom/backend", "humane-js/humane"], function(backend, humane) {
+define(["custom/backend"], function(backend) {
   return {
     eventHandler: function(evt) {
       var extension, f, reader;

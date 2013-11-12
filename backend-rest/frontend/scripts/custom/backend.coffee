@@ -1,7 +1,6 @@
 define [
   "dojo/request","dojo/topic","dojo/_base/lang"
-  "humane-js/humane"
-], (request, topic, lang, humane) ->
+], (request, topic, lang) ->
   # private
   internal = 
     hostname: window.location.origin + "/jersey/aq21/"

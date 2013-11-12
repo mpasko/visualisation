@@ -1,6 +1,6 @@
 define [
-   "custom/backend", "humane-js/humane"
-], (backend, humane) ->
+   "custom/backend"
+], (backend) ->
   eventHandler: (evt) ->
     f = evt.target.files[0]
     extension = if f.fileName? then f.fileName else f.name

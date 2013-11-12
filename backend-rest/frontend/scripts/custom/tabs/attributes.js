@@ -106,7 +106,6 @@ define(["dojo/dom", "dojo/aspect", "dojo/dom-construct", "dojo/_base/window", "d
         }
         div.style.backgroundColor = color;
         div.style.width = val + "%";
-        console.log(div);
         div.style.textAlign = "center";
         div.style.borderRadius = "15px";
         div.innerHTML = object[attr_name];

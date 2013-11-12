@@ -1,6 +1,11 @@
-require(["dojo/parser", "custom/splash", "custom/grid", "MathJax/MathJax.js?config=TeX-AMS_HTML", "d3/d3"], function(parser, splash, grid, attr) {
-  return require(["nvd3/nv.d3"], function() {
+require(["dojo/ready", "custom/tabs/visualisation", "custom/tabs/data", "custom/tabs/configuration", "custom/tabs/attributes", "dojo/parser", "custom/splash"], function(ready, visual, data, conf, attr, parser, splash) {
+  return ready(function() {
+    visual.setup();
+    data.setup();
+    conf.setup();
+    attr.setup();
     parser.parse();
-    return splash.play();
+    splash.play();
+    return null;
   });
 });
