@@ -38,6 +38,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
       return internal.sendMessage(callback);
     },
     convertAQ21: function(file_content) {
+      topic.publish("experiment raw text", file_content);
       return request.post(internal.hostname + "fromAQ21", {
         data: file_content,
         handleAs: "json",

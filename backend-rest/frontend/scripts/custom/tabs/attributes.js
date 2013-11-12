@@ -1,16 +1,6 @@
-define(["dojo/dom", "dojo/aspect", "dojo/dom-construct", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dijit/registry", "custom/file", "custom/grid"], function(dom, aspect, domConstruct, win, topic, Memory, registry, file, grid) {
+define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dijit/registry", "custom/grid"], function(dom, win, topic, Memory, registry, grid) {
   var internal, module;
   internal = {
-    createFileLoader: function() {
-      domConstruct.create("input", {
-        style: {
-          display: "none"
-        },
-        type: "file",
-        id: "load_files"
-      }, win.body());
-      return dom.byId("load_files").addEventListener('change', file.eventHandler, false);
-    },
     stats_store: new Memory(),
     attr_store: new Memory(),
     domains_store: new Memory(),
@@ -116,14 +106,10 @@ define(["dojo/dom", "dojo/aspect", "dojo/dom-construct", "dojo/_base/window", "d
   module = {
     setup: function() {
       var attr_grid, domains_grid, statistics_grid;
-      internal.createFileLoader();
       attr_grid = new grid.onDemand({
         store: internal.attr_store,
         columns: [
           {
-            field: "id",
-            label: "Attribute name"
-          }, {
             field: "name",
             label: "Attribute value"
           }

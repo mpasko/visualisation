@@ -33,6 +33,8 @@ define [
       internal.sendMessage(callback) 
 
     convertAQ21: (file_content) ->
+      topic.publish "experiment raw text", file_content
+    
       request.post(internal.hostname + "fromAQ21",
         data: file_content
         handleAs: "json"
