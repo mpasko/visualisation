@@ -24,7 +24,7 @@ define [
        
        events_grid = new grid.paginated(
          store : internal.events_store, 
-         columns : editor(column, TextBox, "click") for column in columns
+         columns : editor(column, "text", "click") for column in columns
          pagingLinks: 3
          firstLastArrows: true
          pageSizeOptions: [20, 50, 100]
@@ -36,16 +36,6 @@ define [
         input = 
           events: internal.events_store.query({})
         collect input
-        
-      topic.subscribe "request histogram", (params) ->
-        if params.isDiscrete then params.callback params.bins.map (name) -> (
-          query = {}
-          query[params.attr] = name
-          internal.events_store.query(query).total 
-        )
-        
-      
-        
-        
+
+  
   module
-          

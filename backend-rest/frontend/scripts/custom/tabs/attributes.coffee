@@ -1,8 +1,8 @@
 define [
   "dojo/dom","dojo/_base/window","dojo/topic","dojo/store/Memory",
   "dijit/registry",
-  "custom/grid"
-], (dom, win, topic, Memory, registry, grid) ->
+  "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/cellRenderers", "custom/utils"
+], (dom, win, topic, Memory, registry, grid, editor, TextBox, cellRenderers, utils) ->
   # private
   internal = 
     stats_store : new Memory()
@@ -14,83 +14,37 @@ define [
     
     isDiscrete : (attribute) ->
       attribute in ["linear", "nominal"]
-      
+    
+    # whether domain specified in domain field is one of the basic domains
+    # or custom, user-defined domain
     getBaseDomain : (attribute) ->
       if @hasDefaultDomain(attribute) then attribute.domain
       else @domains_store.query(name: attribute.domain)[0].domain
-      
+    
+    # parameters of domain, splitted into a list
     getBaseParameters : (attribute) ->
       if @hasDefaultDomain(attribute) then parameters = attribute.parameters
       else parameters = @domains_store.query(name: attribute.domain)[0].parameters
       parameter.trim() for parameter in /([^{}]+)/.exec(parameters)[1].split ","
     
-    nominal : (parameters) ->
-      console.log "nominal"
-      
-    linear : (parameters) ->
-      console.log "linear"
-      
-    continuous : (parameters) ->
-      @stats_store.put
-        id : "Minimum"
-        value : parameters[0]
-      @stats_store.put
-        id : "Maximum"
-        value : parameters[1]
-        
-      registry.byId("statistics").refresh()
-    
-    basicStats : (attribute) ->
-      @[@getBaseDomain attribute](@getBaseParameters attribute)
-      
-    partialRight : ( fn , args) ->
-      aps = Array.prototype.slice
-      args = aps.call arguments, 1
-      () ->
-        fn.apply this, aps.call( arguments ).concat args 
-        
-    cellRenderers :
-      nominal: (object, value, node, options, parameters, attr_name) ->
-          div = document.createElement "div"
-          div.className = "renderedCell"
-          div.innerHTML = object[attr_name]
-          div
-      
-      linear: (object, value, node, options, parameters, attr_name) ->
-          div = document.createElement "div"
-          div.className = "renderedCell"
-          div.innerHTML = object[attr_name]
-          div
-      
-      continuous: (object, value, node, options, parameters, attr_name) ->
-          div = document.createElement "div"
-          div.className = "renderedCell"
-          min = parseFloat parameters[0]
-          max = parseFloat parameters[1]
-          val = Math.round 100 * ((parseFloat object[attr_name]) - min) / (max - min)
-          if val < 33 then color = "#3FFF00"
-          else if val < 66 then color = "#FFD300"
-          else color = "#ED1C24"
-          div.style.backgroundColor = color
-          div.style.width = val + "%"
-
-          div.style.textAlign = "center"
-          div.style.borderRadius = "15px"
-          div.innerHTML = object[attr_name]
-          div
-      
-      
+    extractAttributeDescription : (attribute) ->
+      domain : attribute.domain
+      baseDomain : @getBaseDomain attribute
+      parameters : @getBaseParameters attribute
       
   # public 
   module = 
     setup : ->
-      
       attr_grid = new grid.onDemand(
         store : internal.attr_store
         columns: [
-          field: "name"
-          label: "Attribute value"
-        ], "attributes")
+          editor(
+            field: "name"
+            label: "Attribute value"
+            autoSave: true
+          , TextBox, "dblclick")
+        ], 
+        "attributes")
 
       domains_grid = new grid.onDemand(
         store : internal.domains_store
@@ -115,37 +69,81 @@ define [
           label: "Value"
         ], "statistics")
       
+      # when item in attributes is selected
+      # then we display some statistics about it
       attr_grid.on "dgrid-select", (event) ->
         attribute = event.rows[0].data
         internal.stats_store.setData []
-        internal.basicStats attribute
         
-        topic.publish "request histogram",
-          attr : attribute.name
-          isDiscrete : internal.isDiscrete internal.getBaseDomain attribute
-          bins : internal.getBaseParameters attribute
-          callback : (histogram) ->
+        description = internal.extractAttributeDescription attribute
+        
+        internal.stats_store.put
+          id : "Domain"
+          value : description.domain
+        
+        internal.stats_store.put
+          id : "Base domain"
+          value : description.baseDomain
+        
+        addMinMax = (params) ->
+          internal.stats_store.put
+            id : "Minimum"
+            value : params[0]
+          
+          internal.stats_store.put
+            id : "Maximum"
+            value : params[1]
+        
+        addNominalValues = (params) ->
+          
+          i = 0
+          while i < params.length
             internal.stats_store.put
-              id : "Histogram"
-              value : ""
-            (
-              internal.stats_store.put
-                id : @bins[i]
-                value : histogram[i]
-            ) for i in [0..histogram.length-1]
+              id : i
+              value : params[i]
             
-            registry.byId("statistics").refresh()
+            i++
+        
+        switch description.baseDomain
+          when "linear" then addNominalValues description.parameters
+          when "nominal" then addNominalValues description.parameters
+          when "continuous" then addMinMax description.parameters
+        
+        
+        registry.byId("statistics").refresh()
+  
+      #
+      attr_grid.on "dgrid-datachange", (event) ->
+        attributes = internal.attr_store.query {}
+        
+        i = 0
+        while i < attributes.length
+          attributes[i].name = event.value if attributes[i].name == event.oldValue
+          i++
+        
+        console.log event
+        columns = ((
+            field : 'attribute' + (attributes.indexOf(attribute)+1)
+            label : attribute.name
+            autoSave : true
+            renderCell : utils.partialRight utils.partialRight( cellRenderers[internal.getBaseDomain attribute], attribute.name), internal.getBaseParameters attribute
+            )  for attribute in attributes)
+
+        topic.publish "provide columns info", columns
+            
 
       topic.subscribe "experiment loaded", (input)->
         internal.attr_store.setData input.attributes
         internal.domains_store.setData input.domains
         
+        attributes = internal.attr_store.query {}
         
         columns = ((
-          field : attribute.name
+          field : 'attribute' + (attributes.indexOf(attribute)+1)
           label : attribute.name
-          renderCell : internal.partialRight internal.partialRight( internal.cellRenderers[internal.getBaseDomain attribute], attribute.name), internal.getBaseParameters attribute
-          )  for attribute in internal.attr_store.query {})
+          autoSave : true
+          renderCell : utils.partialRight utils.partialRight( cellRenderers[internal.getBaseDomain attribute], attribute.name), internal.getBaseParameters attribute
+          )  for attribute in attributes)
           
         topic.publish "provide columns info", columns
         
@@ -156,6 +154,7 @@ define [
         input = 
           attributes : internal.attr_store.query({})
           domains    : internal.domains_store.query({})
+          
         collect input
         
   module

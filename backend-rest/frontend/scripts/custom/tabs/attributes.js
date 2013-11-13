@@ -1,4 +1,4 @@
-define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dijit/registry", "custom/grid"], function(dom, win, topic, Memory, registry, grid) {
+define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/cellRenderers", "custom/utils"], function(dom, win, topic, Memory, registry, grid, editor, TextBox, cellRenderers, utils) {
   var internal, module;
   internal = {
     stats_store: new Memory(),
@@ -37,70 +37,12 @@ define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dij
       }
       return _results;
     },
-    nominal: function(parameters) {
-      return console.log("nominal");
-    },
-    linear: function(parameters) {
-      return console.log("linear");
-    },
-    continuous: function(parameters) {
-      this.stats_store.put({
-        id: "Minimum",
-        value: parameters[0]
-      });
-      this.stats_store.put({
-        id: "Maximum",
-        value: parameters[1]
-      });
-      return registry.byId("statistics").refresh();
-    },
-    basicStats: function(attribute) {
-      return this[this.getBaseDomain(attribute)](this.getBaseParameters(attribute));
-    },
-    partialRight: function(fn, args) {
-      var aps;
-      aps = Array.prototype.slice;
-      args = aps.call(arguments, 1);
-      return function() {
-        return fn.apply(this, aps.call(arguments).concat(args));
+    extractAttributeDescription: function(attribute) {
+      return {
+        domain: attribute.domain,
+        baseDomain: this.getBaseDomain(attribute),
+        parameters: this.getBaseParameters(attribute)
       };
-    },
-    cellRenderers: {
-      nominal: function(object, value, node, options, parameters, attr_name) {
-        var div;
-        div = document.createElement("div");
-        div.className = "renderedCell";
-        div.innerHTML = object[attr_name];
-        return div;
-      },
-      linear: function(object, value, node, options, parameters, attr_name) {
-        var div;
-        div = document.createElement("div");
-        div.className = "renderedCell";
-        div.innerHTML = object[attr_name];
-        return div;
-      },
-      continuous: function(object, value, node, options, parameters, attr_name) {
-        var color, div, max, min, val;
-        div = document.createElement("div");
-        div.className = "renderedCell";
-        min = parseFloat(parameters[0]);
-        max = parseFloat(parameters[1]);
-        val = Math.round(100 * ((parseFloat(object[attr_name])) - min) / (max - min));
-        if (val < 33) {
-          color = "#3FFF00";
-        } else if (val < 66) {
-          color = "#FFD300";
-        } else {
-          color = "#ED1C24";
-        }
-        div.style.backgroundColor = color;
-        div.style.width = val + "%";
-        div.style.textAlign = "center";
-        div.style.borderRadius = "15px";
-        div.innerHTML = object[attr_name];
-        return div;
-      }
     }
   };
   module = {
@@ -109,10 +51,11 @@ define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dij
       attr_grid = new grid.onDemand({
         store: internal.attr_store,
         columns: [
-          {
+          editor({
             field: "name",
-            label: "Attribute value"
-          }
+            label: "Attribute value",
+            autoSave: true
+          }, TextBox, "dblclick")
         ]
       }, "attributes");
       domains_grid = new grid.onDemand({
@@ -143,44 +86,95 @@ define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dij
         ]
       }, "statistics");
       attr_grid.on("dgrid-select", function(event) {
-        var attribute;
+        var addMinMax, addNominalValues, attribute, description;
         attribute = event.rows[0].data;
         internal.stats_store.setData([]);
-        internal.basicStats(attribute);
-        return topic.publish("request histogram", {
-          attr: attribute.name,
-          isDiscrete: internal.isDiscrete(internal.getBaseDomain(attribute)),
-          bins: internal.getBaseParameters(attribute),
-          callback: function(histogram) {
-            var i, _i, _ref;
-            internal.stats_store.put({
-              id: "Histogram",
-              value: ""
-            });
-            for (i = _i = 0, _ref = histogram.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-              internal.stats_store.put({
-                id: this.bins[i],
-                value: histogram[i]
-              });
-            }
-            return registry.byId("statistics").refresh();
-          }
+        description = internal.extractAttributeDescription(attribute);
+        internal.stats_store.put({
+          id: "Domain",
+          value: description.domain
         });
+        internal.stats_store.put({
+          id: "Base domain",
+          value: description.baseDomain
+        });
+        addMinMax = function(params) {
+          internal.stats_store.put({
+            id: "Minimum",
+            value: params[0]
+          });
+          return internal.stats_store.put({
+            id: "Maximum",
+            value: params[1]
+          });
+        };
+        addNominalValues = function(params) {
+          var i, _results;
+          i = 0;
+          _results = [];
+          while (i < params.length) {
+            internal.stats_store.put({
+              id: i,
+              value: params[i]
+            });
+            _results.push(i++);
+          }
+          return _results;
+        };
+        switch (description.baseDomain) {
+          case "linear":
+            addNominalValues(description.parameters);
+            break;
+          case "nominal":
+            addNominalValues(description.parameters);
+            break;
+          case "continuous":
+            addMinMax(description.parameters);
+        }
+        return registry.byId("statistics").refresh();
+      });
+      attr_grid.on("dgrid-datachange", function(event) {
+        var attribute, attributes, columns, i;
+        attributes = internal.attr_store.query({});
+        i = 0;
+        while (i < attributes.length) {
+          if (attributes[i].name === event.oldValue) {
+            attributes[i].name = event.value;
+          }
+          i++;
+        }
+        console.log(event);
+        columns = (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = attributes.length; _i < _len; _i++) {
+            attribute = attributes[_i];
+            _results.push({
+              field: 'attribute' + (attributes.indexOf(attribute) + 1),
+              label: attribute.name,
+              autoSave: true,
+              renderCell: utils.partialRight(utils.partialRight(cellRenderers[internal.getBaseDomain(attribute)], attribute.name), internal.getBaseParameters(attribute))
+            });
+          }
+          return _results;
+        })();
+        return topic.publish("provide columns info", columns);
       });
       topic.subscribe("experiment loaded", function(input) {
-        var attribute, columns;
+        var attribute, attributes, columns;
         internal.attr_store.setData(input.attributes);
         internal.domains_store.setData(input.domains);
+        attributes = internal.attr_store.query({});
         columns = (function() {
-          var _i, _len, _ref, _results;
-          _ref = internal.attr_store.query({});
+          var _i, _len, _results;
           _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            attribute = _ref[_i];
+          for (_i = 0, _len = attributes.length; _i < _len; _i++) {
+            attribute = attributes[_i];
             _results.push({
-              field: attribute.name,
+              field: 'attribute' + (attributes.indexOf(attribute) + 1),
               label: attribute.name,
-              renderCell: internal.partialRight(internal.partialRight(internal.cellRenderers[internal.getBaseDomain(attribute)], attribute.name), internal.getBaseParameters(attribute))
+              autoSave: true,
+              renderCell: utils.partialRight(utils.partialRight(cellRenderers[internal.getBaseDomain(attribute)], attribute.name), internal.getBaseParameters(attribute))
             });
           }
           return _results;

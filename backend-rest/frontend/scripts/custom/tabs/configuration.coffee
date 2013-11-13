@@ -10,6 +10,7 @@ TextBox, editor, backend, grid, dojo_on) ->
     removeTab : (tab) ->
       registry.byId("runTabs").removeChild tab
       registry.byId(tab.id).destroy()
+      
     createTab : (tab, params_store) ->
         contentPane = new ContentPane(title: tab)
         params_grid = new grid.onDemand(

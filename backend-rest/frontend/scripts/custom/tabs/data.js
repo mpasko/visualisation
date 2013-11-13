@@ -22,7 +22,7 @@ define(["dojo/dom-construct", "dojo/topic", "dojo/store/Memory", "dijit/registry
             _results = [];
             for (_i = 0, _len = columns.length; _i < _len; _i++) {
               column = columns[_i];
-              _results.push(editor(column, TextBox, "click"));
+              _results.push(editor(column, "text", "click"));
             }
             return _results;
           })(),
@@ -32,22 +32,12 @@ define(["dojo/dom-construct", "dojo/topic", "dojo/store/Memory", "dijit/registry
         }, "raw_data");
         return events_grid.refresh();
       });
-      topic.subscribe("collect experiment data", function(collect) {
+      return topic.subscribe("collect experiment data", function(collect) {
         var input;
         input = {
           events: internal.events_store.query({})
         };
         return collect(input);
-      });
-      return topic.subscribe("request histogram", function(params) {
-        if (params.isDiscrete) {
-          return params.callback(params.bins.map(function(name) {
-            var query;
-            query = {};
-            query[params.attr] = name;
-            return internal.events_store.query(query).total;
-          }));
-        }
       });
     }
   };
