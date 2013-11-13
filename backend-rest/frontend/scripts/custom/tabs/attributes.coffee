@@ -1,19 +1,10 @@
 define [
-  "dojo/dom","dojo/aspect","dojo/dom-construct", "dojo/_base/window","dojo/topic","dojo/store/Memory",
+  "dojo/dom","dojo/_base/window","dojo/topic","dojo/store/Memory",
   "dijit/registry",
-  "custom/file","custom/grid"
-], (dom, aspect, domConstruct, win, topic, Memory, registry, file, grid) ->
+  "custom/grid"
+], (dom, win, topic, Memory, registry, grid) ->
   # private
   internal = 
-    createFileLoader : ->
-      domConstruct.create "input", 
-        style: 
-          display: "none" 
-        type: "file"
-        id: "load_files"
-      , win.body()
-      
-      dom.byId("load_files").addEventListener 'change', file.eventHandler, false
     stats_store : new Memory()
     attr_store : new Memory()
     domains_store : new Memory()
@@ -82,7 +73,7 @@ define [
           else color = "#ED1C24"
           div.style.backgroundColor = color
           div.style.width = val + "%"
-          console.log div
+
           div.style.textAlign = "center"
           div.style.borderRadius = "15px"
           div.innerHTML = object[attr_name]
@@ -93,13 +84,10 @@ define [
   # public 
   module = 
     setup : ->
-      internal.createFileLoader()
+      
       attr_grid = new grid.onDemand(
         store : internal.attr_store
         columns: [
-          field: "id"
-          label: "Attribute name"
-        ,
           field: "name"
           label: "Attribute value"
         ], "attributes")
@@ -170,12 +158,4 @@ define [
           domains    : internal.domains_store.query({})
         collect input
         
-      
-        
-      
-      
-          
-    
-    
-
   module

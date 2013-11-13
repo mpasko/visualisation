@@ -3,5 +3,9 @@ html,body {
 	width: 100%;
 }
 
-
+#drop_zone {
+  border: 2px dashed #bbb;
+  border-radius: 5px;
+  color: #bbb;
+}
 

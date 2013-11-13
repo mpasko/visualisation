@@ -1,4 +1,4 @@
-define(["dojo/request", "dojo/topic", "dojo/_base/lang", "humane-js/humane"], function(request, topic, lang, humane) {
+define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topic, lang) {
   var internal, module;
   internal = {
     hostname: window.location.origin + "/jersey/aq21/",
@@ -38,6 +38,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang", "humane-js/humane"], fu
       return internal.sendMessage(callback);
     },
     convertAQ21: function(file_content) {
+      topic.publish("experiment raw text", file_content);
       return request.post(internal.hostname + "fromAQ21", {
         data: file_content,
         handleAs: "json",

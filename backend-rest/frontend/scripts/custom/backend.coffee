@@ -1,7 +1,6 @@
 define [
   "dojo/request","dojo/topic","dojo/_base/lang"
-  "humane-js/humane"
-], (request, topic, lang, humane) ->
+], (request, topic, lang) ->
   # private
   internal = 
     hostname: window.location.origin + "/jersey/aq21/"
@@ -34,6 +33,8 @@ define [
       internal.sendMessage(callback) 
 
     convertAQ21: (file_content) ->
+      topic.publish "experiment raw text", file_content
+    
       request.post(internal.hostname + "fromAQ21",
         data: file_content
         handleAs: "json"

@@ -2,9 +2,9 @@ define [
   "dojo/aspect", "dojo/topic","dojo/store/Memory",
   "dijit/registry",  "dijit/layout/ContentPane", "dijit/form/TextBox", 
   "dgrid/editor",
-  "custom/backend", "custom/grid"
+  "custom/backend", "custom/grid", "dojo/on"
 ], (aspect, topic, Memory, registry, ContentPane, 
-TextBox, editor, backend, grid) ->
+TextBox, editor, backend, grid, dojo_on) ->
   # private
   internal =
     removeTab : (tab) ->
@@ -80,6 +80,8 @@ TextBox, editor, backend, grid) ->
             ) for x in runNames
             globalLearningParameters: parametersStore.query(parent: "globalLearningParameters")
         collect input
+        
+      dojo_on(registry.byId("run_button"), "click", @runExperiment)
 
     selectAll: ->
       internal.toggle true

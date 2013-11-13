@@ -1,8 +1,20 @@
 require [
+  "dojo/ready"
+  "custom/tabs/visualisation",
+  "custom/tabs/data",
+  "custom/tabs/configuration",
+  "custom/tabs/attributes",
+  "custom/tabs/import",
   "dojo/parser", 
-  "custom/splash","custom/grid",
-  "MathJax/MathJax.js?config=TeX-AMS_HTML", "d3/d3"
-], (parser, splash, grid, attr) ->
-  require [ "nvd3/nv.d3" ], ->
-    parser.parse()
-    splash.play()
+  "custom/splash"
+], (ready, visual,data,conf , attr, imp, parser, splash) ->
+    ready(
+      ->
+        visual.setup()
+        data.setup()
+        conf.setup()
+        attr.setup()
+        imp.setup()
+        splash.play()
+        null
+    )

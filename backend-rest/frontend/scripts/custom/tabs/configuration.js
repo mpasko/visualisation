@@ -1,4 +1,4 @@
-define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "dijit/form/TextBox", "dgrid/editor", "custom/backend", "custom/grid"], function(aspect, topic, Memory, registry, ContentPane, TextBox, editor, backend, grid) {
+define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "dijit/form/TextBox", "dgrid/editor", "custom/backend", "custom/grid", "dojo/on"], function(aspect, topic, Memory, registry, ContentPane, TextBox, editor, backend, grid, dojo_on) {
   var internal, module;
   internal = {
     removeTab: function(tab) {
@@ -97,7 +97,7 @@ define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dij
         }
         return conf_grid.refresh();
       });
-      return topic.subscribe("collect experiment data", function(collect) {
+      topic.subscribe("collect experiment data", function(collect) {
         var input, parametersStore, runNames, runsStore, x;
         runsStore = internal.runs_store;
         parametersStore = internal.params_store;
@@ -139,6 +139,7 @@ define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dij
         };
         return collect(input);
       });
+      return dojo_on(registry.byId("run_button"), "click", this.runExperiment);
     },
     selectAll: function() {
       return internal.toggle(true);
