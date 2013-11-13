@@ -1,5 +1,9 @@
 package agh.aq21gui;
 
+import agh.aq21gui.algorithms.GLDOptimizer;
+import agh.aq21gui.algorithms.SimulatedAnnealing;
+import agh.aq21gui.model.gld.GLDInput;
+import agh.aq21gui.model.gld.GLDOutput;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
@@ -83,11 +87,10 @@ public class Aq21Resource {
 		MediaType.APPLICATION_JSON
 	//	,MediaType.APPLICATION_XML
 	})
-	public Output fromCSV(String csv){
-		Output out = new Output();
+	public Input fromCSV(String csv){
 		CSVConverter conv = new CSVConverter();
-		out.sEG(conv.convert(csv));
-		return out;
+		Input in = conv.convert(csv);
+		return in;
 	}
 	
 	@POST
@@ -193,6 +196,15 @@ public class Aq21Resource {
 	public Output getIt(String input) {
 		OutputParser parser = new OutputParser();
 		return parser.parse(input);
+	}
+	
+	@POST
+	@Path("gld")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	public GLDOutput optimizeGLD(GLDInput input){
+		GLDOptimizer optimizer = new GLDOptimizer(input, new SimulatedAnnealing());
+		return optimizer.optimize();
 	}
 	
 	@GET

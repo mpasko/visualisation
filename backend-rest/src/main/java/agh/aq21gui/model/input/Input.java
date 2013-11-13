@@ -4,7 +4,6 @@
  */
 package agh.aq21gui.model.input;
 
-import agh.aq21gui.rubbish.MapAdapter;
 import agh.aq21gui.model.output.Hypothesis;
 import java.util.List;
 import java.util.Map;
@@ -227,5 +226,9 @@ public class Input implements IAQ21Serializable {
 		this.testsGroup.traverse();
 		this.inputHypotheses.traverse();
 		this.testingEventsGroup.traverse();
+	}
+
+	public void sAG(AttributesGroup attributes) {
+		this.attributesGroup = attributes;
 	}
 }

@@ -24,22 +24,12 @@ public class Event implements IAQ21Serializable {
 	public int id=0;
 	private List<String> values;
 	
-	private static Long enumerator;
-	
-	static{
-		enumerator = new Long(0);
-	}
-	
 	public Event(){
 		values = new LinkedList<String>();
 	}
-
-	Event(Map<String, Object> event, AttributesGroup attributes) {
-		values = new LinkedList<String>();
-		for(Attribute attr : attributes.attributes){
-			String name = attr.getname();
-			values.add(event.get(name).toString());
-		}
+	
+	public Event(List<String> values) {
+		this.values = values;
 	}
 	
 	public int getId(){
@@ -79,18 +69,6 @@ public class Event implements IAQ21Serializable {
 			CommonTree cell = (CommonTree) obj;
 			values.add(cell.getText());
 		}
-	}
-
-	TreeMap<String, Object> formatEvent(AttributesGroup attributesGroup) {
-		TreeMap<String, Object> workingMap = new TreeMap<String, Object>();
-		workingMap.put("id", enumerator);
-		enumerator++;
-		Iterator<Attribute> attrIterator = attributesGroup.attributes.iterator();
-		for (String value:values){
-			Attribute attr = attrIterator.next();
-			workingMap.put(attr.getname(), value);
-		}
-		return workingMap;
 	}
 
 	void traverse() {

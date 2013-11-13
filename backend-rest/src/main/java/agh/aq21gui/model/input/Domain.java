@@ -6,6 +6,7 @@ package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.utils.TreeNode;
+import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.antlr.runtime.tree.CommonTree;
@@ -117,5 +118,29 @@ public class Domain implements IAQ21Serializable{
 
 	void traverse() {
 		if(name.isEmpty());
+	}
+
+	public void setRange(Double min, Double max) {
+		StringBuilder build = new StringBuilder("{");
+		build.append(min);
+		build.append(" ");
+		build.append(max);
+		build.append("}");
+		this.parameters = build.toString();
+	}
+
+	public void setRange(List<String> values) {
+		StringBuilder build = new StringBuilder("{");
+		int max = values.size();
+		int i = 1;
+		for (String val : values){
+			build.append(val);
+			if(i<max){
+				build.append(", ");	
+			}
+			++i;
+		}
+		build.append("}");
+		this.parameters = build.toString();
 	}
 }
