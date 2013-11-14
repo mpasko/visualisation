@@ -21,6 +21,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
     runExperiment: function() {
       var callback;
       callback = function(message) {
+        console.log(message);
         return request.post(internal.hostname + "postIt", {
           data: message,
           handleAs: "json",
@@ -38,7 +39,6 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
       return internal.sendMessage(callback);
     },
     convertAQ21: function(file_content) {
-      topic.publish("experiment raw text", file_content);
       return request.post(internal.hostname + "fromAQ21", {
         data: file_content,
         handleAs: "json",
@@ -46,7 +46,22 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
           "Content-Type": "text/plain"
         }
       }).then((function(input) {
-        topic.publish("experiment loaded", input);
+        topic.publish("experiment loaded from backend", input);
+        return humane.log("Data successfully loaded");
+      }), function(error) {
+        return console.log("Couldn't convert AQ21 to JSON form");
+      });
+    },
+    convertCSV: function(file_content) {
+      return request.post(internal.hostname + "fromCSV", {
+        data: file_content,
+        handleAs: "json",
+        headers: {
+          "Content-Type": "text/plain"
+        }
+      }).then((function(input) {
+        console.log(input);
+        topic.publish("experiment loaded from backend", input);
         return humane.log("Data successfully loaded");
       }), function(error) {
         return console.log("Couldn't convert AQ21 to JSON form");

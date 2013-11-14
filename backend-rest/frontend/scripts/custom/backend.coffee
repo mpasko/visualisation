@@ -18,6 +18,7 @@ define [
   module = 
     runExperiment: () ->
       callback = (message) ->
+        console.log message
         request.post(internal.hostname + "postIt",
           data:  message
           handleAs: "json"
@@ -32,16 +33,28 @@ define [
           
       internal.sendMessage(callback) 
 
-    convertAQ21: (file_content) ->
-      topic.publish "experiment raw text", file_content
-    
+    convertAQ21: (file_content) ->    
       request.post(internal.hostname + "fromAQ21",
         data: file_content
         handleAs: "json"
         headers:
           "Content-Type": "text/plain"
       ).then ((input) ->
-        topic.publish "experiment loaded", input
+        topic.publish "experiment loaded from backend", input
+        humane.log "Data successfully loaded"
+      ), (error) ->
+        console.log "Couldn't convert AQ21 to JSON form"
+        
+        
+    convertCSV: (file_content) ->    
+      request.post(internal.hostname + "fromCSV",
+        data: file_content
+        handleAs: "json"
+        headers:
+          "Content-Type": "text/plain"
+      ).then ((input) ->
+        console.log input
+        topic.publish "experiment loaded from backend", input
         humane.log "Data successfully loaded"
       ), (error) ->
         console.log "Couldn't convert AQ21 to JSON form"

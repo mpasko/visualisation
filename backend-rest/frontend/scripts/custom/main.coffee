@@ -6,7 +6,7 @@ require [
   "custom/tabs/attributes",
   "custom/tabs/import",
   "dojo/parser", 
-  "custom/splash"
+  "custom/splash",
 ], (ready, visual,data,conf , attr, imp, parser, splash) ->
     ready(
       ->

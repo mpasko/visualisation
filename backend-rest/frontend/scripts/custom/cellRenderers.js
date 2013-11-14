@@ -1,5 +1,14 @@
-define([], function() {
-  return {
+define(["custom/utils/attributes"], function(attributeUtils) {
+  var internal;
+  internal = {
+    partialRight: function(fn, args) {
+      var aps;
+      aps = Array.prototype.slice;
+      args = aps.call(arguments, 1);
+      return function() {
+        return fn.apply(this, aps.call(arguments).concat(args));
+      };
+    },
     nominal: function(object, value, node, options, parameters, attr_name) {
       var div;
       div = document.createElement("div");
@@ -34,6 +43,15 @@ define([], function() {
       div.style.borderRadius = "15px";
       div.innerHTML = value;
       return div;
+    }
+  };
+  return {
+    get: function(attribute, domain_query) {
+      var a, baseDomain, baseParameters;
+      baseDomain = attributeUtils.getBaseDomain(attribute, domain_query);
+      baseParameters = attributeUtils.getBaseParameters(attribute, domain_query);
+      a = internal.partialRight(internal[baseDomain], attribute.name);
+      return internal.partialRight(a, baseParameters);
     }
   };
 });

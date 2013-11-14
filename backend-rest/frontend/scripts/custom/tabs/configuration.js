@@ -59,8 +59,9 @@ define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dij
           }, 'checkbox')
         ]
       }, "runs");
-      topic.subscribe("experiment loaded", function(input) {
+      topic.subscribe("experiment loaded from backend", function(input) {
         var child, parameters, run, runs, x, _i, _j, _len, _len1, _ref, _ref1;
+        console.log("ssssssss");
         runs = input.runsGroup;
         parameters = runs.runs.reduce((function(x, y) {
           return x.concat(y.runSpecificParameters);

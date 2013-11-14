@@ -12,10 +12,10 @@ define [
   # public 
   module = 
     setup : ->
-      topic.subscribe "experiment loaded", (input)->
+      topic.subscribe "experiment loaded from backend", (input)->
         internal.events_store.setData input.events
 
-      topic.subscribe "provide columns info", (columns) ->
+      topic.subscribe "provide columns info for data tab", (columns) ->
        registry.byId("events").destroyDescendants false
        domConstruct.create("div", 
         id: "raw_data"
@@ -31,10 +31,11 @@ define [
          , "raw_data")
 
        events_grid.refresh()
- 
+       topic.publish "provide data for scatter plot", internal.events_store.query {}
+       
+      # reacts for collecting data for experiment
       topic.subscribe "collect experiment data", (collect) ->
-        input = 
-          events: internal.events_store.query({})
+        input = events: internal.events_store.query({})
         collect input
 
   

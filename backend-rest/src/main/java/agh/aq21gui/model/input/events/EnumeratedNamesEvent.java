@@ -69,8 +69,11 @@ public class EnumeratedNamesEvent implements EventAdapter{
 	
 	private List<String> mapToList(Map<String, Object> event, AttributesGroup attributes){
 		LinkedList<String> values = new LinkedList<String>();
-		for(Object value : event.values()){
-			values.add(value.toString());
+		for(String name : event.keySet()){
+                    Object value = event.get(name);
+                    if (name.startsWith("attrib")) {
+                        values.add(value.toString());
+                    }
 		}
 		return values;
 	}

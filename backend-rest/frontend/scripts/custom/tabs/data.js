@@ -5,10 +5,10 @@ define(["dojo/dom-construct", "dojo/topic", "dojo/store/Memory", "dijit/registry
   };
   module = {
     setup: function() {
-      topic.subscribe("experiment loaded", function(input) {
+      topic.subscribe("experiment loaded from backend", function(input) {
         return internal.events_store.setData(input.events);
       });
-      topic.subscribe("provide columns info", function(columns) {
+      topic.subscribe("provide columns info for data tab", function(columns) {
         var column, events_grid;
         registry.byId("events").destroyDescendants(false);
         domConstruct.create("div", {
@@ -30,7 +30,8 @@ define(["dojo/dom-construct", "dojo/topic", "dojo/store/Memory", "dijit/registry
           firstLastArrows: true,
           pageSizeOptions: [20, 50, 100]
         }, "raw_data");
-        return events_grid.refresh();
+        events_grid.refresh();
+        return topic.publish("provide data for scatter plot", internal.events_store.query({}));
       });
       return topic.subscribe("collect experiment data", function(collect) {
         var input;

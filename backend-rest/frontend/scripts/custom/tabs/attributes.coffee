@@ -1,36 +1,14 @@
 define [
   "dojo/dom","dojo/_base/window","dojo/topic","dojo/store/Memory",
   "dijit/registry",
-  "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/cellRenderers", "custom/utils"
+  "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/cellRenderers", 
+  "custom/utils/attributes"
 ], (dom, win, topic, Memory, registry, grid, editor, TextBox, cellRenderers, utils) ->
   # private
   internal = 
     stats_store : new Memory()
     attr_store : new Memory()
     domains_store : new Memory()
-    
-    hasDefaultDomain : (attribute) ->
-      attribute.domain in ["linear", "nominal", "continuous"]
-    
-    isDiscrete : (attribute) ->
-      attribute in ["linear", "nominal"]
-    
-    # whether domain specified in domain field is one of the basic domains
-    # or custom, user-defined domain
-    getBaseDomain : (attribute) ->
-      if @hasDefaultDomain(attribute) then attribute.domain
-      else @domains_store.query(name: attribute.domain)[0].domain
-    
-    # parameters of domain, splitted into a list
-    getBaseParameters : (attribute) ->
-      if @hasDefaultDomain(attribute) then parameters = attribute.parameters
-      else parameters = @domains_store.query(name: attribute.domain)[0].parameters
-      parameter.trim() for parameter in /([^{}]+)/.exec(parameters)[1].split ","
-    
-    extractAttributeDescription : (attribute) ->
-      domain : attribute.domain
-      baseDomain : @getBaseDomain attribute
-      parameters : @getBaseParameters attribute
       
   # public 
   module = 
@@ -69,70 +47,46 @@ define [
           label: "Value"
         ], "statistics")
       
-      # when item in attributes is selected
-      # then we display some statistics about it
       attr_grid.on "dgrid-select", (event) ->
         attribute = event.rows[0].data
-        internal.stats_store.setData []
+        domain_query = internal.domains_store.query(name: attribute.domain)
         
-        description = internal.extractAttributeDescription attribute
+        desc = utils.extractAttributeDescription attribute, domain_query
+        internal.stats_store.setData []
         
         internal.stats_store.put
           id : "Domain"
-          value : description.domain
+          value : desc.domain
         
         internal.stats_store.put
           id : "Base domain"
-          value : description.baseDomain
+          value : desc.baseDomain
         
-        addMinMax = (params) ->
-          internal.stats_store.put
-            id : "Minimum"
-            value : params[0]
-          
-          internal.stats_store.put
-            id : "Maximum"
-            value : params[1]
-        
-        addNominalValues = (params) ->
-          
-          i = 0
-          while i < params.length
-            internal.stats_store.put
-              id : i
-              value : params[i]
-            
-            i++
-        
-        switch description.baseDomain
-          when "linear" then addNominalValues description.parameters
-          when "nominal" then addNominalValues description.parameters
-          when "continuous" then addMinMax description.parameters
-        
+        switch desc.baseDomain
+          when "linear" then internal.stats_store.put a for a in utils.getDiscreteValues desc.parameters
+          when "nominal" then internal.stats_store.put a for a in utils.getDiscreteValues desc.parameters
+          when "continuous" then internal.stats_store.put a for a in utils.getContinuousValues desc.parameters
         
         registry.byId("statistics").refresh()
   
-      #
       attr_grid.on "dgrid-datachange", (event) ->
+        # update value, because we catch
+        attribute = internal.attr_store.query({name : event.oldValue})[0]
+        attribute.name = event.value
+        internal.attr_store.put attribute
+        
         attributes = internal.attr_store.query {}
         
-        i = 0
-        while i < attributes.length
-          attributes[i].name = event.value if attributes[i].name == event.oldValue
-          i++
-        
-        console.log event
         columns = ((
             field : 'attribute' + (attributes.indexOf(attribute)+1)
             label : attribute.name
             autoSave : true
-            renderCell : utils.partialRight utils.partialRight( cellRenderers[internal.getBaseDomain attribute], attribute.name), internal.getBaseParameters attribute
+            renderCell : cellRenderers.get attribute, internal.domains_store.query(name: attribute.domain)
             )  for attribute in attributes)
 
-        topic.publish "provide columns info", columns
-            
-
-      topic.subscribe "experiment loaded", (input)->
+        topic.publish "provide columns info for data tab", columns
+             
+      topic.subscribe "experiment loaded from backend", (input)->
         internal.attr_store.setData input.attributes
         internal.domains_store.setData input.domains
         
@@ -142,11 +96,18 @@ define [
           field : 'attribute' + (attributes.indexOf(attribute)+1)
           label : attribute.name
           autoSave : true
-          renderCell : utils.partialRight utils.partialRight( cellRenderers[internal.getBaseDomain attribute], attribute.name), internal.getBaseParameters attribute
+          renderCell : cellRenderers.get attribute, internal.domains_store.query(name: attribute.domain)
           )  for attribute in attributes)
           
-        topic.publish "provide columns info", columns
+        topic.subscribe "provide data for scatter plot", (data) ->
+          
+          # console.log data
+          return 
+          
+          
+        topic.publish "provide columns info for data tab", columns
         
+
         registry.byId("attributes").refresh()
         registry.byId("domains").refresh()
         

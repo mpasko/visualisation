@@ -1,49 +1,9 @@
-define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/cellRenderers", "custom/utils"], function(dom, win, topic, Memory, registry, grid, editor, TextBox, cellRenderers, utils) {
+define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/cellRenderers", "custom/utils/attributes"], function(dom, win, topic, Memory, registry, grid, editor, TextBox, cellRenderers, utils) {
   var internal, module;
   internal = {
     stats_store: new Memory(),
     attr_store: new Memory(),
-    domains_store: new Memory(),
-    hasDefaultDomain: function(attribute) {
-      var _ref;
-      return (_ref = attribute.domain) === "linear" || _ref === "nominal" || _ref === "continuous";
-    },
-    isDiscrete: function(attribute) {
-      return attribute === "linear" || attribute === "nominal";
-    },
-    getBaseDomain: function(attribute) {
-      if (this.hasDefaultDomain(attribute)) {
-        return attribute.domain;
-      } else {
-        return this.domains_store.query({
-          name: attribute.domain
-        })[0].domain;
-      }
-    },
-    getBaseParameters: function(attribute) {
-      var parameter, parameters, _i, _len, _ref, _results;
-      if (this.hasDefaultDomain(attribute)) {
-        parameters = attribute.parameters;
-      } else {
-        parameters = this.domains_store.query({
-          name: attribute.domain
-        })[0].parameters;
-      }
-      _ref = /([^{}]+)/.exec(parameters)[1].split(",");
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        parameter = _ref[_i];
-        _results.push(parameter.trim());
-      }
-      return _results;
-    },
-    extractAttributeDescription: function(attribute) {
-      return {
-        domain: attribute.domain,
-        baseDomain: this.getBaseDomain(attribute),
-        parameters: this.getBaseParameters(attribute)
-      };
-    }
+    domains_store: new Memory()
   };
   module = {
     setup: function() {
@@ -86,64 +46,53 @@ define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dij
         ]
       }, "statistics");
       attr_grid.on("dgrid-select", function(event) {
-        var addMinMax, addNominalValues, attribute, description;
+        var a, attribute, desc, domain_query, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
         attribute = event.rows[0].data;
+        domain_query = internal.domains_store.query({
+          name: attribute.domain
+        });
+        desc = utils.extractAttributeDescription(attribute, domain_query);
         internal.stats_store.setData([]);
-        description = internal.extractAttributeDescription(attribute);
         internal.stats_store.put({
           id: "Domain",
-          value: description.domain
+          value: desc.domain
         });
         internal.stats_store.put({
           id: "Base domain",
-          value: description.baseDomain
+          value: desc.baseDomain
         });
-        addMinMax = function(params) {
-          internal.stats_store.put({
-            id: "Minimum",
-            value: params[0]
-          });
-          return internal.stats_store.put({
-            id: "Maximum",
-            value: params[1]
-          });
-        };
-        addNominalValues = function(params) {
-          var i, _results;
-          i = 0;
-          _results = [];
-          while (i < params.length) {
-            internal.stats_store.put({
-              id: i,
-              value: params[i]
-            });
-            _results.push(i++);
-          }
-          return _results;
-        };
-        switch (description.baseDomain) {
+        switch (desc.baseDomain) {
           case "linear":
-            addNominalValues(description.parameters);
+            _ref = utils.getDiscreteValues(desc.parameters);
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              a = _ref[_i];
+              internal.stats_store.put(a);
+            }
             break;
           case "nominal":
-            addNominalValues(description.parameters);
+            _ref1 = utils.getDiscreteValues(desc.parameters);
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              a = _ref1[_j];
+              internal.stats_store.put(a);
+            }
             break;
           case "continuous":
-            addMinMax(description.parameters);
+            _ref2 = utils.getContinuousValues(desc.parameters);
+            for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+              a = _ref2[_k];
+              internal.stats_store.put(a);
+            }
         }
         return registry.byId("statistics").refresh();
       });
       attr_grid.on("dgrid-datachange", function(event) {
-        var attribute, attributes, columns, i;
+        var attribute, attributes, columns;
+        attribute = internal.attr_store.query({
+          name: event.oldValue
+        })[0];
+        attribute.name = event.value;
+        internal.attr_store.put(attribute);
         attributes = internal.attr_store.query({});
-        i = 0;
-        while (i < attributes.length) {
-          if (attributes[i].name === event.oldValue) {
-            attributes[i].name = event.value;
-          }
-          i++;
-        }
-        console.log(event);
         columns = (function() {
           var _i, _len, _results;
           _results = [];
@@ -153,14 +102,16 @@ define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dij
               field: 'attribute' + (attributes.indexOf(attribute) + 1),
               label: attribute.name,
               autoSave: true,
-              renderCell: utils.partialRight(utils.partialRight(cellRenderers[internal.getBaseDomain(attribute)], attribute.name), internal.getBaseParameters(attribute))
+              renderCell: cellRenderers.get(attribute, internal.domains_store.query({
+                name: attribute.domain
+              }))
             });
           }
           return _results;
         })();
-        return topic.publish("provide columns info", columns);
+        return topic.publish("provide columns info for data tab", columns);
       });
-      topic.subscribe("experiment loaded", function(input) {
+      topic.subscribe("experiment loaded from backend", function(input) {
         var attribute, attributes, columns;
         internal.attr_store.setData(input.attributes);
         internal.domains_store.setData(input.domains);
@@ -174,12 +125,15 @@ define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dij
               field: 'attribute' + (attributes.indexOf(attribute) + 1),
               label: attribute.name,
               autoSave: true,
-              renderCell: utils.partialRight(utils.partialRight(cellRenderers[internal.getBaseDomain(attribute)], attribute.name), internal.getBaseParameters(attribute))
+              renderCell: cellRenderers.get(attribute, internal.domains_store.query({
+                name: attribute.domain
+              }))
             });
           }
           return _results;
         })();
-        topic.publish("provide columns info", columns);
+        topic.subscribe("provide data for scatter plot", function(data) {});
+        topic.publish("provide columns info for data tab", columns);
         registry.byId("attributes").refresh();
         return registry.byId("domains").refresh();
       });

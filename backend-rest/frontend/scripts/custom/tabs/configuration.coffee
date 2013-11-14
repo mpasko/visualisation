@@ -10,7 +10,6 @@ TextBox, editor, backend, grid, dojo_on) ->
     removeTab : (tab) ->
       registry.byId("runTabs").removeChild tab
       registry.byId(tab.id).destroy()
-      
     createTab : (tab, params_store) ->
         contentPane = new ContentPane(title: tab)
         params_grid = new grid.onDemand(
@@ -52,7 +51,8 @@ TextBox, editor, backend, grid, dojo_on) ->
           )
           ], "runs")
       
-      topic.subscribe "experiment loaded", (input) ->
+      topic.subscribe "experiment loaded from backend", (input) ->
+        console.log "ssssssss"
         runs = input.runsGroup
         parameters = runs.runs.reduce(
           ((x,y) -> x.concat(y.runSpecificParameters)), [])
