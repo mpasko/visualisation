@@ -80,12 +80,14 @@ public class Domain implements IAQ21Serializable{
 		StringBuilder builder = new StringBuilder();
 		builder.append(name).append(' ')
 				.append(domain).append(' ');
-		parameters=parameters.replace("{", "").replace("}", "");
-		if (estimate_brace()){
-			builder.append("{").append(parameters).append("}");
-		} else {
-			builder.append(parameters);
-		}
+        if (parameters!=null) { 
+            parameters=parameters.replace("{", "").replace("}", "");
+            if (estimate_brace()){
+                builder.append("{").append(parameters).append("}");
+            } else {
+            	builder.append(parameters);
+            }
+        }
 		builder.append('\n');
 		return builder.toString();
 	}
@@ -123,7 +125,7 @@ public class Domain implements IAQ21Serializable{
 	public void setRange(Double min, Double max) {
 		StringBuilder build = new StringBuilder("{");
 		build.append(min);
-		build.append(" ");
+		build.append(", ");
 		build.append(max);
 		build.append("}");
 		this.parameters = build.toString();

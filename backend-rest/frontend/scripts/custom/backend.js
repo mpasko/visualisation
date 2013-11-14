@@ -38,6 +38,25 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
       };
       return internal.sendMessage(callback);
     },
+    runExport: function() {
+      var callback;
+      callback = function(message) {
+        console.log(message);
+        return request.post(internal.hostname + "toAQ21", {
+          data: message,
+          handleAs: "text",
+          headers: {
+            "Content-Type": "application/json; charset=UTF-8"
+          }
+        }).then((function(output) {
+          humane.log("Export completed");
+          return console.log(output);
+        }), function(error) {
+          return console.log("Couldn't run experiment");
+        });
+      };
+      return internal.sendMessage(callback);
+    },
     convertAQ21: function(file_content) {
       return request.post(internal.hostname + "fromAQ21", {
         data: file_content,

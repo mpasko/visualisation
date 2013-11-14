@@ -52,7 +52,6 @@ TextBox, editor, backend, grid, dojo_on) ->
           ], "runs")
       
       topic.subscribe "experiment loaded from backend", (input) ->
-        console.log "ssssssss"
         runs = input.runsGroup
         parameters = runs.runs.reduce(
           ((x,y) -> x.concat(y.runSpecificParameters)), [])
@@ -83,6 +82,8 @@ TextBox, editor, backend, grid, dojo_on) ->
         collect input
         
       dojo_on(registry.byId("run_button"), "click", @runExperiment)
+      dojo_on(registry.byId("export_button"), "click", @runExport)
+      
 
     selectAll: ->
       internal.toggle true
@@ -92,6 +93,9 @@ TextBox, editor, backend, grid, dojo_on) ->
       
     runExperiment: ->
       backend.runExperiment()
+      
+    runExport: ->
+      backend.runExport()
        
   module
       

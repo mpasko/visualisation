@@ -32,7 +32,23 @@ define [
           console.log "Couldn't run experiment"
           
       internal.sendMessage(callback) 
-
+    
+    runExport: () ->
+      callback = (message) ->
+        console.log message
+        request.post(internal.hostname + "toAQ21",
+          data:  message
+          handleAs: "text"
+          headers:
+            "Content-Type": "application/json; charset=UTF-8"
+        ).then ((output) ->
+          humane.log "Export completed"
+          
+          console.log output
+        ), (error) ->
+          console.log "Couldn't run experiment"
+          
+      internal.sendMessage(callback) 
     convertAQ21: (file_content) ->    
       request.post(internal.hostname + "fromAQ21",
         data: file_content

@@ -106,6 +106,17 @@ public class Aq21Resource {
 		Input out = parser.parse(pure);
 		return out;
 	}
+    
+    @POST
+	@Path("toAQ21")
+	@Consumes({
+		MediaType.APPLICATION_JSON
+	//	,MediaType.APPLICATION_XML
+	})
+	@Produces({MediaType.TEXT_PLAIN})
+	public String toAQ21(Output aq21){
+		return aq21.toString();
+	}
 	
 	@GET
 	@Path("browse")

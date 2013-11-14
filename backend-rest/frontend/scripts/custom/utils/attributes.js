@@ -12,17 +12,28 @@ define([], function() {
       }
     },
     getBaseParameters: function(attribute, domain_query) {
-      var parameter, parameters, _i, _len, _ref, _results;
+      var parameter, parameters, tmp, _i, _len, _results;
       if (this.hasDefaultDomain(attribute)) {
         parameters = attribute.parameters;
       } else {
         parameters = domain_query[0].parameters;
       }
-      _ref = /([^{}]+)/.exec(parameters)[1].split(" ");
+      tmp = (function() {
+        var _i, _len, _ref, _results;
+        _ref = /([^{}]+)/.exec(parameters)[1].split(" ");
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          parameter = _ref[_i];
+          _results.push(parameter.trim());
+        }
+        return _results;
+      })();
+      console.log(parameters);
+      console.log(tmp);
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        parameter = _ref[_i];
-        _results.push(parameter.trim());
+      for (_i = 0, _len = tmp.length; _i < _len; _i++) {
+        parameter = tmp[_i];
+        _results.push(parameter.slice(-1) === "," ? parameter.slice(0, -1) : parameter);
       }
       return _results;
     },

@@ -61,7 +61,6 @@ define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dij
       }, "runs");
       topic.subscribe("experiment loaded from backend", function(input) {
         var child, parameters, run, runs, x, _i, _j, _len, _len1, _ref, _ref1;
-        console.log("ssssssss");
         runs = input.runsGroup;
         parameters = runs.runs.reduce((function(x, y) {
           return x.concat(y.runSpecificParameters);
@@ -140,7 +139,8 @@ define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dij
         };
         return collect(input);
       });
-      return dojo_on(registry.byId("run_button"), "click", this.runExperiment);
+      dojo_on(registry.byId("run_button"), "click", this.runExperiment);
+      return dojo_on(registry.byId("export_button"), "click", this.runExport);
     },
     selectAll: function() {
       return internal.toggle(true);
@@ -150,6 +150,9 @@ define(["dojo/aspect", "dojo/topic", "dojo/store/Memory", "dijit/registry", "dij
     },
     runExperiment: function() {
       return backend.runExperiment();
+    },
+    runExport: function() {
+      return backend.runExport();
     }
   };
   return module;

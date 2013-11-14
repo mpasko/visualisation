@@ -159,7 +159,15 @@ public class CSVConverter {
 		String[] lines = nls.split("\\n");
 		for (String line : lines){
 			String[] events = line.split(",");
+            
+            
 			if(!events[0].isEmpty()){
+                
+                for (int i =0;i<events.length;i++) {
+                    if (CSVConverter.isNumber(events[i]) && events[i].startsWith(".")) {
+                        events[i] = "0" + events[i];
+                    }
+                }
 				eventsGroup.addEvent(events);
 			}
 		}
