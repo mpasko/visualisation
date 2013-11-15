@@ -1,4 +1,4 @@
-define(["custom/utils/attributes"], function(attributeUtils) {
+define(["custom/data/attributes"], function(attributeUtils) {
   var internal;
   internal = {
     partialRight: function(fn, args) {

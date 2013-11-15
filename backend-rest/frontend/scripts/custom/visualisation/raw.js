@@ -1,17 +1,14 @@
-define(["dojo/dom", "dijit/registry", "dojo/topic", "dojo/store/Memory"], function(dom, registry, topic, Memory) {
+define(["dojo/dom", "dijit/registry", "dojo/store/Memory"], function(dom, registry, Memory) {
   var internal, module;
-  internal = {
-    output_store: new Memory()
-  };
+  internal = {};
   module = {
+    updateTextbox: function(results) {
+      var rawtextbox;
+      rawtextbox = registry.byId("RawAq21");
+      return rawtextbox.set("value", results);
+    },
     setup: function() {
-      console.log("Raw module init");
-      return topic.subscribe("raw format", function(results) {
-        var rawtextbox;
-        internal.output_store.setData(results);
-        rawtextbox = registry.byId("RawAq21");
-        return rawtextbox.set("value", results);
-      });
+      return {};
     }
   };
   return module;

@@ -1,10 +1,10 @@
-define ["custom/utils/attributes"], (attributeUtils) ->
+define ["custom/data/attributes"], (attributeUtils) ->
   internal = 
     partialRight : ( fn , args) ->
         aps = Array.prototype.slice
         args = aps.call arguments, 1
         () ->
-          fn.apply this, aps.call( arguments ).concat args 
+          fn.apply this, aps.call( arguments ).concat args  
 
     nominal: (object, value, node, options, parameters, attr_name) ->
         div = document.createElement "div"

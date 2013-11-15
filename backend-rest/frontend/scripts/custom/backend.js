@@ -11,7 +11,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
       return topic.publish("collect experiment data", function(input) {
         message = lang.mixin(message, input);
         counter = counter + 1;
-        if (counter === 3) {
+        if (counter === 2) {
           return onEnd(JSON.stringify(message));
         }
       });
@@ -30,8 +30,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
           }
         }).then((function(output) {
           humane.log("Experiment completed");
-          topic.publish("visualise results", output["outputHypotheses"]);
-          return topic.publish("raw format", output["raw_aq21"]);
+          return topic.publish("visualise results", output);
         }), function(error) {
           return console.log("Couldn't run experiment");
         });
@@ -57,34 +56,38 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
       };
       return internal.sendMessage(callback);
     },
-    convertAQ21: function(file_content) {
-      return request.post(internal.hostname + "fromAQ21", {
-        data: file_content,
-        handleAs: "json",
-        headers: {
-          "Content-Type": "text/plain"
-        }
-      }).then((function(input) {
-        topic.publish("experiment loaded from backend", input);
-        return humane.log("Data successfully loaded");
-      }), function(error) {
-        return console.log("Couldn't convert AQ21 to JSON form");
-      });
-    },
-    convertCSV: function(file_content) {
-      return request.post(internal.hostname + "fromCSV", {
-        data: file_content,
-        handleAs: "json",
-        headers: {
-          "Content-Type": "text/plain"
-        }
-      }).then((function(input) {
-        console.log(input);
-        topic.publish("experiment loaded from backend", input);
-        return humane.log("Data successfully loaded");
-      }), function(error) {
-        return console.log("Couldn't convert AQ21 to JSON form");
-      });
+    convert: {
+      AQ21: function(file_content) {
+        topic.publish("experiment raw text loaded", file_content);
+        return request.post(internal.hostname + "fromAQ21", {
+          data: file_content,
+          handleAs: "json",
+          headers: {
+            "Content-Type": "text/plain"
+          }
+        }).then((function(input) {
+          topic.publish("experiment loaded from backend", input);
+          return humane.log("Data successfully loaded");
+        }), function(error) {
+          return console.log("Couldn't convert AQ21 to JSON form");
+        });
+      },
+      CSV: function(file_content) {
+        topic.publish("experiment raw text loaded", file_content);
+        return request.post(internal.hostname + "fromCSV", {
+          data: file_content,
+          handleAs: "json",
+          headers: {
+            "Content-Type": "text/plain"
+          }
+        }).then((function(input) {
+          console.log(input);
+          topic.publish("experiment loaded from backend", input);
+          return humane.log("Data successfully loaded");
+        }), function(error) {
+          return console.log("Couldn't convert AQ21 to JSON form");
+        });
+      }
     }
   };
   return module;

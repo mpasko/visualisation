@@ -4,13 +4,14 @@ define(["dojo/topic", "dojo/store/Memory", "custom/visualisation/latex", "custom
     output_store: new Memory()
   };
   return module = {
+    visualiseResults: function(results) {
+      internal.output_store.setData(results["outputHypotheses"]);
+      raw.updateTextbox(results["raw_aq21"]);
+      return latex.renderMath("MathOutput", results["outputHypotheses"]);
+    },
     setup: function() {
       latex.setup();
-      return topic.subscribe("visualise results", function(results) {
-        internal.output_store.setData(results);
-        latex.renderMath("MathOutput", results);
-        return raw.setup();
-      });
+      return raw.setup();
     }
   };
 });

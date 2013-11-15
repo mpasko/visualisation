@@ -21,8 +21,7 @@ define [], () ->
       domain : attribute.domain
       baseDomain : @getBaseDomain attribute, domain_query
       parameters : @getBaseParameters attribute, domain_query
-      
-      
+       
   getContinuousValues : (params) ->
      [
          id : "Minimum"
@@ -42,4 +41,4 @@ define [], () ->
 
       i++
 
-     arr
+    arr

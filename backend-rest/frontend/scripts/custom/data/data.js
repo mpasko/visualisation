@@ -1,11 +1,71 @@
-define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/cellRenderers", "custom/utils/attributes"], function(dom, win, topic, Memory, registry, grid, editor, TextBox, cellRenderers, utils) {
+define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/data/cellRenderers", "custom/data/attributes", "dojo/dom-construct"], function(dom, Memory, registry, grid, editor, TextBox, cellRenderers, utils, domConstruct) {
   var internal, module;
   internal = {
     stats_store: new Memory(),
     attr_store: new Memory(),
-    domains_store: new Memory()
+    domains_store: new Memory(),
+    events_store: new Memory(),
+    updateDataGrid: function() {
+      var attribute, attributes, column, columns, eventsGrid;
+      attributes = this.attr_store.query({});
+      columns = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = attributes.length; _i < _len; _i++) {
+          attribute = attributes[_i];
+          _results.push({
+            field: 'attribute' + (attributes.indexOf(attribute) + 1),
+            label: attribute.name,
+            autoSave: true,
+            renderCell: cellRenderers.get(attribute, internal.domains_store.query({
+              name: attribute.domain
+            }))
+          });
+        }
+        return _results;
+      })();
+      registry.byId("events").destroyDescendants(false);
+      domConstruct.create("div", {
+        id: "datagrid",
+        style: "height : 100%;"
+      }, "events");
+      eventsGrid = new grid.paginated({
+        store: this.events_store,
+        columns: (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = columns.length; _i < _len; _i++) {
+            column = columns[_i];
+            _results.push(editor(column, TextBox, "click"));
+          }
+          return _results;
+        })(),
+        pagingLinks: 3,
+        firstLastArrows: true,
+        rowsPerPage: 20,
+        pageSizeOptions: [20, 50, 100]
+      }, "datagrid");
+      return eventsGrid.refresh();
+    }
   };
   module = {
+    updateStores: function(input) {
+      internal.attr_store.setData(input.attributes);
+      internal.domains_store.setData(input.domains);
+      internal.events_store.setData(input.events);
+      internal.stats_store.setData([]);
+      internal.updateDataGrid();
+      registry.byId("statistics").refresh();
+      registry.byId("attributes").refresh();
+      return registry.byId("domains").refresh();
+    },
+    collectForExperiment: function(collect) {
+      return collect({
+        attributes: internal.attr_store.query({}),
+        domains: internal.domains_store.query({}),
+        events: internal.events_store.query({})
+      });
+    },
     setup: function() {
       var attr_grid, domains_grid, statistics_grid;
       attr_grid = new grid.onDemand({
@@ -85,65 +145,14 @@ define(["dojo/dom", "dojo/_base/window", "dojo/topic", "dojo/store/Memory", "dij
         }
         return registry.byId("statistics").refresh();
       });
-      attr_grid.on("dgrid-datachange", function(event) {
-        var attribute, attributes, columns;
+      return attr_grid.on("dgrid-datachange", function(event) {
+        var attribute;
         attribute = internal.attr_store.query({
           name: event.oldValue
         })[0];
         attribute.name = event.value;
         internal.attr_store.put(attribute);
-        attributes = internal.attr_store.query({});
-        columns = (function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = attributes.length; _i < _len; _i++) {
-            attribute = attributes[_i];
-            _results.push({
-              field: 'attribute' + (attributes.indexOf(attribute) + 1),
-              label: attribute.name,
-              autoSave: true,
-              renderCell: cellRenderers.get(attribute, internal.domains_store.query({
-                name: attribute.domain
-              }))
-            });
-          }
-          return _results;
-        })();
-        return topic.publish("provide columns info for data tab", columns);
-      });
-      topic.subscribe("experiment loaded from backend", function(input) {
-        var attribute, attributes, columns;
-        internal.attr_store.setData(input.attributes);
-        internal.domains_store.setData(input.domains);
-        attributes = internal.attr_store.query({});
-        columns = (function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = attributes.length; _i < _len; _i++) {
-            attribute = attributes[_i];
-            _results.push({
-              field: 'attribute' + (attributes.indexOf(attribute) + 1),
-              label: attribute.name,
-              autoSave: true,
-              renderCell: cellRenderers.get(attribute, internal.domains_store.query({
-                name: attribute.domain
-              }))
-            });
-          }
-          return _results;
-        })();
-        topic.subscribe("provide data for scatter plot", function(data) {});
-        topic.publish("provide columns info for data tab", columns);
-        registry.byId("attributes").refresh();
-        return registry.byId("domains").refresh();
-      });
-      return topic.subscribe("collect experiment data", function(collect) {
-        var input;
-        input = {
-          attributes: internal.attr_store.query({}),
-          domains: internal.domains_store.query({})
-        };
-        return collect(input);
+        return internal.updateDataGrid();
       });
     }
   };

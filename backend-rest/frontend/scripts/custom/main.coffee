@@ -1,20 +1,31 @@
 require [
   "dojo/ready"
-  "custom/tabs/visualisation",
-  "custom/tabs/data",
-  "custom/tabs/configuration",
-  "custom/tabs/attributes",
-  "custom/tabs/import",
-  "dojo/parser", 
+  
+  "custom/import/import",
+  "custom/data/data",
+  "custom/configuration/configuration",
+  "custom/visualisation/visualisation",
+
   "custom/splash",
-], (ready, visual,data,conf , attr, imp, parser, splash) ->
+  "dojo/topic"
+], (ready, importer,data, conf ,visual, splash, topic) ->
     ready(
       ->
         visual.setup()
-        data.setup()
         conf.setup()
-        attr.setup()
-        imp.setup()
+        data.setup()
+        importer.setup()
+        
+        topic.subscribe "experiment raw text loaded",  importer.textProvided
+        
+        topic.subscribe "experiment loaded from backend", data.updateStores
+        topic.subscribe "experiment loaded from backend", conf.createViewFromData
+        
+        topic.subscribe "collect experiment data",  data.collectForExperiment
+        topic.subscribe "collect experiment data",  conf.createDataFromView
+        
+        topic.subscribe "visualise results", visual.visualiseResults
+
         splash.play()
-        null
+        return
     )
