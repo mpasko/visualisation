@@ -10,8 +10,9 @@ define [
     domains_store : new Memory()
     events_store : new Memory()
     
-    updateDataGrid : () ->
+    updateDataGrid : (recreate) ->
        attributes = @attr_store.query {}
+       selected_attributes = @attr_store.query {selected: true}
         
        columns = (
           (
@@ -19,9 +20,9 @@ define [
             label : attribute.name
             autoSave : true
             renderCell : cellRenderers.get attribute, internal.domains_store.query(name: attribute.domain)
-          )  for attribute in attributes
+          )  for attribute in selected_attributes
        )
-   
+       
        registry.byId("events").destroyDescendants false
        domConstruct.create("div", 
         id: "datagrid"
@@ -37,25 +38,31 @@ define [
          pageSizeOptions: [20, 50, 100]
          , "datagrid")
 
-       eventsGrid.refresh()
+       eventsGrid.startup()
       
   # public 
   module = 
     updateStores: (input)->
+        attribute["selected"] = true for attribute in input.attributes
+        console.log input.attributes
         internal.attr_store.setData input.attributes
         internal.domains_store.setData input.domains
         internal.events_store.setData input.events
         internal.stats_store.setData []
 
-        internal.updateDataGrid()
+        internal.updateDataGrid true
 
         registry.byId("statistics").refresh()
         registry.byId("attributes").refresh()
         registry.byId("domains").refresh()
              
     collectForExperiment : (collect) ->
+        attributes = JSON.parse JSON.stringify internal.attr_store.query({})
+        
+        delete a.selected for a in attributes
+        
         collect 
-          attributes : internal.attr_store.query({})
+          attributes : attributes
           domains    : internal.domains_store.query({})
           events     : internal.events_store.query({})
           
@@ -68,6 +75,13 @@ define [
             label: "Attribute value"
             autoSave: true
           , TextBox, "dblclick")
+         ,
+          editor(
+              field: "selected"
+              label: "Selected"
+              autoSave: true, 
+              'checkbox'
+           )
         ], 
         "attributes")
 
@@ -117,12 +131,12 @@ define [
         
         registry.byId("statistics").refresh()
   
-      attr_grid.on "dgrid-datachange", (event) ->
-        attribute = internal.attr_store.query({name : event.oldValue})[0]
-        attribute.name = event.value
-        internal.attr_store.put attribute
+      attr_grid.on "dgrid-datachange", (event) ->  
+        el = event.cell.row.data
+        el[event.cell.column.field] = event.value
 
-        internal.updateDataGrid()
-             
-        
+        internal.attr_store.put el
+
+        internal.updateDataGrid false
+                 
   module

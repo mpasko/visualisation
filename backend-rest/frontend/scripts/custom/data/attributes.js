@@ -28,8 +28,6 @@ define([], function() {
         }
         return _results;
       })();
-      console.log(parameters);
-      console.log(tmp);
       _results = [];
       for (_i = 0, _len = tmp.length; _i < _len; _i++) {
         parameter = tmp[_i];

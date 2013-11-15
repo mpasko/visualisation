@@ -30,11 +30,11 @@ define [
           
     renderRule : (rule, consequent) ->
       antecedent = (@renderSelector rule for rule in rule.selectors).join " \\land "
-      ["$$", antecedent, "\\implies", consequent, "$$"].join " "
+      ["$$", antecedent, "\\implies", consequent, "$$"].join "\n"
         
     renderHypotheses : (hyp) ->
       consequent = @renderSelector hyp.classes[0]
-      (@renderRule(rule, consequent) for rule in hyp.rules).join " "
+      (@renderRule(rule, consequent) for rule in hyp.rules).join "\n"
       
     updateMath : (id, TeX) ->
       dom.byId(id).innerHTML = TeX

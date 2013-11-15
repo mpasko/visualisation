@@ -10,10 +10,8 @@ define [], () ->
     if @hasDefaultDomain(attribute) then parameters = attribute.parameters
     else parameters = domain_query[0].parameters
     
-    
     tmp = (parameter.trim() for parameter in /([^{}]+)/.exec(parameters)[1].split " ")
-    console.log parameters
-    console.log tmp
+
     
     (if parameter.slice(-1) == "," then parameter.slice(0, - 1)  else parameter) for parameter in tmp
     
