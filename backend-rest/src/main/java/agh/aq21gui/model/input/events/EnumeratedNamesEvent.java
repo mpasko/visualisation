@@ -43,25 +43,26 @@ public class EnumeratedNamesEvent implements EventAdapter{
 	@Override
 	public List<Map<String, Object>> formatEvents(AttributesGroup attributesGroup, List<Event> events) {
 		LinkedList<Map<String, Object>> workingList = new LinkedList<Map<String, Object>>();
+		int digits = Integer.toString(attributesGroup.attributes.size()).length();
 		for(Event event : events){
-			workingList.add(formatEvent(attributesGroup,event.getValues()));
+			workingList.add(formatEvent(attributesGroup,event.getValues(),digits));
 		}
 		return workingList;
 	}
 	
-	private String generateAttrName(int number){
+	private String generateAttrName(int number, int digits){
 		StringBuilder builder = new StringBuilder("attribute");
-		builder.append(number);
+		builder.append(String.format("%0"+digits+"d",number));
 		return builder.toString();
 	}
 	
-	TreeMap<String, Object> formatEvent(AttributesGroup attributesGroup, List<String> values) {
+	TreeMap<String, Object> formatEvent(AttributesGroup attributesGroup, List<String> values, int digits) {
 		TreeMap<String, Object> workingMap = new TreeMap<String, Object>();
 		workingMap.put("id", enumerator);
 		enumerator++;
 		int counter = 1;
 		for (String value:values){
-			workingMap.put(generateAttrName(counter), value);
+			workingMap.put(generateAttrName(counter, digits), value);
 			counter++;
 		}
 		return workingMap;
@@ -71,7 +72,7 @@ public class EnumeratedNamesEvent implements EventAdapter{
 		LinkedList<String> values = new LinkedList<String>();
 		for(String name : event.keySet()){
                     Object value = event.get(name);
-                    if (name.startsWith("attrib")) {
+                    if (name.startsWith("attr")) {
                         values.add(value.toString());
                     }
 		}

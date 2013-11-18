@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.model.gld;
 
+import java.util.LinkedList;
 import java.util.List;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -20,6 +21,18 @@ public class ValuesGroup {
 
 	List<Value> getValues() {
 		return values;
+	}
+
+	ValuesGroup cloneItself() {
+		List<Value> vals = new LinkedList<Value>();
+		for (Value v : values) {
+			vals.add(v);
+		}
+		return new ValuesGroup(vals);
+	}
+
+	int width() {
+		return values.size();
 	}
 	
 }

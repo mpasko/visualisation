@@ -5,6 +5,7 @@
 package agh.aq21gui.model.input;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**

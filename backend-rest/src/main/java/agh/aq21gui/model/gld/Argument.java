@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.model.gld;
 
+import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -19,6 +20,10 @@ public class Argument {
 	@JsonProperty
 	public String name;
 	
+	public Argument () {
+		values = new ValuesGroup(new LinkedList<Value>());
+	}
+	
 	public void setValues(List<Value> list){
 		this.values = new ValuesGroup(list);
 	}
@@ -30,5 +35,16 @@ public class Argument {
 	void print() {
 		System.out.print("name:");
 		System.out.print(name);
+	}
+
+	Argument cloneItself() {
+		Argument arg = new Argument();
+		arg.name = name;
+		arg.values = values.cloneItself();
+		return arg;
+	}
+
+	int width() {
+		return values.width();
 	}
 }

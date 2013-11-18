@@ -5,6 +5,7 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.utils.TreeNode;
+import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**

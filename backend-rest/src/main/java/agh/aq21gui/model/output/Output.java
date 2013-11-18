@@ -5,6 +5,7 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.model.input.Attribute;
 import agh.aq21gui.model.input.AttributesGroup;
 import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.DomainsGroup;
@@ -127,5 +128,14 @@ public class Output extends Input{
 	public void traverse(){
 		super.traverse();
 		this.outHypo.traverse();
+	}
+
+	public Attribute findAttribute(String name) {
+		for (Attribute attr : this.getAttributes()) {
+			if (attr.getname().equals(name)){
+				return attr;
+			}
+		}
+		return null;
 	}
 }

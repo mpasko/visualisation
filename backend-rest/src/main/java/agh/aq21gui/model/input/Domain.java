@@ -6,6 +6,8 @@ package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.utils.TreeNode;
+import agh.aq21gui.utils.Util;
+import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,6 +28,7 @@ public class Domain implements IAQ21Serializable{
 	private String name;
 	private String domain;
 	private String parameters;
+	private List<String> range = new LinkedList<String>();
 	//private boolean brace=false;
 	
 	@XmlElement(name="id")
@@ -57,11 +60,20 @@ public class Domain implements IAQ21Serializable{
 	
 	@XmlElement(name="parameters")
 	public String getparameters(){
+		this.buildParams();
+		this.parameters = this.bracify(parameters);
 		return parameters;
 	}
 	
-	public void setparameters(String name){
-		this.parameters = name;
+	public void setparameters(String params){
+		String params_nonbre = params.replace("{", "").replace("}", "").replace(" ", "");
+		this.range = new LinkedList<String>();
+		for (String item : params_nonbre.split(",")) {
+			if (!item.isEmpty()) {
+				this.range.add(item);
+			}
+		}
+		this.parameters = params_nonbre;
 	}
 	
 	public Domain(){
@@ -70,8 +82,11 @@ public class Domain implements IAQ21Serializable{
 	}
 	
 	private boolean estimate_brace(){
-		boolean nobrace = domain.equalsIgnoreCase("continuous");
-		nobrace |= parameters.length()==0;
+		boolean nobrace=false;
+		if (domain != null) {
+			nobrace	= domain.equalsIgnoreCase("continuous");
+		}
+		nobrace |= emptyParams();
 		return !(nobrace);
 	}
 	
@@ -79,8 +94,18 @@ public class Domain implements IAQ21Serializable{
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
 		builder.append(name).append(' ')
-				.append(domain).append(' ');
-        if (parameters!=null) { 
+				.append(domain);
+		if (!emptyParams()){
+			builder.append(' ');
+		    builder.append(this.getparameters());
+		}
+		builder.append('\n');
+		return builder.toString();
+	}
+	
+	private String bracify(String parameters){
+		StringBuilder builder = new StringBuilder();
+		if (!emptyParams()) { 
             parameters=parameters.replace("{", "").replace("}", "");
             if (estimate_brace()){
                 builder.append("{").append(parameters).append("}");
@@ -88,7 +113,6 @@ public class Domain implements IAQ21Serializable{
             	builder.append(parameters);
             }
         }
-		builder.append('\n');
 		return builder.toString();
 	}
 
@@ -97,25 +121,31 @@ public class Domain implements IAQ21Serializable{
 		domain = node.childAt(1, TParser.ID).value();
 		CommonTree args = (CommonTree) node.tree().getChild(2);
 		if(args.getType()==TParser.DOMAIN_ARGS){
-			parameters = parseParams(args);
+			parseRange(args);
 		}else if(args.getType()==TParser.DOMAIN_ARGS_BRACE){
-	//		brace = true;
-			parameters = parseParams(args);
+			parseRange(args);
 		}else{
 			parameters = "";
 		}
 	}
-
-	public static String parseParams(CommonTree args) {
-		StringBuilder pbuild = new StringBuilder();
+	
+	private void parseRange(CommonTree args) {
 		for(Object item : args.getChildren()){
 			CommonTree arg = (CommonTree) item;
+			this.range.add(arg.getText());
+		}
+		buildParams();
+	}
+
+	private void buildParams() {
+		StringBuilder pbuild = new StringBuilder();
+		for(String param : this.range){
 			if(pbuild.length()>0){
 				pbuild.append(", ");
 			}
-			pbuild.append(arg.getText());
+			pbuild.append(param);
 		}
-		return pbuild.toString();
+		this.parameters = pbuild.toString();
 	}
 
 	void traverse() {
@@ -123,26 +153,29 @@ public class Domain implements IAQ21Serializable{
 	}
 
 	public void setRange(Double min, Double max) {
-		StringBuilder build = new StringBuilder("{");
+/*		StringBuilder build = new StringBuilder("{");
 		build.append(min);
 		build.append(", ");
 		build.append(max);
 		build.append("}");
 		this.parameters = build.toString();
+		*/
+		setRange(Util.strings(min.toString(),max.toString()));
 	}
 
 	public void setRange(List<String> values) {
-		StringBuilder build = new StringBuilder("{");
-		int max = values.size();
-		int i = 1;
-		for (String val : values){
-			build.append(val);
-			if(i<max){
-				build.append(", ");	
-			}
-			++i;
-		}
-		build.append("}");
-		this.parameters = build.toString();
+		this.range = values;
+		buildParams();
+	}
+	
+	
+	public List<String> getRange() {
+		return this.range;
+	}
+
+	public boolean emptyParams() {
+		Util.isNull(parameters, "parameters");
+		Util.isNull(range, "range");
+		return ((this.parameters==null)||this.parameters.isEmpty()) && (this.range.isEmpty());
 	}
 }

@@ -45,7 +45,7 @@ public class Hypothesis {
 	
 	@XmlElement(name="rules")
 	public void setRules(List<Rule> rules){
-		rules=rules;
+		this.rules=rules;
 	}
 	
 	public List<Rule> getRules(){

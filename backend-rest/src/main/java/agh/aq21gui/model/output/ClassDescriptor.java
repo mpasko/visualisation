@@ -5,6 +5,7 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.model.gld.Value;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class ClassDescriptor {
 
 	public String name;
 	public String comparator;
-	public String value;
+	private String value="";
 	public String range_begin="";
 	public String range_end="";
 	public List<String> set_elements=new LinkedList<String>();
@@ -49,6 +50,9 @@ public class ClassDescriptor {
 	}
 	
 	public String getValue(){
+		if (value.isEmpty() && (set_elements.size()>=1) ) {
+			rangeToString();
+		}
 		return this.value; 
 	}
 	
@@ -85,9 +89,20 @@ public class ClassDescriptor {
 		builder.append("[");
 		builder.append(name);
 		builder.append(comparator);
-		builder.append(value);
+		builder.append(getValue());
 		builder.append("]");
 		return builder.toString();
+	}
+	
+	private void rangeToString(){
+		StringBuilder build = new StringBuilder();
+		for (String element:set_elements) {
+			if (build.length()>0) {
+				build.append(",");
+			}
+			build.append(element);
+		}
+		value = build.toString();
 	}
 
 	public void parseSelector(TreeNode desc) {
