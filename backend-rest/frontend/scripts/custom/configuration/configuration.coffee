@@ -6,47 +6,24 @@ define [
   # private
   internal =
     params_store : new Memory()
-    removeTab : (tab) ->
-      registry.byId("runTabs").removeChild tab
-      registry.byId(tab.id).destroy()
-    createTab : (tab, params_store) ->
-        contentPane = new ContentPane(title: tab)
-        params_grid = new grid.onDemand(
-          columns:
-            name:
-              label: "Name"
-
-            value: editor(
-              label: "Value"
-              field: "value"
-              autoSave: true
-            , TextBox, "click")
-
-          store: params_store
-          query: parent: tab
-        )
-        contentPane.addChild params_grid
-        registry.byId("runTabs").addChild contentPane  
+    runs_store : new Memory()
   
   # public    
   module =
     createViewFromData : (input) ->
           conf_grid = registry.byId("runs")
-
+          params_grid = registry.byId("parameters")
+          
           runs = input.runsGroup
           parameters = runs.runs.reduce(
             ((x,y) -> x.concat(y.runSpecificParameters)), [])
           parameters = parameters.concat(runs.globalLearningParameters)
 
           internal.params_store.setData parameters
-          internal.runs_store = new Memory(
-            data : (id: x, selected: true for x in runs.runsNames.concat(["globalLearningParameters"]))
-          )
-          conf_grid.set("store", internal.runs_store);
-
-          internal.removeTab(child) for child in registry.byId("runTabs").getChildren()
-          internal.createTab(run.id, internal.params_store) for run in internal.runs_store.query({})
+          internal.runs_store.setData (id: x, selected: true for x in runs.runsNames.concat(["globalLearningParameters"]))
+          
           conf_grid.refresh()
+          params_grid.refresh()
 
     createDataFromView : (collect) ->
         runsStore = internal.runs_store
@@ -63,7 +40,7 @@ define [
         collect input
         
     setup : ->
-      conf_grid = grid.onDemand(
+      conf_grid = new grid.onDemand(
           columns: [
             field: "id"
             label: "Run"
@@ -74,10 +51,52 @@ define [
               autoSave: true, 
               'checkbox'
             )
-          ], "runs")
+          ], 
+          store: internal.runs_store
+          "runs")
+      
+      param_grid = new grid.onDemand(
+        columns:
+          name:
+            label: "Name"
+
+          value: editor(
+            label: "Value"
+            field: "value"
+            autoSave: true
+          , TextBox, "click")
+
+        store: internal.params_store
+        query: parent: "globalLearningParameters",
+        "parameters"
+      )
+
+      conf_grid.on "dgrid-select", (event) ->
+        param_grid.set 'query', parent: event.rows[0].id
+        param_grid.refresh()
+        
       
       dojo_on(registry.byId("run_button"), "click", backend.runExperiment)
       dojo_on(registry.byId("export_button"), "click", backend.runExport)
+      
+      dojo_on(registry.byId("newRunButton"), "click", ->
+        internal.runs_store.put
+          id: registry.byId("newRunText").value
+          selected: true
+          
+        conf_grid = registry.byId("runs")
+        conf_grid.refresh()
+      )
+      
+      dojo_on(registry.byId("newParameterButton"), "click", ->
+        params_grid = registry.byId("parameters")
+        internal.params_store.put
+          name: registry.byId("newParameterText").value
+          value: "value"
+          parent: params_grid.query.parent
+          
+        params_grid.refresh()
+      )
        
   module
       

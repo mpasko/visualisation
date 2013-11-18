@@ -2,72 +2,34 @@ define(["dojo/aspect", "dojo/store/Memory", "dijit/registry", "dijit/layout/Cont
   var internal, module;
   internal = {
     params_store: new Memory(),
-    removeTab: function(tab) {
-      registry.byId("runTabs").removeChild(tab);
-      return registry.byId(tab.id).destroy();
-    },
-    createTab: function(tab, params_store) {
-      var contentPane, params_grid;
-      contentPane = new ContentPane({
-        title: tab
-      });
-      params_grid = new grid.onDemand({
-        columns: {
-          name: {
-            label: "Name"
-          },
-          value: editor({
-            label: "Value",
-            field: "value",
-            autoSave: true
-          }, TextBox, "click")
-        },
-        store: params_store,
-        query: {
-          parent: tab
-        }
-      });
-      contentPane.addChild(params_grid);
-      return registry.byId("runTabs").addChild(contentPane);
-    }
+    runs_store: new Memory()
   };
   module = {
     createViewFromData: function(input) {
-      var child, conf_grid, parameters, run, runs, x, _i, _j, _len, _len1, _ref, _ref1;
+      var conf_grid, parameters, params_grid, runs, x;
       conf_grid = registry.byId("runs");
+      params_grid = registry.byId("parameters");
       runs = input.runsGroup;
       parameters = runs.runs.reduce((function(x, y) {
         return x.concat(y.runSpecificParameters);
       }), []);
       parameters = parameters.concat(runs.globalLearningParameters);
       internal.params_store.setData(parameters);
-      internal.runs_store = new Memory({
-        data: (function() {
-          var _i, _len, _ref, _results;
-          _ref = runs.runsNames.concat(["globalLearningParameters"]);
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            x = _ref[_i];
-            _results.push({
-              id: x,
-              selected: true
-            });
-          }
-          return _results;
-        })()
-      });
-      conf_grid.set("store", internal.runs_store);
-      _ref = registry.byId("runTabs").getChildren();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        child = _ref[_i];
-        internal.removeTab(child);
-      }
-      _ref1 = internal.runs_store.query({});
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        run = _ref1[_j];
-        internal.createTab(run.id, internal.params_store);
-      }
-      return conf_grid.refresh();
+      internal.runs_store.setData((function() {
+        var _i, _len, _ref, _results;
+        _ref = runs.runsNames.concat(["globalLearningParameters"]);
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          x = _ref[_i];
+          _results.push({
+            id: x,
+            selected: true
+          });
+        }
+        return _results;
+      })());
+      conf_grid.refresh();
+      return params_grid.refresh();
     },
     createDataFromView: function(collect) {
       var input, parametersStore, runNames, runsStore, x;
@@ -112,8 +74,8 @@ define(["dojo/aspect", "dojo/store/Memory", "dijit/registry", "dijit/layout/Cont
       return collect(input);
     },
     setup: function() {
-      var conf_grid;
-      conf_grid = grid.onDemand({
+      var conf_grid, param_grid;
+      conf_grid = new grid.onDemand({
         columns: [
           {
             field: "id",
@@ -123,10 +85,51 @@ define(["dojo/aspect", "dojo/store/Memory", "dijit/registry", "dijit/layout/Cont
             label: "Selected",
             autoSave: true
           }, 'checkbox')
-        ]
+        ],
+        store: internal.runs_store
       }, "runs");
+      param_grid = new grid.onDemand({
+        columns: {
+          name: {
+            label: "Name"
+          },
+          value: editor({
+            label: "Value",
+            field: "value",
+            autoSave: true
+          }, TextBox, "click")
+        },
+        store: internal.params_store,
+        query: {
+          parent: "globalLearningParameters"
+        }
+      }, "parameters");
+      conf_grid.on("dgrid-select", function(event) {
+        param_grid.set('query', {
+          parent: event.rows[0].id
+        });
+        return param_grid.refresh();
+      });
       dojo_on(registry.byId("run_button"), "click", backend.runExperiment);
-      return dojo_on(registry.byId("export_button"), "click", backend.runExport);
+      dojo_on(registry.byId("export_button"), "click", backend.runExport);
+      dojo_on(registry.byId("newRunButton"), "click", function() {
+        internal.runs_store.put({
+          id: registry.byId("newRunText").value,
+          selected: true
+        });
+        conf_grid = registry.byId("runs");
+        return conf_grid.refresh();
+      });
+      return dojo_on(registry.byId("newParameterButton"), "click", function() {
+        var params_grid;
+        params_grid = registry.byId("parameters");
+        internal.params_store.put({
+          name: registry.byId("newParameterText").value,
+          value: "value",
+          parent: params_grid.query.parent
+        });
+        return params_grid.refresh();
+      });
     }
   };
   return module;

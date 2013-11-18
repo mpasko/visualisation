@@ -14,7 +14,7 @@ define [
                   opacity:
                     start: 1
                     end: 0
-                duration: 1500
+                duration: 500
            ) for name in (name for name in query ".splash").reverse()
        )
 
