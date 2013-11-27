@@ -12,6 +12,8 @@ import agh.aq21gui.model.gld.GLDOutput;
 import agh.aq21gui.model.gld.Recognizer;
 import agh.aq21gui.model.gld.Value;
 import agh.aq21gui.model.input.Attribute;
+import agh.aq21gui.model.input.Domain;
+import agh.aq21gui.model.input.DomainsGroup;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.Rule;
@@ -31,26 +33,28 @@ public class GLDConverter {
 	private int init_part;
 	private List<Selector> selectors;
 	private final Output data;
+	private final DomainsGroup domains;
 
 	public GLDConverter(GLDInput input) {
 		cols = new LinkedList<Argument>();
 		rows = new LinkedList<Argument>();
 		attrs = input.getData().getAttributes();
-		init_part = attrs.size() / 2;
+		domains = input.getData().gDG();
 		data = input.getData();
 		out = new GLDOutput(data);
 	}
 
 	public GLDOutput convert() {
 		selectors = extractSelectors();
+		List<Argument> args = new LinkedList<Argument>();
 		for (int i = 0; i < attrs.size(); ++i) {
 			Argument arg = new Argument();
 			agh.aq21gui.model.input.Attribute attr = attrs.get(i);
 			arg.name = attr.getname();
 			
 			List<Value> values = new LinkedList<Value>();
-			final String domain = attr.getdomain();
-			RangeList range = new RangeList(attr);
+			String domain = attr.getdomainRecursive(domains);
+			RangeList range = new RangeList(attr,domains);
 			for (Selector selector : selectors) {		
 				if (selector.name.equals(arg.name)) {
 					if (domain.equalsIgnoreCase("nominal")) {
@@ -84,12 +88,20 @@ public class GLDConverter {
 					values.add(value);
 				}
 			}
-			arg.setValues(values);
+			if (values.size()>=2) {
+				arg.setValues(values);
+				args.add(arg);
+			}
+		}
+		int i = 0;
+		init_part = args.size() / 2;
+		for (Argument arg : args){
 			if (i >= init_part) {
 				cols.add(arg);
 			} else {
 				rows.add(arg);
 			}
+			++i;
 		}
 		out.setRows(rows);
 		out.setColumns(cols);

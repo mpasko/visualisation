@@ -50,7 +50,7 @@ public class Domain implements IAQ21Serializable{
 	}
 	
 	@XmlElement(name="domain")
-	public String getdomain(){
+	public String getdomain() {
 		return domain;
 	}
 	
@@ -85,6 +85,7 @@ public class Domain implements IAQ21Serializable{
 		boolean nobrace=false;
 		if (domain != null) {
 			nobrace	= domain.equalsIgnoreCase("continuous");
+			nobrace |= domain.equalsIgnoreCase("integer");
 		}
 		nobrace |= emptyParams();
 		return !(nobrace);
@@ -177,5 +178,19 @@ public class Domain implements IAQ21Serializable{
 		Util.isNull(parameters, "parameters");
 		Util.isNull(range, "range");
 		return ((this.parameters==null)||this.parameters.isEmpty()) && (this.range.isEmpty());
+	}
+
+	
+	public String getdomainRecursive(DomainsGroup dg){
+		String doma = domain;
+		final boolean notContinuous = !doma.equalsIgnoreCase("continuous");
+		final boolean notNominal = !doma.equalsIgnoreCase("nominal");
+		final boolean notInteger = !doma.equalsIgnoreCase("integer");
+		final boolean notLinear = !doma.equalsIgnoreCase("linear");
+		if (notContinuous&&notInteger&&notLinear&&notNominal){
+			Domain domObject = dg.findDomain(doma);
+			doma = domObject.getdomain();
+		}
+		return doma;
 	}
 }

@@ -19,27 +19,11 @@ public class ClassesGroup {
 	public ClassesGroup(){}
 	
 	public ClassesGroup(TreeNode classes){
-		/* now */
 		for(TreeNode classNode : classes.iterator(TParser.CLASS_DESCRIPTION)){
 			ClassDescriptor descriptor = new ClassDescriptor();
 			descriptor.parseSelector(classNode);
 			descriptors.add(descriptor);
 		}
-		/* before *x/
-		for(Object t : tree.getChildren()){
-			CommonTree childTree = (CommonTree)t;
-			if(childTree.getType()==TParser.CLASS_DESCRIPTION){
-				ClassDescriptor descriptor = new ClassDescriptor();
-				descriptor.name = childTree.getChild(0).getText();
-				descriptor.comparator = childTree.getChild(1).getText();
-				descriptor.value = childTree.getChild(2).getText();
-				descriptors.add(descriptor);
-			}else{
-				Logger.getLogger("Interpreter").severe("Error! Expected CLASS_DESCRIPTION, received:");
-				Logger.getLogger("Interpreter").severe(tree.toString());
-			}
-		}
-		/* */
 	}
 
 	void traverse() {

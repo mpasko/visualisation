@@ -5,6 +5,8 @@
 package agh.aq21gui.algorithms;
 
 import agh.aq21gui.model.gld.Argument;
+import agh.aq21gui.model.gld.CellValue;
+import agh.aq21gui.model.gld.Coordinate;
 import agh.aq21gui.model.gld.GLDInput;
 import agh.aq21gui.model.gld.GLDOutput;
 import agh.aq21gui.model.gld.Value;
@@ -57,8 +59,8 @@ public class GLDConverterTest {
 	 * Test of convert method, of class GLDConverter.
 	 */
 	@Test
-	public void testConvert() {
-		System.out.println("convert");
+	public void testConvert2nominal() {
+		System.out.println("convert2nominal");
 		GLDInput input = new GLDInput();
 		input.setData(sample2nominal);
 		GLDConverter instance = new GLDConverter(input);
@@ -89,6 +91,28 @@ public class GLDConverterTest {
 		}
 		System.out.println();
 		assertEquals(true,containsString(arg2.getValues(),"d"));
+	}
+	
+	/**
+	 * Test of convert method, of class GLDConverter.
+	 */
+	@Test
+	public void testConvertEmpty() {
+		System.out.println("convertEmpty");
+		GLDInput input = new GLDInput();
+		input.setData(sample2nominal);
+		GLDConverter instance = new GLDConverter(input);
+		GLDOutput result = instance.convert();
+		List<Coordinate> h = result.getHCoordSequence();
+		List<Coordinate> v = result.getVCoordSequence();
+		CellValue value1 = result.eval(v.get(0), h.get(0));
+		CellValue value2 = result.eval(v.get(1), h.get(0));
+		CellValue value3 = result.eval(v.get(0), h.get(1));
+		CellValue value4 = result.eval(v.get(1), h.get(1));
+		assertEquals(true,value1.compare(value2));
+		assertEquals(true,value2.compare(value3));
+		assertEquals(true,value3.compare(value4));
+		assertEquals(true,value4.compare(value1));
 	}
 
 	private static boolean containsString(List<Value> list, String ...strings) {

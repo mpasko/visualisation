@@ -1,9 +1,0 @@
-drop table attributes;
-drop table eventvalues;
-drop table events;
-drop table domains;
-drop table experiments;
-drop table results;
-drop table ExperimentList;
-drop table ResultList;
-drop table directory;

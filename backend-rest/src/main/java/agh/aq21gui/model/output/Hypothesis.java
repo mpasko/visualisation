@@ -56,6 +56,10 @@ public class Hypothesis {
 		LABEL = "Output_hypotheses";
 	}
 	
+	public void addClass(ClassDescriptor desc){
+		this.classes.descriptors.add(desc);
+	}
+	
 	public void addBody(TreeNode tree){
 		/* now: */
 		TreeNode classesTree = tree.childAt(0, TParser.CLASSES);

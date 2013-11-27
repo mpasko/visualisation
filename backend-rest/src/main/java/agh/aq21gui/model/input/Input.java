@@ -191,8 +191,9 @@ public class Input implements IAQ21Serializable {
 		this.domainsGroup = domains;
 	}
 
-	protected void sAttributesGroup(AttributesGroup attributes) {
-		this.attributesGroup = attributes;
+	
+	public DomainsGroup gDG() {
+		return domainsGroup;
 	}
 	
 	@Override
@@ -228,7 +229,7 @@ public class Input implements IAQ21Serializable {
 		this.testingEventsGroup.traverse();
 	}
 
-	public void sAG(AttributesGroup attributes) {
+	public void sAttributesGroup(AttributesGroup attributes) {
 		this.attributesGroup = attributes;
 	}
 }

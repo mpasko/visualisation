@@ -76,6 +76,10 @@ public class ArgumentsGroup {
 		for (Argument arg : arguments) {
 			iterators.add(new StopIterator(arg.name,arg.getValues()));
 		}
+		if (iterators.size()==0) {
+			System.out.println("Warning! CoordSequence is empty!");
+			return product;
+		}
 		while (iterators.getFirst().hasNext()||(iterators.getFirst().current!=null)) {
 			Coordinate coord = new Coordinate();
 			for (StopIterator iterator : iterators) {

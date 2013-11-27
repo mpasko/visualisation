@@ -37,7 +37,7 @@ public class RangeListTest {
 	@Test
 	public void testSimpleAddContinuous() {
 		System.out.println("addContinuous");
-		RangeList instance = new RangeList(null);
+		RangeList instance = new RangeList(null,null);
 		instance.addContinuous("4", "=");
 		instance.addContinuous("5", "=");
 		instance.addContinuous("6", ">");
@@ -53,7 +53,7 @@ public class RangeListTest {
 	@Test
 	public void testOrderAddContinuous() {
 		System.out.println("addContinuous_order");
-		RangeList instance = new RangeList(null);
+		RangeList instance = new RangeList(null,null);
 		instance.addContinuous("4", "=");
 		instance.addContinuous("6", ">");
 		instance.addContinuous("1", "<");
@@ -80,7 +80,7 @@ public class RangeListTest {
 		System.out.println("addLinear");
 		String value = "b";
 		String comparator = "=";
-		RangeList instance = new RangeList(attr);
+		RangeList instance = new RangeList(attr,null);
 		instance.addLinear(value, comparator);
 		
 		List<RangeElement> elems = instance.getElements();
@@ -94,7 +94,7 @@ public class RangeListTest {
 	@Test
 	public void testGenereteNames() {
 		System.out.println("genereteNames");
-		RangeList instance = new RangeList(null);
+		RangeList instance = new RangeList(null,null);
 		instance.addContinuous("1", ">");
 		instance.addContinuous("2", ">");
 		instance.addContinuous("2", "=");

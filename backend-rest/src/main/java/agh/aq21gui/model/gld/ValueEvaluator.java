@@ -17,16 +17,16 @@ import java.util.List;
  *
  * @author marcin
  */
-class DynamicEvaluator implements Evaluator {
+class ValueEvaluator implements Evaluator {
 //	private final ArgumentsGroup rows;
 //	private final ArgumentsGroup cols;
-	private final Hypothesis hypo;
-	private List<Value> contrdomain;
+	private final List<Hypothesis> hypotheses;
+	private List<CellValue> contrdomain;
 	private final Output out;
 
-	DynamicEvaluator(Output out/*, ArgumentsGroup rows, ArgumentsGroup columns*/) {
+	ValueEvaluator(Output out/*, ArgumentsGroup rows, ArgumentsGroup columns*/) {
 		this.out = out;
-		this.hypo = out.getOutputHypotheses().get(0);
+		this.hypotheses = out.getOutputHypotheses();
 //		this.rows = rows;
 //		this.cols = columns;
 		initContrDomain();
@@ -34,7 +34,7 @@ class DynamicEvaluator implements Evaluator {
 
 	@Override
 	public Evaluator cloneItself() {
-		DynamicEvaluator deg = new DynamicEvaluator(out/*,rows,cols*/);
+		ValueEvaluator deg = new ValueEvaluator(out/*,rows,cols*/);
 		return deg;
 	}
 
@@ -75,9 +75,17 @@ class DynamicEvaluator implements Evaluator {
 	*/
 
 	@Override
-	public Value eval(Coordinate row, Coordinate col) {
+	public CellValue eval(Coordinate row, Coordinate col) {
 		Coordinate coord = row.merge(col);
-		for (Rule rule : hypo.rules){
+		CellValue result = new CellValue();
+		for (Hypothesis hypo:this.hypotheses){
+			if (ruleMatches(hypo.rules, coord)) {
+				result.addAll(hypo.getClasses());
+			}
+		}
+		/*
+		
+		for (Rule rule : hypotheses.rules){
 			boolean matches=true;
 			for (Selector sel : rule.getSelectors()){
 				if(!selectorMatches(sel,coord)){
@@ -85,21 +93,22 @@ class DynamicEvaluator implements Evaluator {
 				}
 			}
 			if (matches) {
-				return retrieveValue(rule,row.merge(col));
+				return retrieveValue(rule,coord);
 			}
 		}
-		return null;
+		*/
+		return result;
 	}
 
 	private boolean selectorMatches(Selector sel, Coordinate coord) {
 		Value v = coord.get(sel.name);
 		Attribute attr = out.findAttribute(sel.name);
-		return v.recognizer.accept(sel,attr);
+		return v.recognizer.accept(sel,attr,out.gDG());
 	}
 
-	private Value retrieveValue(Rule rule, Coordinate cord) {
+	private CellValue retrieveValue(Rule rule, Coordinate coord) {
 		for (ClassDescriptor desc : rule.getSelectors()) {
-			if (matches(desc,cord)){
+			if (matches(desc,coord)){
 				return findContrdomainValue(desc);
 			}
 		}
@@ -123,22 +132,24 @@ class DynamicEvaluator implements Evaluator {
 	*/
 
 	private void initContrDomain() {
-		this.contrdomain = new LinkedList<Value>();
+		this.contrdomain = new LinkedList<CellValue>();
+		/*
 		this.contrdomain.add(null);
-		for (ClassDescriptor desc : hypo.getClasses()){
-			Value exist = findContrdomainValue(desc);
+		for (ClassDescriptor desc : hypotheses.getClasses()){
+			CellValue exist = findContrdomainValue(desc);
 			if (exist==contrdomain.get(0)) {
-				final Value value = new Value(desc.getValue());
+				final CellValue value = new CellValue(desc);
 				this.contrdomain.add(value);
 			}
 		}
+		*/
 	}
 
-	private Value findContrdomainValue(ClassDescriptor desc) {
-		Value exist=contrdomain.get(0);
-		for (Value v : contrdomain){
+	private CellValue findContrdomainValue(ClassDescriptor desc) {
+		CellValue exist=contrdomain.get(0);
+		for (CellValue v : contrdomain){
 			if (v!=null) {
-				if (v.name.equalsIgnoreCase(desc.getValue())){
+				if (v.matches(desc)){
 					exist = v;
 				}
 			}
@@ -149,6 +160,19 @@ class DynamicEvaluator implements Evaluator {
 	private boolean matches(ClassDescriptor desc, Coordinate cord) {
 		Value value = cord.get(desc.name);
 		Attribute attr = out.findAttribute(desc.name);
-		return value.recognizer.accept(desc, attr);
+		return value.recognizer.accept(desc, attr, out.gDG());
+	}
+
+	private boolean ruleMatches(List<Rule> rules, Coordinate coord) {
+		for (Rule rule:rules){
+			boolean selectorMatch = true;
+			for (Selector sel : rule.getSelectors()){
+				selectorMatch |= selectorMatches(sel, coord);
+			}
+			if (selectorMatch) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

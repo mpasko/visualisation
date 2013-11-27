@@ -6,6 +6,7 @@ package agh.aq21gui.algorithms.conversion;
 
 import agh.aq21gui.model.gld.Value;
 import agh.aq21gui.model.input.Attribute;
+import agh.aq21gui.model.input.DomainsGroup;
 import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.utils.Util;
 import org.junit.After;
@@ -38,6 +39,7 @@ public class RangeRecognizerTest {
 		System.out.println("accept");
 	//	Value v = new Value("a");
 		Attribute attr = new Attribute();
+		DomainsGroup dg = new DomainsGroup();
 		attr.setname("a");
 		attr.setdomain("continuous");
 		attr.setRange(Util.strings("1","2","3"));
@@ -49,7 +51,7 @@ public class RangeRecognizerTest {
 		RangeElement right = new ContinuousElement("5", "<");
 		RangeRecognizer instance = new RangeRecognizer(left,right);
 		boolean expResult = true;
-		boolean result = instance.accept(s,attr);
+		boolean result = instance.accept(s,attr,dg);
 		assertEquals(expResult, result);
 	}
 
@@ -64,12 +66,13 @@ public class RangeRecognizerTest {
 		s.comparator = "=";
 		s.setValue("a");
 		Attribute attr = new Attribute();
+		DomainsGroup dg = new DomainsGroup();
 		attr.setname("x");
 		attr.setdomain("nominal");
 		attr.setparameters("{a, b}");
 		RangeRecognizer instance = new RangeRecognizer("a");
 		boolean expResult = true;
-		boolean result = instance.accept(s, attr);
+		boolean result = instance.accept(s, attr, dg);
 		assertEquals(expResult, result);
 	}
 }

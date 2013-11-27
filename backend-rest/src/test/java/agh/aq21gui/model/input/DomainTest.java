@@ -175,4 +175,19 @@ public class DomainTest {
 		}
 		assertTrue(containsAll);
 	}
+	
+	@Test
+	public void getDomainRecursiveTest() {
+		System.out.println("getRecursive");
+		Attribute attr = new Attribute();
+		attr.setname("x");
+		attr.setdomain("length");
+		DomainsGroup dg = new DomainsGroup();
+		Domain domain = new Domain();
+		domain.setdomain("continuous");
+		domain.setname("length");
+		dg.domains.add(domain);
+		String result = attr.getdomainRecursive(dg);
+		assertEquals("continuous", result);
+	}
 }

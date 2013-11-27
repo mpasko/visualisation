@@ -19,6 +19,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  */
 @XmlRootElement
 public class GLDOutput {
+
 	private ArgumentsGroup rows;
 	private ArgumentsGroup columns;
 	private Evaluator elements;
@@ -28,7 +29,7 @@ public class GLDOutput {
 		this.hypo = out;
 		rows = new ArgumentsGroup(new LinkedList<Argument>());
 		columns = new ArgumentsGroup(new LinkedList<Argument>());
-		elements = new DynamicEvaluator(out/*,rows,columns*/);
+		elements = new ValueEvaluator(out/*,rows,columns*/);
 	}
 	
 	@JsonProperty("rows")
@@ -49,11 +50,19 @@ public class GLDOutput {
 		return this.columns.getArguments();
 	}
 	
+	/**
+	 * 
+	 * @return cols in full sequence
+	 */
 	@JsonIgnore
 	public List<Coordinate> getHCoordSequence(){
 		return this.columns.getCoordSequence();
 	}
 	
+	/**
+	 * 
+	 * @return rows in full sequence
+	 */
 	@JsonIgnore
 	public List<Coordinate> getVCoordSequence(){
 		return this.rows.getCoordSequence();
@@ -87,7 +96,26 @@ public class GLDOutput {
 		return rows.width();
 	}
 
-	public Value eval(Coordinate row, Coordinate col) {
+	/**
+	 * Returns cell value
+	 * @param row ==V
+	 * @param col ==H
+	 * @return cellvalue
+	 */
+	public CellValue eval(Coordinate row, Coordinate col) {
 		return this.elements.eval(row,col);
+	}
+	
+	static void print(GLDOutput gld_output) {
+		List<Coordinate> v = gld_output.getVCoordSequence();
+		List<Coordinate> h = gld_output.getHCoordSequence();
+		
+		for(Coordinate row : v){
+			for(Coordinate col : h){
+				CellValue value = gld_output.eval(row, col);
+				System.out.println(value.toString());
+			}
+			System.out.println("\n");
+		}
 	}
 }

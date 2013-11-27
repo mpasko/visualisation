@@ -139,4 +139,31 @@ public class ClassDescriptor {
 	void traverse() {
 		if(name.isEmpty());
 	}
+
+	public boolean contains(ClassDescriptor other) {
+		if (equals(other)){
+			return true;
+		}
+		if (this.comparator.equals("=")){
+			return false;
+		}
+		//TODO
+		return false;
+	}
+	
+	public boolean equals(ClassDescriptor other){
+		if (other==null){
+			return false;
+		}
+		if (!this.name.equalsIgnoreCase(other.name)){
+			return false;
+		}
+		if (!this.comparator.equalsIgnoreCase(other.comparator)){
+			return false;
+		}
+		if (!this.value.equalsIgnoreCase(other.value)){
+			return false;
+		}
+		return true;
+	}
 }

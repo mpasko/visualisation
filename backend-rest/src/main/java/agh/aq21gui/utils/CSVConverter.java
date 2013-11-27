@@ -11,6 +11,8 @@ import agh.aq21gui.model.input.DomainsGroup;
 import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.EventsGroup;
 import agh.aq21gui.model.input.Input;
+import agh.aq21gui.model.input.Run;
+import agh.aq21gui.model.input.Test;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,9 +21,23 @@ import java.util.List;
  * @author marcin
  */
 public class CSVConverter {
+
+	private Test generateRun(Attribute attr) {
+		Run r = new Run();
+		r.setName("c1");
+		r.addParameter("mode", "tf");
+		r.addParameter("consequent", String.format("[%s=*]", attr.getname()));
+		r.addParameter("ambiguity", "includeinpos");
+		r.addParameter("trim", "optimal");
+		r.addParameter("compute_alternative_covers", "true");
+		r.addParameter("maxstar", "1");
+		r.addParameter("maxrule", "10");
+		return r;
+	}
 	
 	private enum DomainType{
 		CONTINUOUS("continuous"),
+		INTEGER("integer"),
 		LINEAR("linear"),
 		NOMINAL("nominal");
 		
@@ -58,7 +74,7 @@ public class CSVConverter {
 		
 		public PredictedDomain(int id){
 			number = id;
-			type = DomainType.LINEAR;
+			type = DomainType.NOMINAL;
 			values = new LinkedList<String>();
 			max = Double.MIN_VALUE;
 			min = Double.MAX_VALUE;
@@ -66,25 +82,26 @@ public class CSVConverter {
 		
 		public void VerifyNew(String value){
 			switch (type){
-				case LINEAR:
+				case INTEGER:
 					if(!isInteger(value)){
 						type = DomainType.CONTINUOUS;
 					}
 				case CONTINUOUS:
 					if(!isNumber(value)){
 						type = DomainType.NOMINAL;
-					}else{
-						Double val = Double.parseDouble(value);
-						if(val>max){
-							max=val;
-						}
-						if(val<min){
-							min=val;
-						}
 					}
 					break;
 				case NOMINAL:
 					break;
+			}
+			if (isNumber(value)) {
+				Double val = Double.parseDouble(value);
+				if(val>max){
+					max=val;
+				}
+				if(val<min){
+					min=val;
+				}
 			}
 			if(!values.contains(value)){
 				values.add(value);
@@ -96,7 +113,7 @@ public class CSVConverter {
 			dom.setdomain(type.value);
 			dom.setname("domain"+number);
 			switch(type){
-				case LINEAR:
+				case INTEGER:
 				case CONTINUOUS:
 					dom.setRange(min,max);
 					break;
@@ -123,7 +140,7 @@ public class CSVConverter {
 		Event event0 = events.events.get(0);
 		int len = event0.getValues().size();
 		LinkedList<PredictedDomain> columns = new LinkedList<PredictedDomain>();
-		for (int i=0; i<len; ++i){
+		for (int i=1; i<=len; ++i){
 			columns.add(new PredictedDomain(i));
 		}
 		for (Event e : events.events){
@@ -176,7 +193,10 @@ public class CSVConverter {
 		Input input = new Input();
 		input.sEG(eventsGroup);
 		input.sDomainsGroup(domains);
-		input.sAG(attributes);
+		input.sAttributesGroup(attributes);
+		List<Test> runs = new LinkedList<Test>();
+		runs.add(generateRun(attributes.attributes.get(attributes.attributes.size()-1)));
+		input.runsGroup.setRuns(runs);
 		return input;
 	}
 }

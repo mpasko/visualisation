@@ -7,6 +7,7 @@ package agh.aq21gui.algorithms;
 import agh.aq21gui.algorithms.structures.Mesh;
 import agh.aq21gui.algorithms.structures.MeshCell;
 import agh.aq21gui.model.gld.Argument;
+import agh.aq21gui.model.gld.CellValue;
 import agh.aq21gui.model.gld.Coordinate;
 import agh.aq21gui.model.gld.GLDOutput;
 import agh.aq21gui.model.gld.Value;
@@ -48,12 +49,12 @@ public class GLDState extends State{
 		MergingSets sets = new ArrayMergingSets(maxClusters);
 		List<Coordinate> colSeq = data.getHCoordSequence();
 		List<Coordinate> rowSeq = data.getVCoordSequence();
-		Value prevValue = null;
+		CellValue prevValue = null;
 		MeshCell prevCell = null;
 		
 		for (Coordinate row: rowSeq) {
 			for (Coordinate col : colSeq) {
-				Value value = data.eval(row,col);
+				CellValue value = data.eval(row,col);
 				MeshCell cell = mesh.transform(col, row);
 				cell.set(value);
 				sets.newElement(cell);
@@ -64,11 +65,11 @@ public class GLDState extends State{
 			prevCell = null;
 			for (Coordinate col : colSeq) {
 				MeshCell cell = mesh.transform(col, row);
-				Value value = (Value)cell.get();
+				CellValue value = (CellValue)cell.get();
 				
 				if ((prevCell!=null)) {
-					prevValue = (Value)prevCell.get();
-					if (value==prevValue) {
+					prevValue = (CellValue)prevCell.get();
+					if ((value==null && prevValue==null)||value.compare(prevValue)) {
 						sets.merge(cell, prevCell);
 					}
 				}
@@ -80,18 +81,18 @@ public class GLDState extends State{
 			prevCell = null;
 			for (Coordinate row: rowSeq) {
 				MeshCell cell = mesh.transform(col, row);
-				Value value = (Value)cell.get();
+				CellValue value = (CellValue)cell.get();
 				
 				if ((prevCell!=null)) {
-					prevValue = (Value)prevCell.get();
-					if (value==prevValue) {
+					prevValue = (CellValue)prevCell.get();
+					if ((value==null && prevValue==null)||value.compare(prevValue)) {
 						sets.merge(cell, prevCell);
 					}
 				}
 				prevCell=cell;
 			}
 		}
-		return maxClusters;
+		return sets.count();
 	}
 	
 	public double getGoldenRatioCloseness(){

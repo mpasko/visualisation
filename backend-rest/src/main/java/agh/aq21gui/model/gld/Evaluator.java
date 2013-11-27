@@ -16,6 +16,6 @@ interface Evaluator {
 
 	public List<Element> getElements();
 
-	public Value eval(Coordinate row, Coordinate col);
+	public CellValue eval(Coordinate row, Coordinate col);
 	
 }

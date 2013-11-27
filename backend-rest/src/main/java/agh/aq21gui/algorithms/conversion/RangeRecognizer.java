@@ -7,6 +7,7 @@ package agh.aq21gui.algorithms.conversion;
 import agh.aq21gui.model.gld.Recognizer;
 import agh.aq21gui.model.gld.Value;
 import agh.aq21gui.model.input.Attribute;
+import agh.aq21gui.model.input.DomainsGroup;
 import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.utils.Util;
@@ -20,6 +21,9 @@ public class RangeRecognizer implements Recognizer{
 	public final RangeElement right;
 
 	RangeRecognizer(RangeElement left, RangeElement right) {
+		if ((left == null) && (right == null)){
+			throw new RuntimeException("RangeRecognizer: both left and right are null!");
+		}
 		this.left = left;
 		this.right = right;
 	}
@@ -67,18 +71,18 @@ public class RangeRecognizer implements Recognizer{
 	}
 
 	@Override
-	public boolean accept(ClassDescriptor selector, Attribute attr) {
+	public boolean accept(ClassDescriptor selector, Attribute attr, DomainsGroup dg) {
 		String name=selector.name;
 		String comparator=selector.comparator;
 		String value=selector.getValue();
 		RangeElement elem = null;
 		Util.isNull(attr, "attr");
-		String domain = attr.getdomain();
-		if (domain.equals("nominal")) {
+		String domain = attr.getdomainRecursive(dg);
+		if (domain.equalsIgnoreCase("nominal")) {
 			elem = new NominalElement(value);
-		} else if (domain.equals("continuous")) {
+		} else if (domain.equalsIgnoreCase("continuous")||domain.equalsIgnoreCase("integer")) {
 			elem = new ContinuousElement(value, comparator);
-		} else if (domain.equals("linear")) {
+		} else if (domain.equalsIgnoreCase("linear")) {
 			elem = new LinearElement(attr, value, comparator);
 		}
 		

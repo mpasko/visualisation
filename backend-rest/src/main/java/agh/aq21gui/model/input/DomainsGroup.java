@@ -48,4 +48,13 @@ public class DomainsGroup implements IAQ21Serializable{
 			d.traverse();
 		}
 	}
+	
+	public Domain findDomain(String name){
+		for (Domain item : domains){
+			if (item.getname().equalsIgnoreCase(name)){
+				return item;
+			}
+		}
+		return null;
+	}
 }

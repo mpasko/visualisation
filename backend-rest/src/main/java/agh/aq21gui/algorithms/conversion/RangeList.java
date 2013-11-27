@@ -6,6 +6,7 @@ package agh.aq21gui.algorithms.conversion;
 
 import agh.aq21gui.model.gld.Recognizer;
 import agh.aq21gui.model.input.Attribute;
+import agh.aq21gui.model.input.DomainsGroup;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,9 +18,11 @@ import java.util.List;
 public class RangeList {
 	private LinkedList<RangeElement> list;
 	private Attribute attr;
+	private final DomainsGroup dg;
 	
-	public RangeList(Attribute attr){
+	public RangeList(Attribute attr, DomainsGroup dg){
 		this.attr = attr;
+		this.dg = dg;
 		this.list = new LinkedList<RangeElement>();
 	}
 	
@@ -77,27 +80,29 @@ public class RangeList {
 
 	public List<RangeRecognizer> genereteRecognizers() {
 		List<RangeRecognizer> recogns = new LinkedList<RangeRecognizer>();
-		for (int i=0; i<=list.size(); ++i) {
-			final RangeElement right;
-			final RangeElement left;
-			if (i<list.size()) {
-				right = list.get(i);
-			} else {
-				right = null;
+		if(list.size()>0){
+			for (int i=0; i<=list.size(); ++i) {
+				final RangeElement right;
+				final RangeElement left;
+				if (i<list.size()) {
+					right = list.get(i);
+				} else {
+					right = null;
+				}
+				if (i>0) {
+					left = list.get(i-1);
+				} else {
+					left = null;
+				}
+				RangeRecognizer reco = new RangeRecognizer(left,right);
+				recogns.add(reco);
 			}
-			if (i>0) {
-				left = list.get(i-1);
-			} else {
-				left = null;
-			}
-			RangeRecognizer reco = new RangeRecognizer(left,right);
-			recogns.add(reco);
 		}
 		return recogns;
 	}
 
 	public void addAny(String value, String comparator) {
-		if (this.attr!=null && this.attr.getdomain().equalsIgnoreCase("linear")){
+		if (this.attr!=null && this.attr.getdomainRecursive(dg).equalsIgnoreCase("linear")){
 			this.addLinear(value, comparator);
 		} else {
 			this.addContinuous(value, comparator);
