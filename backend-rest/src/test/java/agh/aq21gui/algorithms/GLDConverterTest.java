@@ -79,14 +79,14 @@ public class GLDConverterTest {
 		}
 		System.out.print("Arg1: ");
 		for (Value v: arg1.getValues()) {
-			System.out.print(v.name);
+			System.out.print(v.getName());
 			System.out.print(", ");
 		}
 		System.out.println();
 		assertEquals(true,containsString(arg1.getValues(),"b","c"));
 		System.out.print("Arg2: ");
 		for (Value v: arg2.getValues()) {
-			System.out.print(v.name);
+			System.out.print(v.getName());
 			System.out.print(", ");
 		}
 		System.out.println();
@@ -119,7 +119,7 @@ public class GLDConverterTest {
 		for (String str : strings) {
 			boolean found = false;
 			for (Value item : list) {
-				if (item.name.contains(str)) {
+				if (item.getName().contains(str)) {
 					found = true;
 				}
 			}

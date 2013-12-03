@@ -106,16 +106,21 @@ public class GLDOutput {
 		return this.elements.eval(row,col);
 	}
 	
-	static void print(GLDOutput gld_output) {
+	static void printCellValues(GLDOutput gld_output) {
 		List<Coordinate> v = gld_output.getVCoordSequence();
 		List<Coordinate> h = gld_output.getHCoordSequence();
-		
+		System.out.print("Width:");
+		System.out.println(h.size());
+		System.out.print("Height:");
+		System.out.println(v.size());
+
+		System.out.println();
 		for(Coordinate row : v){
 			for(Coordinate col : h){
 				CellValue value = gld_output.eval(row, col);
-				System.out.println(value.toString());
+				System.out.print(value.toString());
 			}
-			System.out.println("\n");
+			System.out.println();
 		}
 	}
 }

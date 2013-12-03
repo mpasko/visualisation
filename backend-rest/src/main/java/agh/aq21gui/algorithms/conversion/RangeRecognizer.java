@@ -33,38 +33,20 @@ public class RangeRecognizer implements Recognizer{
 		right = new NominalElement(value);
 	}
 
-	/*
-	@Override
-	public boolean accept(Value v) {
-		if (v.recognizer==null){
-			if(left == null){
-				return v.name.equals(right.getValue());
-			}
-		}
-		if (this.equals(v.recognizer)){
-			return true;
-		} else {
-			return false;
-		}
-	}
-	*/
-
 	public String generateName() {
 		StringBuilder text;
 		text = new StringBuilder();
 		String rightName="";
 		String leftName="";
-		if (right == null) {
-			final RangeElement left = this.left;
-			leftName = left.leftName();
-		}
-		if (left == null) {
-			final RangeElement right = this.right;
+		if (right != null) {
 			rightName = right.rightName();
+		}
+		if (left != null) {
+			leftName = left.leftName();
 		}
 		text.append(leftName);
 		if(!rightName.isEmpty()&&!leftName.isEmpty()){
-			text.append(",");
+			text.append("..");
 		}
 		text.append(rightName);
 		return text.toString();
@@ -74,33 +56,42 @@ public class RangeRecognizer implements Recognizer{
 	public boolean accept(ClassDescriptor selector, Attribute attr, DomainsGroup dg) {
 		String name=selector.name;
 		String comparator=selector.comparator;
-		String value=selector.getValue();
 		RangeElement elem = null;
 		Util.isNull(attr, "attr");
+		String value=selector.getValue();
 		String domain = attr.getdomainRecursive(dg);
+		boolean matches = true;
 		if (domain.equalsIgnoreCase("nominal")) {
 			elem = new NominalElement(value);
-		} else if (domain.equalsIgnoreCase("continuous")||domain.equalsIgnoreCase("integer")) {
-			elem = new ContinuousElement(value, comparator);
-		} else if (domain.equalsIgnoreCase("linear")) {
-			elem = new LinearElement(attr, value, comparator);
-		}
-		
-		boolean matches = true;
-		if (left!=null){
-			if (comparator.equals("=")){
-				matches = left.minus(elem)==0;
-			}else if (comparator.equals(">")){
-				matches = left.minus(elem)>0;
-			}else if (comparator.equals("<")){
-				matches = left.minus(elem)<0;
-			}else if (comparator.equals(">=")){
-				matches = left.minus(elem)>=0;
-			}else if (comparator.equals("<=")){
-				matches = left.minus(elem)<=0;
+		} else {
+			if (domain.equalsIgnoreCase("continuous")||domain.equalsIgnoreCase("integer")) {
+				if (selector.getRange_begin().isEmpty()){
+					elem = new ContinuousElement(value, comparator);
+				}else {
+					RangeElement from = new ContinuousElement(selector.range_begin, ">=");
+					RangeElement to = new ContinuousElement(selector.range_end, "<=");
+					matches &= matchesComparator(from, ">=", right);
+					matches &= matchesComparator(to, "<=", left);
+				}
+			} else if (domain.equalsIgnoreCase("linear")) {
+				if (selector.getRange_begin().isEmpty()){
+					elem = new LinearElement(attr, value, comparator);
+				} else {
+					RangeElement from = new LinearElement(attr, selector.range_begin, ">=");
+					RangeElement to = new LinearElement(attr, selector.range_end, "<=");
+					matches &= matchesComparator(from, ">=", right);
+					matches &= matchesComparator(to, "<=", left);
+				}
 			}
 		}
-		if (right!=null){
+		matches &= matchesComparator(left, comparator, elem);
+		matches &= matchesComparator(right, comparator, elem);
+		return matches;
+	}
+
+	private boolean matchesComparator(RangeElement right, String comparator, RangeElement elem) {
+		boolean matches = true;
+		if ((right!=null) && (elem != null)){
 			if (comparator.equals("=")){
 				matches = matches && right.minus(elem)==0;
 			}else if (comparator.equals(">")){

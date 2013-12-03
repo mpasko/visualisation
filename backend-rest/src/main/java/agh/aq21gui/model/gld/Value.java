@@ -16,11 +16,29 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @XmlRootElement
 public class Value {
 	@JsonProperty("name")
-	public String name;
+	private String name="";
 	public RangeRecognizer recognizer;
 
 	public Value(String value) {
 		this.name = value;
 		this.recognizer = new RangeRecognizer(value);
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		if (name.isEmpty()){
+			return this.recognizer.generateName();
+		} else {
+			return name;
+		}
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 }

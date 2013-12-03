@@ -28,6 +28,7 @@ public class GLDState extends State{
 	private double p=1.0;
 	private GLDOutput data;
 	public double repartition_prob=0.05;
+	private int clusterscache=-1;
 
 	@Override
 	public double targetFunction() {
@@ -43,6 +44,9 @@ public class GLDState extends State{
 	}
 	
 	public double getClusters(){
+		if (clusterscache != -1){
+			return clusterscache;
+		}
 		/* Create groups of clusters*/
 		Mesh mesh = new Mesh();
 		int maxClusters = data.height()*data.width();
@@ -92,7 +96,8 @@ public class GLDState extends State{
 				prevCell=cell;
 			}
 		}
-		return sets.count();
+		clusterscache = sets.count();
+		return clusterscache;
 	}
 	
 	public double getGoldenRatioCloseness(){
@@ -107,6 +112,7 @@ public class GLDState extends State{
 
 	@Override
 	public void modifyItself() {
+		clusterscache = -1;
 		List<Argument> rows = data.getRows();
 		List<Argument> cols = data.getColumns();
 		if (Math.random()<repartition_prob) {
@@ -145,6 +151,7 @@ public class GLDState extends State{
 	@Override
 	public void printIt() {
 		this.data.print();
+		System.out.printf("Clusters:%f, GoldenRatio closeness:%f\n", this.getClusters(),this.getGoldenRatioCloseness());
 	}
 	
 }

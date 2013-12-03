@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -67,7 +69,7 @@ public class ArgumentsGroup {
 			move = !pivot.hasNext();
 		}
 		pivot.shift();
-		Util.isNull(pivot.current, "pivot.current");
+//		Util.isNull(pivot.current, "pivot.current");
 	}
 	
 	public List<Coordinate> getCoordSequence() {
@@ -77,7 +79,8 @@ public class ArgumentsGroup {
 			iterators.add(new StopIterator(arg.name,arg.getValues()));
 		}
 		if (iterators.size()==0) {
-			System.out.println("Warning! CoordSequence is empty!");
+			String message = "List of arguments for GLD rows and cols is empty!";
+			Logger.getLogger("GLD").log(Level.WARNING, message);
 			return product;
 		}
 		while (iterators.getFirst().hasNext()||(iterators.getFirst().current!=null)) {

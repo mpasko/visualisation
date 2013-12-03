@@ -35,6 +35,12 @@ public class Argument {
 	void print() {
 		System.out.print("name:");
 		System.out.print(name);
+		System.out.print("values:[");
+		for (Value v: getValues()){
+			System.out.print(v.getName());
+			System.out.print(",");
+		}
+		System.out.print("]");
 	}
 
 	Argument cloneItself() {

@@ -4,6 +4,9 @@
  */
 package agh.aq21gui.algorithms.conversion;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author marcin
@@ -13,7 +16,13 @@ public class ContinuousElement extends RangeElement{
 	private Double value;
 
 	ContinuousElement(String value, String comparator) {
-		this.value = Double.parseDouble(value);
+		try{
+			this.value = Double.parseDouble(value);
+		}catch(NumberFormatException e){
+			String message = "Error creating range boundary for type continuous. Number format parse exception. v={0}";
+			Logger.getLogger("GLD").log(Level.SEVERE, message, value);
+		}
+		
 		this.setComparator(comparator);
 	}
 

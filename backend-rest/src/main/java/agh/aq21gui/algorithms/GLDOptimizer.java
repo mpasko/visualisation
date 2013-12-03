@@ -4,16 +4,8 @@
  */
 package agh.aq21gui.algorithms;
 
-import agh.aq21gui.model.gld.Argument;
 import agh.aq21gui.model.gld.GLDInput;
 import agh.aq21gui.model.gld.GLDOutput;
-import agh.aq21gui.model.input.Attribute;
-import agh.aq21gui.model.output.Hypothesis;
-import agh.aq21gui.model.output.OutputHypotheses;
-import agh.aq21gui.model.output.Rule;
-import agh.aq21gui.model.output.Selector;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  *

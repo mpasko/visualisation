@@ -5,7 +5,6 @@
 package agh.aq21gui.model.gld;
 
 import agh.aq21gui.model.input.Attribute;
-import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.Rule;
@@ -44,36 +43,6 @@ class ValueEvaluator implements Evaluator {
 		return list;
 	}
 
-	/*
-	@Override
-	public Value eval(Coordinate row, Coordinate col) {
-		Value result=null;
-		for (int index=0; index<row.getValues().size(); ++index) {
-			Value v = row.getValues().get(index);
-			Argument arg = rows.getArguments().get(index);
-			if (!arg.getValues().contains(v)){
-				throw new RuntimeException("Error! Parameters are out of order!");
-			}
-			Value selector = v.recognizer.returns();
-			if (selector != null){
-				result = selector;
-			}
-		}
-		for (int index=0; index<col.getValues().size(); ++index) {
-			Value v = row.getValues().get(index);
-			Argument arg = rows.getArguments().get(index);
-			if (!arg.getValues().contains(v)){
-				throw new RuntimeException("Error! Parameters are out of order!");
-			}
-			Value selector = v.recognizer.returns();
-			if (selector != null){
-				result = selector;
-			}
-		}
-		return result;
-	}
-	*/
-
 	@Override
 	public CellValue eval(Coordinate row, Coordinate col) {
 		Coordinate coord = row.merge(col);
@@ -83,20 +52,6 @@ class ValueEvaluator implements Evaluator {
 				result.addAll(hypo.getClasses());
 			}
 		}
-		/*
-		
-		for (Rule rule : hypotheses.rules){
-			boolean matches=true;
-			for (Selector sel : rule.getSelectors()){
-				if(!selectorMatches(sel,coord)){
-					matches=false;
-				}
-			}
-			if (matches) {
-				return retrieveValue(rule,coord);
-			}
-		}
-		*/
 		return result;
 	}
 
@@ -106,68 +61,15 @@ class ValueEvaluator implements Evaluator {
 		return v.recognizer.accept(sel,attr,out.gDG());
 	}
 
-	private CellValue retrieveValue(Rule rule, Coordinate coord) {
-		for (ClassDescriptor desc : rule.getSelectors()) {
-			if (matches(desc,coord)){
-				return findContrdomainValue(desc);
-			}
-		}
-		return contrdomain.get(0);
-	}
-
-	/**
-	 * @return the contrdomain
-	 *x/
-	public List<Value> getContrdomain() {
-		return contrdomain;
-	}
-	*/
-
-	/**
-	 * @param contrdomain the contrdomain to set
-	 *x/
-	public void setContrdomain(List<Value> contrdomain) {
-		this.contrdomain = contrdomain;
-	}
-	*/
-
 	private void initContrDomain() {
 		this.contrdomain = new LinkedList<CellValue>();
-		/*
-		this.contrdomain.add(null);
-		for (ClassDescriptor desc : hypotheses.getClasses()){
-			CellValue exist = findContrdomainValue(desc);
-			if (exist==contrdomain.get(0)) {
-				final CellValue value = new CellValue(desc);
-				this.contrdomain.add(value);
-			}
-		}
-		*/
-	}
-
-	private CellValue findContrdomainValue(ClassDescriptor desc) {
-		CellValue exist=contrdomain.get(0);
-		for (CellValue v : contrdomain){
-			if (v!=null) {
-				if (v.matches(desc)){
-					exist = v;
-				}
-			}
-		}
-		return exist;
-	}
-
-	private boolean matches(ClassDescriptor desc, Coordinate cord) {
-		Value value = cord.get(desc.name);
-		Attribute attr = out.findAttribute(desc.name);
-		return value.recognizer.accept(desc, attr, out.gDG());
 	}
 
 	private boolean ruleMatches(List<Rule> rules, Coordinate coord) {
 		for (Rule rule:rules){
 			boolean selectorMatch = true;
 			for (Selector sel : rule.getSelectors()){
-				selectorMatch |= selectorMatches(sel, coord);
+				selectorMatch &= selectorMatches(sel, coord);
 			}
 			if (selectorMatch) {
 				return true;

@@ -94,7 +94,7 @@ public class ArgumentsGroupTest {
 			List<Value> values = new LinkedList<Value>();
 			for (int j = 0; j < 3; ++j){
 				Value val = new Value(""+j);
-				val.name = "value"+j;
+				val.setName("value"+j);
 				values.add(val);
 			}
 			arg.setValues(values);

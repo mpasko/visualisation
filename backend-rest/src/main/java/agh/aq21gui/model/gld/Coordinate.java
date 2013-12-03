@@ -24,7 +24,7 @@ public class Coordinate {
 	public String toString(){
 		StringBuilder build = new StringBuilder("{");
 		for (Value val : getValues()) {
-			build.append(val.name);
+			build.append(val.getName());
 			build.append(", ");
 		}
 		build.append("}");

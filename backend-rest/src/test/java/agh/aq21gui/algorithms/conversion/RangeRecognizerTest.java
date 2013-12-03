@@ -60,7 +60,7 @@ public class RangeRecognizerTest {
 	 */
 	@Test
 	public void testAccept_3args() {
-		System.out.println("accept");
+		System.out.println("accept_3args");
 		Selector s = new Selector();
 		s.name = "x";
 		s.comparator = "=";
@@ -71,6 +71,27 @@ public class RangeRecognizerTest {
 		attr.setdomain("nominal");
 		attr.setparameters("{a, b}");
 		RangeRecognizer instance = new RangeRecognizer("a");
+		boolean expResult = true;
+		boolean result = instance.accept(s, attr, dg);
+		assertEquals(expResult, result);
+	}
+	
+	@Test
+	public void testAccept_range() {
+		System.out.println("accept_range");
+		Selector s = new Selector();
+		s.name = "x";
+		s.comparator = "=";
+		s.setRange_begin("1.5");
+		s.setRange_end("4.5");
+		Attribute attr = new Attribute();
+		DomainsGroup dg = new DomainsGroup();
+		attr.setname("x");
+		attr.setdomain("continuous");
+		attr.setparameters("{1.0, 4.5}");
+		ContinuousElement left = new ContinuousElement("2", ">");
+		ContinuousElement right = new ContinuousElement("3.5", "<");
+		RangeRecognizer instance = new RangeRecognizer(left, right);
 		boolean expResult = true;
 		boolean result = instance.accept(s, attr, dg);
 		assertEquals(expResult, result);
