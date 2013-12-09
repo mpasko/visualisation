@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.algorithms;
 
+import agh.aq21gui.algorithms.structures.StopIterator;
 import agh.aq21gui.model.gld.Value;
 import java.util.LinkedList;
 import org.junit.After;

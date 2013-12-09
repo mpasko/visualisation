@@ -4,7 +4,7 @@
  */
 package agh.aq21gui.model.gld;
 
-import agh.aq21gui.algorithms.StopIterator;
+import agh.aq21gui.algorithms.structures.StopIterator;
 import agh.aq21gui.utils.Util;
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,9 +20,9 @@ import java.util.logging.Logger;
  */
 public class ArgumentsGroup {
 
-	private List<Argument> arguments;
+	private List<Argument> arguments = new LinkedList<Argument>();
 	
-	ArgumentsGroup(List<Argument> list) {
+	public ArgumentsGroup(List<Argument> list) {
 		this.arguments = list;
 	}
 	
@@ -79,8 +79,9 @@ public class ArgumentsGroup {
 			iterators.add(new StopIterator(arg.name,arg.getValues()));
 		}
 		if (iterators.size()==0) {
-			String message = "List of arguments for GLD rows and cols is empty!";
-			Logger.getLogger("GLD").log(Level.WARNING, message);
+			Coordinate def = new Coordinate();
+			def.put("default", new Value("*"));
+			product.add(def);
 			return product;
 		}
 		while (iterators.getFirst().hasNext()||(iterators.getFirst().current!=null)) {

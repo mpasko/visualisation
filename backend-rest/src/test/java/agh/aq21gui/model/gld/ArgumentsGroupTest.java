@@ -4,7 +4,8 @@
  */
 package agh.aq21gui.model.gld;
 
-import agh.aq21gui.algorithms.StopIterator;
+import agh.aq21gui.algorithms.structures.StopIterator;
+import agh.aq21gui.stubs.StubFactory;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.After;
@@ -85,36 +86,25 @@ public class ArgumentsGroupTest {
 		assertEquals(null, result);
 	}
 	
-	public static ArgumentsGroup getArgumentsGroupSample(String prefix){
-		System.out.println("getCoordSequence");
-		List<Argument> list = new LinkedList<Argument>();
-		for (int i = 0; i < 3; ++i) {
-			Argument arg = new Argument();
-			arg.name = prefix+i;
-			List<Value> values = new LinkedList<Value>();
-			for (int j = 0; j < 3; ++j){
-				Value val = new Value(""+j);
-				val.setName("value"+j);
-				values.add(val);
-			}
-			arg.setValues(values);
-			list.add(arg);
-		}
-		ArgumentsGroup instance = new ArgumentsGroup(list);
-		return instance;
-	}
-	
 	/**
 	 * Test of getCoordSequence method, of class ArgumentsGroup.
 	 */
 	@Test(timeout=1000)
 	public void testGetCoordSequence() {
-		ArgumentsGroup instance = getArgumentsGroupSample("arg");
+		ArgumentsGroup instance = StubFactory.getArgumentsGroupSample("arg");
 		int expResult = 27;
 		List<Coordinate> result = instance.getCoordSequence();
 		for (Coordinate cord:result){
 			//System.out.println(cord.toString());
 		}
+		assertEquals(expResult, result.size());
+	}
+	
+	@Test
+	public void testGetEmptyCoordSequence() {
+		ArgumentsGroup instance = new ArgumentsGroup(new LinkedList<Argument>());
+		int expResult = 1;
+		List<Coordinate> result = instance.getCoordSequence();
 		assertEquals(expResult, result.size());
 	}
 }

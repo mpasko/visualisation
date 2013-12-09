@@ -11,6 +11,7 @@ import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.model.output.Output;
+import agh.aq21gui.stubs.StubFactory;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -73,8 +74,8 @@ public class RepositoryTest {
 	@Test
 	public void testSaveExperiment() {
 		System.out.println("saveExperiment");
-		Input input = MyResource.workingFactory();
-		InputPair experiment = new InputPair("componetn_test_case_01", input);
+		Input input = StubFactory.getInput();
+		InputPair experiment = new InputPair("component_test_case_01", input);
 		instance.saveExperiment(experiment);
 		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
@@ -86,9 +87,9 @@ public class RepositoryTest {
 	@Test
 	public void testSaveResult() {
 		System.out.println("saveResult");
-		Input input = MyResource.workingFactory();
+		Input input = StubFactory.getInput();
 		Output output = new Invoker().invoke(input);
-		OutputPair result = new OutputPair("componetn_test_case_02", output);
+		OutputPair result = new OutputPair("component_test_case_02", output);
 		instance.saveResult(result);
 		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");

@@ -38,8 +38,8 @@ class ValueEvaluator implements Evaluator {
 	}
 
 	@Override
-	public List<Element> getElements() {
-		List<Element> list = new LinkedList<Element>();
+	public List<Cell> getElements() {
+		List<Cell> list = new LinkedList<Cell>();
 		return list;
 	}
 
@@ -47,18 +47,14 @@ class ValueEvaluator implements Evaluator {
 	public CellValue eval(Coordinate row, Coordinate col) {
 		Coordinate coord = row.merge(col);
 		CellValue result = new CellValue();
-		for (Hypothesis hypo:this.hypotheses){
-			if (ruleMatches(hypo.rules, coord)) {
-				result.addAll(hypo.getClasses());
+		if (coord.size()>0){
+			for (Hypothesis hypo:this.hypotheses){
+				if (ruleMatches(hypo.rules, coord)) {
+					result.addAll(hypo.getClasses());
+				}
 			}
 		}
 		return result;
-	}
-
-	private boolean selectorMatches(Selector sel, Coordinate coord) {
-		Value v = coord.get(sel.name);
-		Attribute attr = out.findAttribute(sel.name);
-		return v.recognizer.accept(sel,attr,out.gDG());
 	}
 
 	private void initContrDomain() {
@@ -76,5 +72,11 @@ class ValueEvaluator implements Evaluator {
 			}
 		}
 		return false;
+	}
+
+	private boolean selectorMatches(Selector sel, Coordinate coord) {
+		Value v = coord.get(sel.name);
+		Attribute attr = out.findAttribute(sel.name);
+		return v.recognizer.accept(sel,attr,out.gDG());
 	}
 }

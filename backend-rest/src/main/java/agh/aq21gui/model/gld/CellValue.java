@@ -7,11 +7,14 @@ package agh.aq21gui.model.gld;
 import agh.aq21gui.model.output.ClassDescriptor;
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
  * @author marcin
  */
+@XmlRootElement
 public class CellValue {
 	
 	private List<ClassDescriptor> descriptors = new LinkedList<ClassDescriptor>();
@@ -25,7 +28,7 @@ public class CellValue {
 	}
 
 	public boolean matches(ClassDescriptor other) {
-		for (ClassDescriptor desc : descriptors){
+		for (ClassDescriptor desc : getDescriptors()){
 			if (desc.contains(other)){
 				return true;
 			}
@@ -34,16 +37,16 @@ public class CellValue {
 	}
 	
 	public boolean compare(CellValue other){
-		if (other.descriptors.size() != this.descriptors.size()) {
+		if (other.getDescriptors().size() != this.getDescriptors().size()) {
 			//TODO change in future
 			return false;
 		}
-		for (ClassDescriptor desc : descriptors){
+		for (ClassDescriptor desc : getDescriptors()){
 			if (!other.matches(desc)){
 				return false;
 			}
 		}
-		for (ClassDescriptor desc : other.descriptors){
+		for (ClassDescriptor desc : other.getDescriptors()){
 			if (!matches(desc)){
 				return false;
 			}
@@ -52,17 +55,43 @@ public class CellValue {
 	}
 
 	public void addAll(List<ClassDescriptor> classes) {
-		this.descriptors.addAll(classes);
+		this.getDescriptors().addAll(classes);
 	}
 	
 	@Override
 	public String toString(){
 		StringBuilder build = new StringBuilder("|");
-		for (ClassDescriptor desc : descriptors){
-			build.append(desc.toString());
-			build.append(",");
-		}
+		build.append(this.getName());
 		build.append("|");
 		return build.toString();
+	}
+
+	@JsonProperty("name")
+	public String getName(){
+		StringBuilder build = new StringBuilder();
+		int cnt = 0;
+		for (ClassDescriptor desc : getDescriptors()){
+			if (cnt != 0){
+				build.append(",");
+			}
+			build.append(desc.toString());
+			++cnt;
+		}
+		return build.toString();
+	}
+	
+	/**
+	 * @return the descriptors
+	 */
+	@JsonProperty("descriptors")
+	public List<ClassDescriptor> getDescriptors() {
+		return descriptors;
+	}
+
+	/**
+	 * @param descriptors the descriptors to set
+	 */
+	public void setDescriptors(List<ClassDescriptor> descriptors) {
+		this.descriptors = descriptors;
 	}
 }

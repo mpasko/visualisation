@@ -24,6 +24,7 @@ public class Argument {
 		values = new ValuesGroup(new LinkedList<Value>());
 	}
 	
+	@JsonProperty("values")
 	public void setValues(List<Value> list){
 		this.values = new ValuesGroup(list);
 	}

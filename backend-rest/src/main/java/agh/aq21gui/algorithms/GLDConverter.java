@@ -12,7 +12,6 @@ import agh.aq21gui.model.gld.GLDOutput;
 import agh.aq21gui.model.gld.Recognizer;
 import agh.aq21gui.model.gld.Value;
 import agh.aq21gui.model.input.Attribute;
-import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.DomainsGroup;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
@@ -34,6 +33,7 @@ public class GLDConverter {
 	private List<Selector> selectors;
 	private final Output data;
 	private final DomainsGroup domains;
+	public List<Argument> args;
 
 	public GLDConverter(GLDInput input) {
 		cols = new LinkedList<Argument>();
@@ -42,57 +42,29 @@ public class GLDConverter {
 		domains = input.getData().gDG();
 		data = input.getData();
 		out = new GLDOutput(data);
+		args = new LinkedList<Argument>();
 	}
 
 	public GLDOutput convert() {
 		selectors = extractSelectors();
-		List<Argument> args = new LinkedList<Argument>();
 		for (int i = 0; i < attrs.size(); ++i) {
-			Argument arg = new Argument();
 			agh.aq21gui.model.input.Attribute attr = attrs.get(i);
-			arg.name = attr.getname();
-			
-			List<Value> values = new LinkedList<Value>();
-			String domain = attr.getdomainRecursive(domains);
-			RangeList range = new RangeList(attr,domains);
-			for (Selector selector : selectors) {		
-				if (selector.name.equals(arg.name)) {
-					if (domain.equalsIgnoreCase("nominal")) {
-						if (attr.getRange().size()>0){
-							List<String> list = attr.getRange();
-							for (String element:list){
-								values.add(new Value(element));
-							}
-						} else {
-							if (selector.comparator.equals("=")) {
-								values.add(new Value(selector.getValue()));
-							} else {
-								throw new RuntimeException("Unexpected comparator:"+selector.comparator);
-							}
-						}
-					} else {
-						if (selector.range_begin.isEmpty()) {
-							range.addAny(selector.getValue(), selector.comparator);
-						} else {
-							range.addAny(selector.range_begin, ">=");
-							range.addAny(selector.range_end, "<=");
-						}
-					} 
-				}
-			}
-			if (!domain.equalsIgnoreCase("nominal")) {
-				List<RangeRecognizer> names = range.genereteRecognizers();
-				for (RangeRecognizer name : names) {
-					final Value value = new Value(name.generateName());
-					value.recognizer = name;
-					values.add(value);
-				}
-			}
-			if (values.size()>=2) {
-				arg.setValues(values);
-				args.add(arg);
+			processAttribute(attr);
+		}
+		return offerPartition();
+	}
+	
+	public List<Selector> extractSelectors(){
+		List<Selector> selctrs = new LinkedList<Selector>();
+		for (Hypothesis hypothesis : data.getOutputHypotheses()) {
+			for (Rule rule : hypothesis.getRules()) {
+				selctrs.addAll(rule.getSelectors());
 			}
 		}
+		return selctrs;
+	}
+
+	public GLDOutput offerPartition() {
 		int i = 0;
 		init_part = args.size() / 2;
 		for (Argument arg : args){
@@ -107,15 +79,65 @@ public class GLDConverter {
 		out.setColumns(cols);
 		return out;
 	}
-	
-	public List<Selector> extractSelectors(){
-		List<Selector> selctrs = new LinkedList<Selector>();
-		for (Hypothesis hypothesis : data.getOutputHypotheses()) {
-			for (Rule rule : hypothesis.getRules()) {
-				selctrs.addAll(rule.getSelectors());
+
+	public void processAttribute(Attribute attr) {
+		Argument arg = new Argument();
+		arg.name = attr.getname();
+		
+		List<Value> values = new LinkedList<Value>();
+		String domain = attr.getdomainRecursive(domains);
+		RangeList range = new RangeList(attr,domains);
+		for (Selector selector : selectors) {		
+			if (selector.name.equals(arg.name)) {
+				processSelector(domain, attr, values, selector, range); 
 			}
 		}
-		return selctrs;
+		if (!domain.equalsIgnoreCase("nominal")) {
+			List<RangeRecognizer> names = range.genereteRecognizers();
+			for (RangeRecognizer name : names) {
+				final Value value = new Value(name.generateName());
+				value.recognizer = name;
+				values.add(value);
+			}
+		}
+		if (values.size()==1) {
+			final Value solo = values.get(0);
+			Recognizer p = solo.recognizer;
+			Recognizer q = p.getCounterRecognizer();
+			Value v = new Value("not ("+solo.getName()+")");
+			v.recognizer = q;
+			values.add(v);
+		}
+		if (values.size()>=2) {
+			arg.setValues(values);
+			args.add(arg);
+		}
+	}
+
+	public void processSelector(String domain, Attribute attr, List<Value> values, Selector selector, RangeList range) {
+		if (domain.equalsIgnoreCase("nominal")) {
+			if (attr.getRange().size()>0){
+				List<String> list = attr.getRange();
+				for (String element:list){
+					values.add(new Value(element));
+				}
+			} else {
+				if (selector.comparator.equals("=")) {
+					values.add(new Value(selector.getValue()));
+				} else {
+					throw new RuntimeException("Unexpected comparator:"+selector.comparator);
+				}
+			}
+		} else {
+			if (selector.set_elements.size()>=1){
+				range.addSet(selector.getSet_elements(), "=");
+			} else if (selector.range_begin.isEmpty()) {
+				range.addAny(selector.getValue(), selector.comparator);
+			} else {
+				range.addAny(selector.range_begin, ">=");
+				range.addAny(selector.range_end, "<=");
+			}
+		}
 	}
 	
 }

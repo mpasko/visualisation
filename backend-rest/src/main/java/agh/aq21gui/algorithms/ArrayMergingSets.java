@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.algorithms;
 
+import agh.aq21gui.algorithms.structures.MergingSets;
 import agh.aq21gui.model.gld.Coordinate;
 import java.util.ArrayList;
 import java.util.HashMap;

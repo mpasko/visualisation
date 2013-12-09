@@ -15,6 +15,8 @@ import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.Rule;
 import agh.aq21gui.model.output.Selector;
+import agh.aq21gui.stubs.StubFactory;
+import agh.aq21gui.stubs.Utils;
 import agh.aq21gui.utils.Util;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,22 +39,11 @@ public class GLDConverterTest {
 	
 	@Before
 	public void setUp() {
-		createSample2nominal();
+		sample2nominal=StubFactory.createSample2nominal();
 	}
 	
 	@After
 	public void tearDown() {
-	}
-	
-	private void createSample2nominal() {
-		sample2nominal = new Output();
-		sample2nominal.addAttribute("1", "nominal", "a,b,c");
-		sample2nominal.addAttribute("2", "nominal", "d,e");
-		final Selector selector1 = listSelector("1",Util.strings("b","c"));
-		final Selector selector2 = valueSelector("2","=","d");
-		List<Hypothesis> hyps = new LinkedList<Hypothesis>();
-		hyps.add(hypothesis(selector1, selector2));
-		sample2nominal.setOutputHypotheses(hyps);
 	}
 
 	/**
@@ -63,8 +54,10 @@ public class GLDConverterTest {
 		System.out.println("convert2nominal");
 		GLDInput input = new GLDInput();
 		input.setData(sample2nominal);
+		Hypothesis hypo = input.getData().getOutputHypotheses().get(0);
 		GLDConverter instance = new GLDConverter(input);
 		GLDOutput result = instance.convert();
+		assertEquals(1, hypo.getRules().size());
 		List<Argument> merged = new LinkedList<Argument>(result.getRows());
 		merged.addAll(result.getColumns());
 		assertEquals(2, merged.size());
@@ -83,14 +76,14 @@ public class GLDConverterTest {
 			System.out.print(", ");
 		}
 		System.out.println();
-		assertEquals(true,containsString(arg1.getValues(),"b","c"));
+		assertEquals(true,Utils.containsString(arg1.getValues(),"b","c"));
 		System.out.print("Arg2: ");
 		for (Value v: arg2.getValues()) {
 			System.out.print(v.getName());
 			System.out.print(", ");
 		}
 		System.out.println();
-		assertEquals(true,containsString(arg2.getValues(),"d"));
+		assertEquals(true,Utils.containsString(arg2.getValues(),"d"));
 	}
 	
 	/**
@@ -113,50 +106,6 @@ public class GLDConverterTest {
 		assertEquals(true,value2.compare(value3));
 		assertEquals(true,value3.compare(value4));
 		assertEquals(true,value4.compare(value1));
-	}
-
-	private static boolean containsString(List<Value> list, String ...strings) {
-		for (String str : strings) {
-			boolean found = false;
-			for (Value item : list) {
-				if (item.getName().contains(str)) {
-					found = true;
-				}
-			}
-			if (!found) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	private static Selector listSelector(String name, List<String> elems) {
-		Selector selector1 = new Selector();
-		selector1.name=name;
-		selector1.comparator="=";
-		selector1.set_elements = elems;
-		return selector1;
-	}
-
-	private Selector valueSelector(String name, String comparator, String value) {
-		Selector selector2 = new Selector();
-		selector2.name=name;
-		selector2.comparator=comparator;
-		selector2.setValue(value);
-		return selector2;
-	}
-
-	private Hypothesis hypothesis(Selector ...sel) {
-		Hypothesis hypo = new Hypothesis();
-		List<Rule> rules = new LinkedList<Rule>();
-		Rule rule1 = new Rule();
-		List<Selector> selectors = new LinkedList<Selector>(Arrays.asList(sel));
-		rule1.setSelectors(selectors);
-		assertEquals(sel.length, rule1.getSelectors().size());
-		rules.add(rule1);
-		hypo.setRules(rules);
-		assertEquals(1, hypo.getRules().size());
-		return hypo;
 	}
 
 	@Test

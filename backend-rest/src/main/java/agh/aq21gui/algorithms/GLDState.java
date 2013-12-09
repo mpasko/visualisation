@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.algorithms;
 
+import agh.aq21gui.algorithms.structures.MergingSets;
 import agh.aq21gui.algorithms.structures.Mesh;
 import agh.aq21gui.algorithms.structures.MeshCell;
 import agh.aq21gui.model.gld.Argument;
@@ -47,57 +48,43 @@ public class GLDState extends State{
 		if (clusterscache != -1){
 			return clusterscache;
 		}
-		/* Create groups of clusters*/
-		Mesh mesh = new Mesh();
 		int maxClusters = data.height()*data.width();
 		MergingSets sets = new ArrayMergingSets(maxClusters);
+		MeshCell<CellValue> prevCell = null;
 		List<Coordinate> colSeq = data.getHCoordSequence();
 		List<Coordinate> rowSeq = data.getVCoordSequence();
-		CellValue prevValue = null;
-		MeshCell prevCell = null;
-		
-		for (Coordinate row: rowSeq) {
-			for (Coordinate col : colSeq) {
-				CellValue value = data.eval(row,col);
-				MeshCell cell = mesh.transform(col, row);
-				cell.set(value);
-				sets.newElement(cell);
-			}
+		data.resetMesh();
+		for (MeshCell<CellValue> cell:data.getCells(rowSeq,colSeq)){
+			sets.newElement(cell);
 		}
 		//left to right
 		for (Coordinate row: rowSeq) {
 			prevCell = null;
 			for (Coordinate col : colSeq) {
-				MeshCell cell = mesh.transform(col, row);
-				CellValue value = (CellValue)cell.get();
-				
-				if ((prevCell!=null)) {
-					prevValue = (CellValue)prevCell.get();
-					if ((value==null && prevValue==null)||value.compare(prevValue)) {
-						sets.merge(cell, prevCell);
-					}
-				}
-				prevCell=cell;
+				prevCell = mergeCell(col, row, prevCell, sets);
 			}
 		}
 		//top to bottom
 		for (Coordinate col : colSeq) {
 			prevCell = null;
 			for (Coordinate row: rowSeq) {
-				MeshCell cell = mesh.transform(col, row);
-				CellValue value = (CellValue)cell.get();
-				
-				if ((prevCell!=null)) {
-					prevValue = (CellValue)prevCell.get();
-					if ((value==null && prevValue==null)||value.compare(prevValue)) {
-						sets.merge(cell, prevCell);
-					}
-				}
-				prevCell=cell;
+				prevCell = mergeCell(col, row, prevCell, sets);
 			}
 		}
 		clusterscache = sets.count();
 		return clusterscache;
+	}
+
+	public MeshCell mergeCell(Coordinate col, Coordinate row, MeshCell<CellValue> prevCell, MergingSets sets) {
+		MeshCell<CellValue> cell = data.mesh.transform(col, row);
+		CellValue value = (CellValue)cell.get();
+		if ((prevCell!=null)) {
+			CellValue prevValue = (CellValue)prevCell.get();
+			if ((value==null && prevValue==null)||value.compare(prevValue)) {
+				sets.merge(cell, prevCell);
+			}
+		}
+		return cell;
 	}
 	
 	public double getGoldenRatioCloseness(){
@@ -153,5 +140,4 @@ public class GLDState extends State{
 		this.data.print();
 		System.out.printf("Clusters:%f, GoldenRatio closeness:%f\n", this.getClusters(),this.getGoldenRatioCloseness());
 	}
-	
 }

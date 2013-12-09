@@ -108,4 +108,9 @@ public class RangeList {
 			this.addContinuous(value, comparator);
 		}
 	}
+
+	public void addSet(List<String> set_elements, String string) {
+		RangeElement elem = new SetElement(set_elements);
+		addElement(elem);
+	}
 }

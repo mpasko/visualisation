@@ -16,4 +16,8 @@ import agh.aq21gui.model.output.Selector;
 public interface Recognizer {
 //	boolean accept(Value v);
 	boolean accept(ClassDescriptor selector, Attribute attr, DomainsGroup dg);
+
+	public String generateName();
+	
+	public Recognizer getCounterRecognizer();
 }

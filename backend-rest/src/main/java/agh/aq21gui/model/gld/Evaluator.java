@@ -14,7 +14,7 @@ interface Evaluator {
 
 	public Evaluator cloneItself();
 
-	public List<Element> getElements();
+	public List<Cell> getElements();
 
 	public CellValue eval(Coordinate row, Coordinate col);
 	

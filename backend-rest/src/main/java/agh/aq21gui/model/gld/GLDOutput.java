@@ -4,7 +4,10 @@
  */
 package agh.aq21gui.model.gld;
 
+import agh.aq21gui.algorithms.GLDState;
 import agh.aq21gui.algorithms.State;
+import agh.aq21gui.algorithms.structures.Mesh;
+import agh.aq21gui.algorithms.structures.MeshCell;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import java.util.LinkedList;
@@ -24,12 +27,14 @@ public class GLDOutput {
 	private ArgumentsGroup columns;
 	private Evaluator elements;
 	private Output hypo;
+	public Mesh mesh;
 	
 	public GLDOutput(Output out) {
 		this.hypo = out;
 		rows = new ArgumentsGroup(new LinkedList<Argument>());
 		columns = new ArgumentsGroup(new LinkedList<Argument>());
 		elements = new ValueEvaluator(out/*,rows,columns*/);
+		this.resetMesh();
 	}
 	
 	@JsonProperty("rows")
@@ -83,9 +88,16 @@ public class GLDOutput {
 		return out;
 	}
 
-	@JsonProperty("elements")
-	public List<Element> getElements() {
-		return this.elements.getElements();
+	@JsonProperty("values")
+	public List<Cell> getElements() {
+		this.resetMesh();
+		Iterable<MeshCell<CellValue>> mesh_cells = this.getCells(this.getVCoordSequence(), this.getHCoordSequence());
+		List<Cell> cells = new LinkedList<Cell>();
+		for (MeshCell<CellValue> mesh_value: mesh_cells) {
+			Cell c = new Cell(mesh_value.get());
+			cells.add(c);
+		}
+		return cells;
 	}
 
 	public int width() {
@@ -121,6 +133,38 @@ public class GLDOutput {
 				System.out.print(value.toString());
 			}
 			System.out.println();
+		}
+	}
+
+	public void sColAG(ArgumentsGroup argumentsGroupSample) {
+		this.columns=argumentsGroupSample;
+	}
+
+	public void sRowAG(ArgumentsGroup argumentsGroupSample) {
+		this.rows=argumentsGroupSample;
+	}
+
+	public Iterable<MeshCell<CellValue>> getCells(Iterable<Coordinate> rowSeq, Iterable<Coordinate> colSeq) {
+		List<MeshCell<CellValue>> list = new LinkedList<MeshCell<CellValue>>();
+		for (Coordinate row: rowSeq) {
+			for (Coordinate col : colSeq) {
+				MeshCell<CellValue> cell = mesh.transform(col, row);
+				list.add(cell);
+			}
+		}
+		return list;
+	}
+
+	public void resetMesh() {
+		mesh = new Mesh<Coordinate,CellValue>();
+		List<Coordinate> rowSeq=this.getVCoordSequence();
+		List<Coordinate> colSeq=this.getHCoordSequence();
+		for (Coordinate row : rowSeq) {
+			for (Coordinate col : colSeq) {
+				CellValue value = eval(row, col);
+				MeshCell cell = mesh.transform(col, row);
+				cell.set(value);
+			}
 		}
 	}
 }

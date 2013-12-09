@@ -8,14 +8,14 @@ package agh.aq21gui.algorithms.structures;
  *
  * @author marcin
  */
-public class MeshCell {
-	private Object value;
+public class MeshCell<V> {
+	private V value;
 	
-	public Object get(){
+	public V get(){
 		return value;
 	}
 	
-	public void set(Object value){
+	public void set(V value){
 		this.value=value;
 	}
 }

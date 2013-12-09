@@ -54,38 +54,38 @@ public class RangeRecognizer implements Recognizer{
 
 	@Override
 	public boolean accept(ClassDescriptor selector, Attribute attr, DomainsGroup dg) {
-		String name=selector.name;
 		String comparator=selector.comparator;
-		RangeElement elem = null;
 		Util.isNull(attr, "attr");
 		String value=selector.getValue();
 		String domain = attr.getdomainRecursive(dg);
 		boolean matches = true;
-		if (domain.equalsIgnoreCase("nominal")) {
-			elem = new NominalElement(value);
-		} else {
-			if (domain.equalsIgnoreCase("continuous")||domain.equalsIgnoreCase("integer")) {
-				if (selector.getRange_begin().isEmpty()){
-					elem = new ContinuousElement(value, comparator);
-				}else {
-					RangeElement from = new ContinuousElement(selector.range_begin, ">=");
-					RangeElement to = new ContinuousElement(selector.range_end, "<=");
-					matches &= matchesComparator(from, ">=", right);
-					matches &= matchesComparator(to, "<=", left);
-				}
-			} else if (domain.equalsIgnoreCase("linear")) {
-				if (selector.getRange_begin().isEmpty()){
-					elem = new LinearElement(attr, value, comparator);
-				} else {
-					RangeElement from = new LinearElement(attr, selector.range_begin, ">=");
-					RangeElement to = new LinearElement(attr, selector.range_end, "<=");
-					matches &= matchesComparator(from, ">=", right);
-					matches &= matchesComparator(to, "<=", left);
-				}
+		RangeElement from=null;
+		RangeElement to=null;
+		RangeElement elem = null;
+		if (domain.equalsIgnoreCase("continuous")||domain.equalsIgnoreCase("integer")) {
+			if(!selector.range_begin.isEmpty()){
+				from = new ContinuousElement(selector.range_begin, ">=");
+				to = new ContinuousElement(selector.range_end, "<=");
+			} else if (!value.isEmpty()){
+				elem = new ContinuousElement(value, comparator);
 			}
+		} else if (domain.equalsIgnoreCase("linear")) {
+			if(!selector.range_begin.isEmpty()){
+				from = new LinearElement(attr, selector.range_begin, ">=");
+				to = new LinearElement(attr, selector.range_end, "<=");
+			} else if (!value.isEmpty()){
+				elem = new LinearElement(attr, value, comparator);
+			}
+		} else if (domain.equalsIgnoreCase("nominal")) {
+			elem = new NominalElement(value);
 		}
-		matches &= matchesComparator(left, comparator, elem);
-		matches &= matchesComparator(right, comparator, elem);
+		if (!selector.getRange_begin().isEmpty()){
+			matches &= matchesComparator(from, "<=", left);
+			matches &= matchesComparator(to, ">=", right);
+		}else {
+			matches &= matchesComparator(left, comparator, elem);
+			matches &= matchesComparator(right, comparator, elem);
+		}
 		return matches;
 	}
 
@@ -105,5 +105,10 @@ public class RangeRecognizer implements Recognizer{
 			}
 		}
 		return matches;
+	}
+
+	@Override
+	public Recognizer getCounterRecognizer() {
+		return new NegatedRecognizer(this);
 	}
 }

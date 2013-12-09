@@ -46,21 +46,30 @@ public class Coordinate {
 	Coordinate cloneItself() {
 		Coordinate copy = new Coordinate();
 		copy.values = new HashMap<String, Value>();
-		for (String key: this.values.keySet()){
-			copy.put(key, this.values.get(key));
-		}
+		copy.putAll(this.values);
 		return copy;
 	}
 
 	Coordinate merge(Coordinate col) {
 		Coordinate coord = this.cloneItself();
-		for (String key : col.values.keySet()) {
-			coord.put(key, col.get(key));
-		}
+		coord.putAll(col.values);
 		return coord;
+	}
+	
+	private void putAll(Map<String,Value> values) {
+		for (String key: values.keySet()){
+			final Value value = values.get(key);
+			if (value.notWildcard()){
+				put(key, value);
+			}
+		}
 	}
 
 	Value get(String name) {
 		return values.get(name);
+	}
+
+	int size() {
+		return this.values.size();
 	}
 }

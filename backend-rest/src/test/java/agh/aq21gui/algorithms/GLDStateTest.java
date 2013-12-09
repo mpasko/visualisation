@@ -9,6 +9,7 @@ import agh.aq21gui.model.gld.ArgumentsGroupTest;
 import agh.aq21gui.model.gld.GLDOutput;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
+import agh.aq21gui.stubs.StubFactory;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.After;
@@ -24,8 +25,7 @@ public class GLDStateTest {
 	private GLDOutput initialData;
 	
 	public GLDStateTest() {
-		Output data = generateSampleData();
-		initialData = new GLDOutput(data);
+		initialData = StubFactory.getGLDOutput();
 	}
 	
 	@Before
@@ -52,7 +52,7 @@ public class GLDStateTest {
 	@Test
 	public void testTargetFunction() {
 		System.out.println("targetFunction");
-		GLDState instance = generateInitialData();
+		GLDState instance = StubFactory.getGLDState();
 		instance.setRatioImportance(0);
 		double expResult = instance.getClusters();
 		double result = instance.targetFunction();
@@ -66,7 +66,7 @@ public class GLDStateTest {
 	public void testSetRatioImportance() {
 		System.out.println("setRatioImportance");
 		int newp = 0;
-		GLDState instance = generateInitialData();
+		GLDState instance = StubFactory.getGLDState();
 		instance.setRatioImportance(1);
 		double expResult = instance.getClusters()+instance.getGoldenRatioCloseness();
 		double result = instance.targetFunction();
@@ -80,7 +80,7 @@ public class GLDStateTest {
 	public void testSetRepartitionProb() {
 		System.out.println("setRepartitionProb");
 		double prob = 0.0;
-		GLDState instance = generateInitialData();
+		GLDState instance = StubFactory.getGLDState();
 		instance.setRepartitionProb(prob);
 		int h_before = instance.getData().height();
 		int w_before = instance.getData().width();
@@ -95,7 +95,7 @@ public class GLDStateTest {
 	@Test
 	public void testGetClusters() {
 		System.out.println("getClusters");
-		GLDState instance = generateInitialData();
+		GLDState instance = StubFactory.getGLDState();
 		double expResult = 1.0;
 		double result = instance.getClusters();
 		assertEquals(expResult, result, 0.0);
@@ -107,7 +107,7 @@ public class GLDStateTest {
 	@Test
 	public void testGetGoldenRatioCloseness() {
 		System.out.println("getGoldenRatioCloseness");
-		GLDState instance = generateInitialData();
+		GLDState instance = StubFactory.getGLDState();
 		double expResult = 0.61803;
 		double result = instance.getGoldenRatioCloseness();
 		assertEquals(expResult, result, 0.001);
@@ -119,7 +119,7 @@ public class GLDStateTest {
 	@Test
 	public void testModifyItself() {
 		System.out.println("modifyItself");
-		GLDState instance = generateInitialData();
+		GLDState instance = StubFactory.getGLDState();
 		instance.setRepartitionProb(1.0);
 		int h_before = instance.getData().getRows().size();
 		int w_before = instance.getData().getColumns().size();
@@ -160,7 +160,7 @@ public class GLDStateTest {
 	@Test
 	public void testCloneItself() {
 		System.out.println("cloneItself");
-		Output out = generateSampleData();
+		Output out = StubFactory.getSimpleData();
 		GLDOutput data = new GLDOutput(out);
 		List<Argument> cols = new LinkedList<Argument>();
 		data.setColumns(cols);
@@ -180,23 +180,7 @@ public class GLDStateTest {
 	@Test
 	public void testPrintIt() {
 		System.out.println("printIt");
-		GLDState instance = generateInitialData();
+		GLDState instance = StubFactory.getGLDState();
 		instance.printIt();
-	}
-
-	private GLDState generateInitialData() {
-		initialData.setColumns(ArgumentsGroupTest.getArgumentsGroupSample("column").getArguments());
-		initialData.setRows(ArgumentsGroupTest.getArgumentsGroupSample("row").getArguments());
-		GLDState instance = GLDState.build(initialData);
-		return instance;
-	}
-
-	private Output generateSampleData() {
-		Output out = new Output();
-		List<Hypothesis> hypos = new LinkedList<Hypothesis>();
-		Hypothesis hypo = new Hypothesis();
-		hypos.add(hypo);
-		out.setOutputHypotheses(hypos);
-		return out;
 	}
 }

@@ -1,10 +1,12 @@
 
 package agh.aq21gui;
 
+import agh.aq21gui.model.gld.GLDOutput;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Run;
 import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.management.Directory;
+import agh.aq21gui.stubs.StubFactory;
 import agh.aq21gui.utils.OutputParser;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -27,88 +29,32 @@ public class MyResource {
         return "Got it!";
     }
 	
-	public static Input workingFactory(){
-		//Based on template1.aq21
-		Input input = new Input();
-		input.addDomain("color", "nominal", "{red, green, blue}");
-		input.addAttribute("background", "color", "");
-		input.addAttribute("number", "linear", "{ 0, 1, 2 }");
-		input.addAttribute("length", "continuous", "0, 200");
-		input.addAttribute("class", "nominal", "{c1, c2}");
-		RunsGroup runs = new RunsGroup();
-		Run run_c1 = new Run();
-		run_c1.name = "Run_c1";
-		run_c1.addParameter("Mode", "TF");
-		run_c1.addParameter("Consequent", "[class=c1]");
-		run_c1.addParameter("Ambiguity", "IncludeInPos");
-		run_c1.addParameter("Trim", "Optimal");
-		run_c1.addParameter("Compute_alternative_covers", "True");
-		run_c1.addParameter("Maxstar", "1");
-		run_c1.addParameter("Maxrule", "10");
-		runs.runs.add(run_c1);
-		
-		Run run_c2 = new Run();
-		run_c2.name = "Run_c2";
-		run_c2.addParameter("Mode", "TF");
-		run_c2.addParameter("Consequent", "[class=c2]");
-		run_c2.addParameter("Ambiguity", "IncludeInPos");
-		run_c2.addParameter("Trim", "Optimal");
-		run_c2.addParameter("Compute_alternative_covers", "False");
-		run_c2.addParameter("Maxstar", "1");
-		run_c2.addParameter("Maxrule", "1");
-		runs.runs.add(run_c2);
-		
-		Run run_all_in_pd = new Run();
-		run_all_in_pd.name = "Run_All_in_PD";
-		run_all_in_pd.addParameter("Mode", "PD");
-		run_all_in_pd.addParameter("Consequent", "[class=*]");
-		run_all_in_pd.addParameter("Ambiguity", "IncludeInPos");
-		run_all_in_pd.addParameter("Trim", "Optimal");
-		run_all_in_pd.addParameter("Compute_alternative_covers", "False");
-		run_all_in_pd.addParameter("Maxstar", "1");
-		run_all_in_pd.addParameter("Maxrule", "1");
-		runs.runs.add(run_all_in_pd);
-		
-		Run run_multi_head = new Run();
-		run_multi_head.name = "Run_Multi-head";
-		run_multi_head.addParameter("Mode", "PD");
-		run_multi_head.addParameter("Consequent", "[class=c1][length<=40]");
-		run_multi_head.addParameter("Ambiguity", "IncludeInPos");
-		run_multi_head.addParameter("Trim", "Optimal");
-		run_multi_head.addParameter("Compute_alternative_covers", "False");
-		run_multi_head.addParameter("Maxstar", "1");
-		run_multi_head.addParameter("Maxrule", "1");
-		runs.runs.add(run_multi_head);
-		
-		input.runsGroup = runs;
-		
-		input.addEvent("red","1","34.6","c1");
-		input.addEvent("green","0","2.45","c2");
-		input.addEvent("red","1","33.0","c1");
-		input.addEvent("blue","0","33.5","c2");
-		return input;
-	}
-	
 	@GET
 	@Path("/template1JSON")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Input getTemplate1JSON(){
-		return workingFactory();
+		return StubFactory.getInput();
 	}
 	
 	@GET
 	@Path("/template1XML")
 	@Produces(MediaType.APPLICATION_XML)
 	public Input getTemplate1XML(){
-		return workingFactory();
+		return StubFactory.getInput();
 	}
 	
 	@GET
 	@Path("/templateDBResult")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Directory getDirectory() {
-		Directory dir = new Directory();
-		dir.putExperiment("working", workingFactory());
+	public Directory getDBDirectory() {
+		Directory dir = StubFactory.getDirectory();
 		return dir;
+	}
+	
+	@GET
+	@Path("templateGLDOutput")
+	@Produces(MediaType.APPLICATION_JSON)
+	public GLDOutput getGLD(){
+		return StubFactory.getGLDOutputBaloons();
 	}
 }
