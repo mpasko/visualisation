@@ -27,7 +27,7 @@ public class IntegrationTests {
 	private static Output iris;
 	private static Output aq21example;
 	private static Output alternateCovers;
-	private boolean skip_iris_all = true;
+	private boolean skip_iris_all = false;
 	
 	public IntegrationTests() {
 	}

@@ -12,6 +12,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.antlr.runtime.tree.CommonTree;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
@@ -40,7 +41,7 @@ public class Domain implements IAQ21Serializable{
 		this.id = id;
 	}
 	
-	@XmlElement(name="name")
+	@JsonProperty("name")
 	public String getname(){
 		return name;
 	}
@@ -49,7 +50,7 @@ public class Domain implements IAQ21Serializable{
 		this.name = name;
 	}
 	
-	@XmlElement(name="domain")
+	@JsonProperty("domain")
 	public String getdomain() {
 		return domain;
 	}
