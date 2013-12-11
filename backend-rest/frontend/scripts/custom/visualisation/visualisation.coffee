@@ -3,8 +3,9 @@ define [
   "custom/visualisation/latex",
   "custom/visualisation/raw",
   ], (topic, Memory, latex, raw) ->
-  internal = 
-    output_store : new Memory()
+  internal =
+    stores:
+      output : new Memory()
   
   module = 
     visualiseResults: (results)->

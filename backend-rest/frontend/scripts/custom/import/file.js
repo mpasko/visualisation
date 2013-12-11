@@ -1,4 +1,4 @@
-define(["custom/backend", "dojo/dom", "dojo/dom-construct", "dojo/_base/window"], function(backend, dom, domConstruct, win) {
+define(["custom/backend", "dojo/dom", "dojo/dom-construct", "dojo/_base/window", "dijit/registry"], function(backend, dom, domConstruct, win, registry) {
   var internal, module;
   internal = {
     loadFile: function(f) {
@@ -22,21 +22,10 @@ define(["custom/backend", "dojo/dom", "dojo/dom-construct", "dojo/_base/window"]
     },
     eventHandler: function(evt) {
       return internal.loadFile(evt.target.files[0]);
-    },
-    handleFileSelect: function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-      return internal.loadFile(evt.dataTransfer.files[0]);
-    },
-    handleDragOver: function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-      return evt.dataTransfer.dropEffect = 'copy';
     }
   };
   module = {
     createFileLoader: function() {
-      var dropZone, tmp;
       domConstruct.create("input", {
         style: {
           display: "none"
@@ -45,13 +34,9 @@ define(["custom/backend", "dojo/dom", "dojo/dom-construct", "dojo/_base/window"]
         id: "load_files"
       }, win.body());
       dom.byId("load_files").addEventListener('change', internal.eventHandler, false);
-      dropZone = dom.byId('drop_zone');
-      dropZone.addEventListener('dragover', internal.handleDragOver, false);
-      dropZone.addEventListener('drop', internal.handleFileSelect, false);
-      tmp = function() {
+      return registry.byId("file_button").on('click', function() {
         return dom.byId("load_files").click();
-      };
-      return dropZone.addEventListener('click', tmp, false);
+      });
     }
   };
   return module;

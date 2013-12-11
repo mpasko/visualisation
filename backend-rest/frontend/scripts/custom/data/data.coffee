@@ -4,22 +4,22 @@ define [
   "custom/data/cellRenderers", "custom/data/attributes", "dojo/dom-construct"
 ], (dom, Memory, registry, grid, editor, TextBox, cellRenderers, utils,domConstruct) ->
   # private
-  internal = 
-    stats_store : new Memory()
-    attr_store : new Memory()
-    domains_store : new Memory()
-    events_store : new Memory()
+  internal =
+    stores:
+      attr : new Memory()
+      domains : new Memory()
+      events : new Memory()
     
-    updateDataGrid : (recreate) ->
-       attributes = @attr_store.query {}
-       selected_attributes = @attr_store.query {selected: true}
+    updateDataGrid : () ->
+       attributes = @stores.attr.query {}
+       selected_attributes = @stores.attr.query {selected: true}
         
        columns = (
           (
             field : 'attribute' + (attributes.indexOf(attribute)+1)
             label : attribute.name
             autoSave : true
-            renderCell : cellRenderers.get attribute, internal.domains_store.query(name: attribute.domain)
+            renderCell : cellRenderers.get attribute, internal.stores.domains.query(name: attribute.domain)
           )  for attribute in selected_attributes
        )
        
@@ -30,7 +30,7 @@ define [
        , "events")
        
        eventsGrid = new grid.paginated(
-         store : @events_store, 
+         store : @stores.events, 
          columns : editor(column, TextBox, "click") for column in columns
          pagingLinks: 3
          firstLastArrows: true
@@ -45,30 +45,29 @@ define [
     updateStores: (input)->
         attribute["selected"] = true for attribute in input.attributes
         console.log input.attributes
-        internal.attr_store.setData input.attributes
-        internal.domains_store.setData input.domains
-        internal.events_store.setData input.events
-        internal.stats_store.setData []
+        internal.stores.attr.setData input.attributes
+        internal.stores.domains.setData input.domains
+        internal.stores.events.setData input.events
 
-        internal.updateDataGrid true
+        internal.updateDataGrid()
 
         registry.byId("statistics").refresh()
         registry.byId("attributes").refresh()
         registry.byId("domains").refresh()
              
     collectForExperiment : (collect) ->
-        attributes = JSON.parse JSON.stringify internal.attr_store.query({})
+        attributes = JSON.parse JSON.stringify internal.stores.attr.query({})
         
         delete a.selected for a in attributes
         
         collect 
           attributes : attributes
-          domains    : internal.domains_store.query({})
-          events     : internal.events_store.query({})
+          domains    : internal.stores.domains.query({})
+          events     : internal.stores.events.query({})
           
     setup : ->
       attr_grid = new grid.onDemand(
-        store : internal.attr_store
+        store : internal.stores.attr
         columns: [
           editor(
             field: "name"
@@ -86,7 +85,7 @@ define [
         "attributes")
 
       domains_grid = new grid.onDemand(
-        store : internal.domains_store
+        store : internal.stores.domains
         columns: [
           field: "name"
           label: "Name"
@@ -98,8 +97,8 @@ define [
           label: "Parameters"
         ], "domains")
 
-      statistics_grid = new grid.onDemand(
-        store : internal.stats_store
+      statistics_grid = new grid.simple(
+        store : internal.stores.stats
         columns: [
           field: "id"
           label: "Statistic"
@@ -111,32 +110,33 @@ define [
       
       attr_grid.on "dgrid-select", (event) ->
         attribute = event.rows[0].data
-        domain_query = internal.domains_store.query(name: attribute.domain)
+        domain_query = internal.stores.domains.query(name: attribute.domain)
         
         desc = utils.extractAttributeDescription attribute, domain_query
-        internal.stats_store.setData []
+        array = []
         
-        internal.stats_store.put
+        array.push
           id : "Domain"
           value : desc.domain
         
-        internal.stats_store.put
+        array.push
           id : "Base domain"
           value : desc.baseDomain
         
         switch desc.baseDomain
-          when "linear" then internal.stats_store.put a for a in utils.getDiscreteValues desc.parameters
-          when "nominal" then internal.stats_store.put a for a in utils.getDiscreteValues desc.parameters
-          when "continuous" then internal.stats_store.put a for a in utils.getContinuousValues desc.parameters
+          when "linear" then array.push a for a in utils.getDiscreteValues desc.parameters
+          when "nominal" then array.push a for a in utils.getDiscreteValues desc.parameters
+          when "continuous" then array.push a for a in utils.getContinuousValues desc.parameters
         
         registry.byId("statistics").refresh()
+        registry.byId("statistics").renderArray array
   
       attr_grid.on "dgrid-datachange", (event) ->  
         el = event.cell.row.data
         el[event.cell.column.field] = event.value
 
-        internal.attr_store.put el
+        internal.stores.attr.put el
 
-        internal.updateDataGrid false
+        internal.updateDataGrid()
                  
   module

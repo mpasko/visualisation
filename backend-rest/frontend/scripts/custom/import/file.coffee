@@ -1,6 +1,6 @@
 define [
-   "custom/backend",  "dojo/dom","dojo/dom-construct", "dojo/_base/window"
-], (backend, dom,  domConstruct, win) ->
+   "custom/backend",  "dojo/dom","dojo/dom-construct", "dojo/_base/window", "dijit/registry"
+], (backend, dom,  domConstruct, win, registry) ->
   internal =
     loadFile : (f) ->
       extension = if f.fileName? then f.fileName else f.name
@@ -21,17 +21,6 @@ define [
     eventHandler: (evt) ->
       internal.loadFile evt.target.files[0]
 
-    handleFileSelect :(evt) ->
-      evt.stopPropagation()
-      evt.preventDefault()
-
-      internal.loadFile evt.dataTransfer.files[0]
-
-    handleDragOver : (evt) ->
-      evt.stopPropagation()
-      evt.preventDefault()
-      evt.dataTransfer.dropEffect = 'copy'
-
   module = 
     createFileLoader : ->
         domConstruct.create "input", 
@@ -42,14 +31,9 @@ define [
         , win.body()
 
         dom.byId("load_files").addEventListener 'change', internal.eventHandler, false
-        dropZone = dom.byId 'drop_zone'
+        registry.byId("file_button").on 'click', 
+          ->
+            dom.byId("load_files").click()
 
-        dropZone.addEventListener 'dragover', internal.handleDragOver, false
-        dropZone.addEventListener 'drop', internal.handleFileSelect, false
-
-        tmp = ->
-          dom.byId("load_files").click()
-
-        dropZone.addEventListener 'click', tmp, false
 
   module

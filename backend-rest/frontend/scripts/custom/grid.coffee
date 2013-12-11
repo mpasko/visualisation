@@ -6,3 +6,4 @@ define [
     (declare, Grid, Keyboard, ColumnResizer, Selection, DijitRegistry,Pagination,OnDemandGrid) ->
       paginated : declare [Grid, Selection, Keyboard, ColumnResizer, DijitRegistry,Pagination]
       onDemand : declare [OnDemandGrid, Selection, Keyboard, ColumnResizer, DijitRegistry]
+      simple : declare [Grid, Selection, Keyboard, ColumnResizer, DijitRegistry]

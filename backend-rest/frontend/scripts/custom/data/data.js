@@ -1,14 +1,15 @@
 define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/data/cellRenderers", "custom/data/attributes", "dojo/dom-construct"], function(dom, Memory, registry, grid, editor, TextBox, cellRenderers, utils, domConstruct) {
   var internal, module;
   internal = {
-    stats_store: new Memory(),
-    attr_store: new Memory(),
-    domains_store: new Memory(),
-    events_store: new Memory(),
-    updateDataGrid: function(recreate) {
+    stores: {
+      attr: new Memory(),
+      domains: new Memory(),
+      events: new Memory()
+    },
+    updateDataGrid: function() {
       var attribute, attributes, column, columns, eventsGrid, selected_attributes;
-      attributes = this.attr_store.query({});
-      selected_attributes = this.attr_store.query({
+      attributes = this.stores.attr.query({});
+      selected_attributes = this.stores.attr.query({
         selected: true
       });
       columns = (function() {
@@ -20,7 +21,7 @@ define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid
             field: 'attribute' + (attributes.indexOf(attribute) + 1),
             label: attribute.name,
             autoSave: true,
-            renderCell: cellRenderers.get(attribute, internal.domains_store.query({
+            renderCell: cellRenderers.get(attribute, internal.stores.domains.query({
               name: attribute.domain
             }))
           });
@@ -33,7 +34,7 @@ define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid
         style: "height : 100%;"
       }, "events");
       eventsGrid = new grid.paginated({
-        store: this.events_store,
+        store: this.stores.events,
         columns: (function() {
           var _i, _len, _results;
           _results = [];
@@ -60,32 +61,31 @@ define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid
         attribute["selected"] = true;
       }
       console.log(input.attributes);
-      internal.attr_store.setData(input.attributes);
-      internal.domains_store.setData(input.domains);
-      internal.events_store.setData(input.events);
-      internal.stats_store.setData([]);
-      internal.updateDataGrid(true);
+      internal.stores.attr.setData(input.attributes);
+      internal.stores.domains.setData(input.domains);
+      internal.stores.events.setData(input.events);
+      internal.updateDataGrid();
       registry.byId("statistics").refresh();
       registry.byId("attributes").refresh();
       return registry.byId("domains").refresh();
     },
     collectForExperiment: function(collect) {
       var a, attributes, _i, _len;
-      attributes = JSON.parse(JSON.stringify(internal.attr_store.query({})));
+      attributes = JSON.parse(JSON.stringify(internal.stores.attr.query({})));
       for (_i = 0, _len = attributes.length; _i < _len; _i++) {
         a = attributes[_i];
         delete a.selected;
       }
       return collect({
         attributes: attributes,
-        domains: internal.domains_store.query({}),
-        events: internal.events_store.query({})
+        domains: internal.stores.domains.query({}),
+        events: internal.stores.events.query({})
       });
     },
     setup: function() {
       var attr_grid, domains_grid, statistics_grid;
       attr_grid = new grid.onDemand({
-        store: internal.attr_store,
+        store: internal.stores.attr,
         columns: [
           editor({
             field: "name",
@@ -99,7 +99,7 @@ define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid
         ]
       }, "attributes");
       domains_grid = new grid.onDemand({
-        store: internal.domains_store,
+        store: internal.stores.domains,
         columns: [
           {
             field: "name",
@@ -113,8 +113,8 @@ define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid
           }
         ]
       }, "domains");
-      statistics_grid = new grid.onDemand({
-        store: internal.stats_store,
+      statistics_grid = new grid.simple({
+        store: internal.stores.stats,
         columns: [
           {
             field: "id",
@@ -126,18 +126,18 @@ define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid
         ]
       }, "statistics");
       attr_grid.on("dgrid-select", function(event) {
-        var a, attribute, desc, domain_query, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+        var a, array, attribute, desc, domain_query, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
         attribute = event.rows[0].data;
-        domain_query = internal.domains_store.query({
+        domain_query = internal.stores.domains.query({
           name: attribute.domain
         });
         desc = utils.extractAttributeDescription(attribute, domain_query);
-        internal.stats_store.setData([]);
-        internal.stats_store.put({
+        array = [];
+        array.push({
           id: "Domain",
           value: desc.domain
         });
-        internal.stats_store.put({
+        array.push({
           id: "Base domain",
           value: desc.baseDomain
         });
@@ -146,31 +146,32 @@ define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid
             _ref = utils.getDiscreteValues(desc.parameters);
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               a = _ref[_i];
-              internal.stats_store.put(a);
+              array.push(a);
             }
             break;
           case "nominal":
             _ref1 = utils.getDiscreteValues(desc.parameters);
             for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
               a = _ref1[_j];
-              internal.stats_store.put(a);
+              array.push(a);
             }
             break;
           case "continuous":
             _ref2 = utils.getContinuousValues(desc.parameters);
             for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
               a = _ref2[_k];
-              internal.stats_store.put(a);
+              array.push(a);
             }
         }
-        return registry.byId("statistics").refresh();
+        registry.byId("statistics").refresh();
+        return registry.byId("statistics").renderArray(array);
       });
       return attr_grid.on("dgrid-datachange", function(event) {
         var el;
         el = event.cell.row.data;
         el[event.cell.column.field] = event.value;
-        internal.attr_store.put(el);
-        return internal.updateDataGrid(false);
+        internal.stores.attr.put(el);
+        return internal.updateDataGrid();
       });
     }
   };

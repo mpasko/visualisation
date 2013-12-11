@@ -8,8 +8,7 @@ define [
   # public 
   module = 
     textProvided : (text) ->
-      registry.byId("loaded_text").set 'value', text.split("\n")[..30].join("\n")
-      registry.byId("accordion").selectChild registry.byId("raw_aq21_text"), true
+      return
       
     setup : ->
       file.createFileLoader()

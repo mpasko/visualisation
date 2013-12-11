@@ -5,8 +5,9 @@ define [
 ], (aspect, Memory, registry, ContentPane, TextBox, editor, backend, grid, dojo_on) ->
   # private
   internal =
-    params_store : new Memory()
-    runs_store : new Memory()
+    stores:
+      params : new Memory()
+      runs : new Memory()
   
   # public    
   module =
@@ -19,15 +20,15 @@ define [
             ((x,y) -> x.concat(y.runSpecificParameters)), [])
           parameters = parameters.concat(runs.globalLearningParameters)
 
-          internal.params_store.setData parameters
-          internal.runs_store.setData (id: x, selected: true for x in runs.runsNames.concat(["globalLearningParameters"]))
+          internal.stores.params.setData parameters
+          internal.stores.runs.setData (id: x, selected: true for x in runs.runsNames.concat(["globalLearningParameters"]))
           
           conf_grid.refresh()
           params_grid.refresh()
 
     createDataFromView : (collect) ->
-        runsStore = internal.runs_store
-        parametersStore = internal.params_store
+        runsStore = internal.stores.runs
+        parametersStore = internal.stores.params
         runNames = (x.id for x in runsStore.query(selected: true) when x.id isnt "globalLearningParameters")
         input =
           runsGroup:
@@ -52,7 +53,7 @@ define [
               'checkbox'
             )
           ], 
-          store: internal.runs_store
+          store: internal.stores.runs
           "runs")
       
       param_grid = new grid.onDemand(
@@ -66,7 +67,7 @@ define [
             autoSave: true
           , TextBox, "click")
 
-        store: internal.params_store
+        store: internal.stores.params
         query: parent: "globalLearningParameters",
         "parameters"
       )
@@ -80,7 +81,7 @@ define [
       dojo_on(registry.byId("export_button"), "click", backend.runExport)
       
       dojo_on(registry.byId("newRunButton"), "click", ->
-        internal.runs_store.put
+        internal.stores.runs.put
           id: registry.byId("newRunText").value
           selected: true
           
@@ -90,7 +91,7 @@ define [
       
       dojo_on(registry.byId("newParameterButton"), "click", ->
         params_grid = registry.byId("parameters")
-        internal.params_store.put
+        internal.stores.params.put
           name: registry.byId("newParameterText").value
           value: "value"
           parent: params_grid.query.parent
