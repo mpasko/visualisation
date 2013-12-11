@@ -1,55 +1,29 @@
 define [
   "dojo/dom","dojo/store/Memory", "dijit/registry",
   "custom/grid", "dgrid/editor", "dijit/form/TextBox", 
-  "custom/data/cellRenderers", "custom/data/attributes", "dojo/dom-construct"
-], (dom, Memory, registry, grid, editor, TextBox, cellRenderers, utils,domConstruct) ->
+   "custom/data/attributes", "dojo/dom-construct", "custom/data/dataGrid"
+], (dom, Memory, registry, grid, editor, TextBox, utils,domConstruct, datagrid) ->
   # private
   internal =
     stores:
       attr : new Memory()
       domains : new Memory()
       events : new Memory()
+    visualisations : [
+      datagrid
+    ]
     
-    updateDataGrid : () ->
-       attributes = @stores.attr.query {}
-       selected_attributes = @stores.attr.query {selected: true}
-        
-       columns = (
-          (
-            field : 'attribute' + (attributes.indexOf(attribute)+1)
-            label : attribute.name
-            autoSave : true
-            renderCell : cellRenderers.get attribute, internal.stores.domains.query(name: attribute.domain)
-          )  for attribute in selected_attributes
-       )
-       
-       registry.byId("events").destroyDescendants false
-       domConstruct.create("div", 
-        id: "datagrid"
-        style :"height : 100%;"
-       , "events")
-       
-       eventsGrid = new grid.paginated(
-         store : @stores.events, 
-         columns : editor(column, TextBox, "click") for column in columns
-         pagingLinks: 3
-         firstLastArrows: true
-         rowsPerPage : 20
-         pageSizeOptions: [20, 50, 100]
-         , "datagrid")
-
-       eventsGrid.startup()
       
   # public 
   module = 
-    updateStores: (input)->
+    update: (input)->
         attribute["selected"] = true for attribute in input.attributes
         console.log input.attributes
         internal.stores.attr.setData input.attributes
         internal.stores.domains.setData input.domains
         internal.stores.events.setData input.events
 
-        internal.updateDataGrid()
+        item.update internal.stores for item in internal.visualisations
 
         registry.byId("statistics").refresh()
         registry.byId("attributes").refresh()
@@ -137,6 +111,6 @@ define [
 
         internal.stores.attr.put el
 
-        internal.updateDataGrid()
+        item.update internal.stores for item in internal.visualisations
                  
   module

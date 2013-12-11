@@ -6,14 +6,16 @@ define [
   internal =
     stores:
       output : new Memory()
+    visualisations: [
+      raw,
+      latex
+    ]
   
   module = 
-    visualiseResults: (results)->
-        internal.output_store.setData results["outputHypotheses"]
-        raw.updateTextbox results["raw_aq21"]
-        latex.renderMath "MathOutput", results["outputHypotheses"]
-        
-        
+    update: (results)->
+        internal.stores.output.setData results["outputHypotheses"]
+        item.update results for item in internal.visualisations
+
     setup : ->
       latex.setup()
       raw.setup()

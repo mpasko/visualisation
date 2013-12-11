@@ -11,7 +11,7 @@ define [
   
   # public    
   module =
-    createViewFromData : (input) ->
+    update : (input) ->
           conf_grid = registry.byId("runs")
           params_grid = registry.byId("parameters")
           

@@ -61,16 +61,6 @@ define(["dojo/dom", "dijit/registry"], function(dom, registry) {
     updateMath: function(id, TeX) {
       dom.byId(id).innerHTML = TeX;
       return MathJax.Hub.Queue(["Typeset", MathJax.Hub, id]);
-    }
-  };
-  module = {
-    setup: function() {
-      return MathJax.Hub.Config({
-        tex2jax: {
-          inlineMath: [["$$", "$$"]]
-        },
-        imageFont: null
-      });
     },
     convertToLaTex: function(hypotheses) {
       var hyp;
@@ -83,12 +73,23 @@ define(["dojo/dom", "dijit/registry"], function(dom, registry) {
         }
         return _results;
       })()).join(" ");
+    }
+  };
+  module = {
+    setup: function() {
+      return MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [["$$", "$$"]]
+        },
+        imageFont: null
+      });
     },
-    renderMath: function(id, hypotheses) {
-      var text, textbox;
+    update: function(results) {
+      var hypotheses, text, textbox;
+      hypotheses = results["outputHypotheses"];
       console.log("The server returned: ", hypotheses);
-      text = this.convertToLaTex(hypotheses);
-      internal.updateMath(id, text);
+      text = internal.convertToLaTex(hypotheses);
+      internal.updateMath("MathOutput", text);
       textbox = registry.byId("LatexCode");
       return textbox.set("value", text);
     }

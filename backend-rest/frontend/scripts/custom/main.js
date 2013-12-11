@@ -1,15 +1,16 @@
-require(["dojo/ready", "custom/import/import", "custom/data/data", "custom/configuration/configuration", "custom/visualisation/visualisation", "custom/splash", "dojo/topic"], function(ready, importer, data, conf, visual, splash, topic) {
+require(["dojo/ready", "custom/data_sources/file", "custom/data/data", "custom/configuration/configuration", "custom/visualisation/visualisation", "custom/backend", "custom/splash", "dojo/topic"], function(ready, file, data, conf, visual, backend, splash, topic) {
   return ready(function() {
+    file.createFileLoader();
     visual.setup();
     conf.setup();
     data.setup();
-    importer.setup();
-    topic.subscribe("experiment raw text loaded", importer.textProvided);
-    topic.subscribe("experiment loaded from backend", data.updateStores);
-    topic.subscribe("experiment loaded from backend", conf.createViewFromData);
+    topic.subscribe("convert AQ21", backend.convert.AQ21);
+    topic.subscribe("convert CSV", backend.convert.CSV);
+    topic.subscribe("experiment loaded from backend", data.update);
+    topic.subscribe("experiment loaded from backend", conf.update);
     topic.subscribe("collect experiment data", data.collectForExperiment);
     topic.subscribe("collect experiment data", conf.createDataFromView);
-    topic.subscribe("visualise results", visual.visualiseResults);
+    topic.subscribe("visualise results", visual.update);
     splash.play();
   });
 });

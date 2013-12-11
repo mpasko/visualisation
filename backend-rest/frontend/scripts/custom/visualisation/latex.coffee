@@ -39,6 +39,9 @@ define [
     updateMath : (id, TeX) ->
       dom.byId(id).innerHTML = TeX
       MathJax.Hub.Queue(["Typeset", MathJax.Hub, id])
+      
+    convertToLaTex : (hypotheses) ->
+      (internal.renderHypotheses(hyp) for hyp in hypotheses).join " "
            
   # public
   module = 
@@ -49,13 +52,11 @@ define [
         imageFont:null
       )
     
-    convertToLaTex : (hypotheses) ->
-      (internal.renderHypotheses(hyp) for hyp in hypotheses).join " "
-    
-    renderMath : (id, hypotheses) ->
+    update : (results) ->
+      hypotheses = results["outputHypotheses"]
       console.log "The server returned: ", hypotheses
-      text = @convertToLaTex hypotheses 
-      internal.updateMath id, text
+      text = internal.convertToLaTex hypotheses 
+      internal.updateMath "MathOutput", text
       textbox = registry.byId "LatexCode"    
       textbox.set "value", text
       

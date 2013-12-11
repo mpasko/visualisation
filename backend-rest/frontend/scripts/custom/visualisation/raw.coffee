@@ -7,9 +7,9 @@ define [
     
   # public
   module = 
-    updateTextbox : (results)->
+    update : (results)->
         rawtextbox = registry.byId "RawAq21"   
-        rawtextbox.set "value", results
+        rawtextbox.set "value", results["raw_aq21"]
   
     setup : ->
       {}
