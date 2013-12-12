@@ -4,20 +4,19 @@ define [
   # private
   internal = 
     hostname: window.location.origin + "/jersey/aq21/"
-    sendMessage : (onEnd)->
+    sendMessage : (configuration, onEnd)->
       message = 
         id:0
-      counter = 0
-              
+      message = lang.mixin message, configuration
+      
       topic.publish "collect experiment data", 
-        (input) ->
-          message = lang.mixin message, input
-          counter = counter + 1
-          onEnd(JSON.stringify message) if counter == 2
+        (data) ->
+          message = lang.mixin message, data
+          onEnd(JSON.stringify message)
       
   # public 
   module = 
-    runExperiment: () ->
+    runExperiment: (configuration) ->
       callback = (message) ->
         console.log message
         request.post(internal.hostname + "postIt",
@@ -31,9 +30,9 @@ define [
         ), (error) ->
           console.log "Couldn't run experiment"
           
-      internal.sendMessage(callback) 
+      internal.sendMessage(configuration,callback) 
     
-    runExport: () ->
+    runExport: (configuration) ->
       callback = (message) ->
         console.log message
         request.post(internal.hostname + "toAQ21",
@@ -47,7 +46,7 @@ define [
         ), (error) ->
           console.log "Couldn't run experiment"
           
-      internal.sendMessage(callback) 
+      internal.sendMessage(configuration,callback) 
       
     convert :  
       AQ21: (file_content) ->  

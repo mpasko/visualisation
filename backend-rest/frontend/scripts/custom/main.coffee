@@ -20,12 +20,13 @@ require [
         
         topic.subscribe "convert AQ21", backend.convert.AQ21
         topic.subscribe "convert CSV",  backend.convert.CSV
+        topic.subscribe "run export", backend.runExport
+        topic.subscribe "run experiment", backend.runExperiment
         
         topic.subscribe "experiment loaded from backend", data.update
         topic.subscribe "experiment loaded from backend", conf.update
         
         topic.subscribe "collect experiment data",  data.collectForExperiment
-        topic.subscribe "collect experiment data",  conf.createDataFromView
         
         topic.subscribe "visualise results", visual.update
 

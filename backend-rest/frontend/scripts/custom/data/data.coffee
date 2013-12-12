@@ -1,8 +1,8 @@
 define [
-  "dojo/dom","dojo/store/Memory", "dijit/registry",
+  "dojo/store/Memory", "dijit/registry",
   "custom/grid", "dgrid/editor", "dijit/form/TextBox", 
-   "custom/data/attributes", "dojo/dom-construct", "custom/data/dataGrid"
-], (dom, Memory, registry, grid, editor, TextBox, utils,domConstruct, datagrid) ->
+   "custom/data/attributes", "custom/data/dataGrid"
+], (Memory, registry, grid, editor, TextBox, utils, datagrid) ->
   # private
   internal =
     stores:
@@ -13,7 +13,6 @@ define [
       datagrid
     ]
     
-      
   # public 
   module = 
     update: (input)->
@@ -72,7 +71,6 @@ define [
         ], "domains")
 
       statistics_grid = new grid.simple(
-        store : internal.stores.stats
         columns: [
           field: "id"
           label: "Statistic"
@@ -87,15 +85,13 @@ define [
         domain_query = internal.stores.domains.query(name: attribute.domain)
         
         desc = utils.extractAttributeDescription attribute, domain_query
-        array = []
-        
-        array.push
+        array = [
           id : "Domain"
           value : desc.domain
-        
-        array.push
+        ,
           id : "Base domain"
           value : desc.baseDomain
+        ]        
         
         switch desc.baseDomain
           when "linear" then array.push a for a in utils.getDiscreteValues desc.parameters
@@ -108,7 +104,6 @@ define [
       attr_grid.on "dgrid-datachange", (event) ->  
         el = event.cell.row.data
         el[event.cell.column.field] = event.value
-
         internal.stores.attr.put el
 
         item.update internal.stores for item in internal.visualisations

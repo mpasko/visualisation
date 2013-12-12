@@ -2,23 +2,20 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
   var internal, module;
   internal = {
     hostname: window.location.origin + "/jersey/aq21/",
-    sendMessage: function(onEnd) {
-      var counter, message;
+    sendMessage: function(configuration, onEnd) {
+      var message;
       message = {
         id: 0
       };
-      counter = 0;
-      return topic.publish("collect experiment data", function(input) {
-        message = lang.mixin(message, input);
-        counter = counter + 1;
-        if (counter === 2) {
-          return onEnd(JSON.stringify(message));
-        }
+      message = lang.mixin(message, configuration);
+      return topic.publish("collect experiment data", function(data) {
+        message = lang.mixin(message, data);
+        return onEnd(JSON.stringify(message));
       });
     }
   };
   module = {
-    runExperiment: function() {
+    runExperiment: function(configuration) {
       var callback;
       callback = function(message) {
         console.log(message);
@@ -35,9 +32,9 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
           return console.log("Couldn't run experiment");
         });
       };
-      return internal.sendMessage(callback);
+      return internal.sendMessage(configuration, callback);
     },
-    runExport: function() {
+    runExport: function(configuration) {
       var callback;
       callback = function(message) {
         console.log(message);
@@ -54,7 +51,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
           return console.log("Couldn't run experiment");
         });
       };
-      return internal.sendMessage(callback);
+      return internal.sendMessage(configuration, callback);
     },
     convert: {
       AQ21: function(file_content) {

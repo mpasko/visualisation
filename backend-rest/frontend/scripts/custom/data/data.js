@@ -1,4 +1,4 @@
-define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/data/attributes", "dojo/dom-construct", "custom/data/dataGrid"], function(dom, Memory, registry, grid, editor, TextBox, utils, domConstruct, datagrid) {
+define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/data/attributes", "custom/data/dataGrid"], function(Memory, registry, grid, editor, TextBox, utils, datagrid) {
   var internal, module;
   internal = {
     stores: {
@@ -74,7 +74,6 @@ define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid
         ]
       }, "domains");
       statistics_grid = new grid.simple({
-        store: internal.stores.stats,
         columns: [
           {
             field: "id",
@@ -92,15 +91,15 @@ define(["dojo/dom", "dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid
           name: attribute.domain
         });
         desc = utils.extractAttributeDescription(attribute, domain_query);
-        array = [];
-        array.push({
-          id: "Domain",
-          value: desc.domain
-        });
-        array.push({
-          id: "Base domain",
-          value: desc.baseDomain
-        });
+        array = [
+          {
+            id: "Domain",
+            value: desc.domain
+          }, {
+            id: "Base domain",
+            value: desc.baseDomain
+          }
+        ];
         switch (desc.baseDomain) {
           case "linear":
             _ref = utils.getDiscreteValues(desc.parameters);

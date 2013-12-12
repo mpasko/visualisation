@@ -1,40 +1,13 @@
-define(["dojo/aspect", "dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "dijit/form/TextBox", "dgrid/editor", "custom/backend", "custom/grid", "dojo/on"], function(aspect, Memory, registry, ContentPane, TextBox, editor, backend, grid, dojo_on) {
+define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "dijit/form/TextBox", "dgrid/editor", "custom/grid", "dojo/topic"], function(Memory, registry, ContentPane, TextBox, editor, grid, topic) {
   var internal, module;
   internal = {
     stores: {
       params: new Memory(),
       runs: new Memory()
-    }
-  };
-  module = {
-    update: function(input) {
-      var conf_grid, parameters, params_grid, runs, x;
-      conf_grid = registry.byId("runs");
-      params_grid = registry.byId("parameters");
-      runs = input.runsGroup;
-      parameters = runs.runs.reduce((function(x, y) {
-        return x.concat(y.runSpecificParameters);
-      }), []);
-      parameters = parameters.concat(runs.globalLearningParameters);
-      internal.stores.params.setData(parameters);
-      internal.stores.runs.setData((function() {
-        var _i, _len, _ref, _results;
-        _ref = runs.runsNames.concat(["globalLearningParameters"]);
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          x = _ref[_i];
-          _results.push({
-            id: x,
-            selected: true
-          });
-        }
-        return _results;
-      })());
-      conf_grid.refresh();
-      return params_grid.refresh();
     },
-    createDataFromView: function(collect) {
+    getConfiguration: function() {
       var input, parametersStore, runNames, runsStore, x;
+      console.log("aaa");
       runsStore = internal.stores.runs;
       parametersStore = internal.stores.params;
       runNames = (function() {
@@ -73,7 +46,35 @@ define(["dojo/aspect", "dojo/store/Memory", "dijit/registry", "dijit/layout/Cont
           })
         }
       };
-      return collect(input);
+      return input;
+    }
+  };
+  module = {
+    update: function(input) {
+      var conf_grid, parameters, params_grid, runs, x;
+      conf_grid = registry.byId("runs");
+      params_grid = registry.byId("parameters");
+      runs = input.runsGroup;
+      parameters = runs.runs.reduce((function(x, y) {
+        return x.concat(y.runSpecificParameters);
+      }), []);
+      parameters = parameters.concat(runs.globalLearningParameters);
+      internal.stores.params.setData(parameters);
+      internal.stores.runs.setData((function() {
+        var _i, _len, _ref, _results;
+        _ref = runs.runsNames.concat(["globalLearningParameters"]);
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          x = _ref[_i];
+          _results.push({
+            id: x,
+            selected: true
+          });
+        }
+        return _results;
+      })());
+      conf_grid.refresh();
+      return params_grid.refresh();
     },
     setup: function() {
       var conf_grid, param_grid;
@@ -112,17 +113,20 @@ define(["dojo/aspect", "dojo/store/Memory", "dijit/registry", "dijit/layout/Cont
         });
         return param_grid.refresh();
       });
-      dojo_on(registry.byId("run_button"), "click", backend.runExperiment);
-      dojo_on(registry.byId("export_button"), "click", backend.runExport);
-      dojo_on(registry.byId("newRunButton"), "click", function() {
+      registry.byId("run_button").on("click", function() {
+        return topic.publish("run experiment", internal.getConfiguration());
+      });
+      registry.byId("export_button").on("click", function() {
+        return topic.publish("run export", internal.getConfiguration());
+      });
+      registry.byId("newRunButton").on("click", function() {
         internal.stores.runs.put({
           id: registry.byId("newRunText").value,
           selected: true
         });
-        conf_grid = registry.byId("runs");
-        return conf_grid.refresh();
+        return registry.byId("runs").refresh();
       });
-      return dojo_on(registry.byId("newParameterButton"), "click", function() {
+      return registry.byId("newParameterButton").on("click", function() {
         var params_grid;
         params_grid = registry.byId("parameters");
         internal.stores.params.put({

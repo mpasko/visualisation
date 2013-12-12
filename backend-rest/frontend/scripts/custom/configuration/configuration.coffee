@@ -1,13 +1,28 @@
 define [
-  "dojo/aspect", "dojo/store/Memory",
+  "dojo/store/Memory",
   "dijit/registry",  "dijit/layout/ContentPane", "dijit/form/TextBox", 
-  "dgrid/editor",  "custom/backend", "custom/grid", "dojo/on"
-], (aspect, Memory, registry, ContentPane, TextBox, editor, backend, grid, dojo_on) ->
+  "dgrid/editor", "custom/grid", "dojo/topic"
+], (Memory, registry, ContentPane, TextBox, editor, grid,  topic) ->
   # private
   internal =
     stores:
       params : new Memory()
       runs : new Memory()
+    getConfiguration : () ->
+      console.log "aaa"
+      runsStore = internal.stores.runs
+      parametersStore = internal.stores.params
+      runNames = (x.id for x in runsStore.query(selected: true) when x.id isnt "globalLearningParameters")
+      input =
+        runsGroup:
+          runsNames: runNames
+          runs: (
+            name: x
+            runSpecificParameters: parametersStore.query(parent: x)
+          ) for x in runNames
+          globalLearningParameters: parametersStore.query(parent: "globalLearningParameters")
+
+      input
   
   # public    
   module =
@@ -26,20 +41,6 @@ define [
           conf_grid.refresh()
           params_grid.refresh()
 
-    createDataFromView : (collect) ->
-        runsStore = internal.stores.runs
-        parametersStore = internal.stores.params
-        runNames = (x.id for x in runsStore.query(selected: true) when x.id isnt "globalLearningParameters")
-        input =
-          runsGroup:
-            runsNames: runNames
-            runs: (
-              name: x
-              runSpecificParameters: parametersStore.query(parent: x)
-            ) for x in runNames
-            globalLearningParameters: parametersStore.query(parent: "globalLearningParameters")
-        collect input
-        
     setup : ->
       conf_grid = new grid.onDemand(
           columns: [
@@ -76,28 +77,31 @@ define [
         param_grid.set 'query', parent: event.rows[0].id
         param_grid.refresh()
         
-      
-      dojo_on(registry.byId("run_button"), "click", backend.runExperiment)
-      dojo_on(registry.byId("export_button"), "click", backend.runExport)
-      
-      dojo_on(registry.byId("newRunButton"), "click", ->
-        internal.stores.runs.put
-          id: registry.byId("newRunText").value
-          selected: true
+      registry.byId("run_button").on "click", 
+        ->
+          topic.publish "run experiment", internal.getConfiguration()
           
-        conf_grid = registry.byId("runs")
-        conf_grid.refresh()
-      )
+      registry.byId("export_button").on "click", 
+        ->
+          topic.publish "run export", internal.getConfiguration()
       
-      dojo_on(registry.byId("newParameterButton"), "click", ->
-        params_grid = registry.byId("parameters")
-        internal.stores.params.put
-          name: registry.byId("newParameterText").value
-          value: "value"
-          parent: params_grid.query.parent
-          
-        params_grid.refresh()
-      )
+      registry.byId("newRunButton").on "click", 
+        ->
+          internal.stores.runs.put
+            id: registry.byId("newRunText").value
+            selected: true
+
+          registry.byId("runs").refresh()
+      
+      registry.byId("newParameterButton").on "click",
+        ->
+          params_grid = registry.byId("parameters")
+          internal.stores.params.put
+            name: registry.byId("newParameterText").value
+            value: "value"
+            parent: params_grid.query.parent
+
+          params_grid.refresh()
        
   module
       
