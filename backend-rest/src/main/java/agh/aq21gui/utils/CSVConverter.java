@@ -74,7 +74,7 @@ public class CSVConverter {
 		
 		public PredictedDomain(int id){
 			number = id;
-			type = DomainType.NOMINAL;
+			type = DomainType.INTEGER;
 			values = new LinkedList<String>();
 			max = Double.MIN_VALUE;
 			min = Double.MAX_VALUE;
@@ -85,6 +85,8 @@ public class CSVConverter {
 				case INTEGER:
 					if(!isInteger(value)){
 						type = DomainType.CONTINUOUS;
+					}else if(!isNumber(value)){
+						type = DomainType.NOMINAL;
 					}
 				case CONTINUOUS:
 					if(!isNumber(value)){
