@@ -55,18 +55,25 @@ define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "
   module = {
     setup: function() {},
     update: function(stores) {
-      var attribute, attributes, column, columns, eventsGrid, selected_attributes;
+      var attribute, attributes, column, columns, eventsGrid, pad, selected_attributes;
       attributes = stores.attr.query({});
       selected_attributes = stores.attr.query({
         selected: true
       });
+      pad = function(n) {
+        if (n < 10) {
+          return '0' + n;
+        } else {
+          return '' + n;
+        }
+      };
       columns = (function() {
         var _i, _len, _results;
         _results = [];
         for (_i = 0, _len = selected_attributes.length; _i < _len; _i++) {
           attribute = selected_attributes[_i];
           _results.push({
-            field: 'attribute' + (attributes.indexOf(attribute) + 1),
+            field: 'attribute' + pad(attributes.indexOf(attribute) + 1),
             label: attribute.name,
             autoSave: true,
             renderCell: internal.get(attribute, stores.domains.query({

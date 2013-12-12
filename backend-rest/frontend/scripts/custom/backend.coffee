@@ -42,6 +42,17 @@ define [
             "Content-Type": "application/json; charset=UTF-8"
         ).then ((output) ->
           humane.log "Export completed"
+          textFileAsBlob = new Blob [output], type:'text/plain'
+          downloadLink = document.createElement "a"
+          downloadLink.download = "sample.aq21"
+          downloadLink.innerHTML = "Download File"
+          downloadLink.href = window.URL.createObjectURL textFileAsBlob
+          downloadLink.onclick = (event) ->
+            document.body.removeChild(event.target)
+          downloadLink.style.display = "none"
+          document.body.appendChild downloadLink
+   
+          downloadLink.click()
           console.log output
         ), (error) ->
           console.log "Couldn't run experiment"
@@ -50,7 +61,6 @@ define [
       
     convert :  
       AQ21: (file_content) ->  
-        topic.publish "experiment raw text loaded", file_content
         request.post(internal.hostname + "fromAQ21",
           data: file_content
           handleAs: "json"
@@ -64,7 +74,6 @@ define [
 
 
       CSV: (file_content) -> 
-        topic.publish "experiment raw text loaded", file_content
         request.post(internal.hostname + "fromCSV",
           data: file_content
           handleAs: "json"

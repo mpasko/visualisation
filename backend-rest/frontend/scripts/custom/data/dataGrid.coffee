@@ -55,10 +55,18 @@ define ["dijit/registry","dojo/dom-construct","custom/grid", "dgrid/editor", "cu
     update : (stores) ->
        attributes = stores.attr.query {}
        selected_attributes = stores.attr.query {selected: true}
-        
+       
+       pad = (n)->
+          if n < 10
+            return '0' + n
+          else
+            return '' + n
+            
+
+       
        columns = (
           (
-            field : 'attribute' + (attributes.indexOf(attribute)+1)
+            field : 'attribute' + pad(attributes.indexOf(attribute)+1)
             label : attribute.name
             autoSave : true
             renderCell : internal.get attribute, stores.domains.query(name: attribute.domain)

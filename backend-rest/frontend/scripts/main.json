@@ -1,0 +1,82 @@
+{
+  "backend": [
+    "dojo/_base/lang",
+    "dojo/request",
+    "dojo/topic"
+  ],
+  "configuration\\configuration": [
+    "custom/grid",
+    "dgrid/editor",
+    "dijit/form/Button",
+    "dijit/form/TextBox",
+    "dijit/layout/ContentPane",
+    "dijit/registry",
+    "dojo/store/Memory",
+    "dojo/topic"
+  ],
+  "data\\attributes": [],
+  "data\\data": [
+    "custom/data/attributes",
+    "custom/data/dataGrid",
+    "custom/grid",
+    "dgrid/editor",
+    "dijit/form/TextBox",
+    "dijit/registry",
+    "dojo/store/Memory"
+  ],
+  "data\\dataGrid": [
+    "custom/data/attributes",
+    "custom/grid",
+    "dgrid/editor",
+    "dijit/form/TextBox",
+    "dijit/registry",
+    "dojo/dom-construct"
+  ],
+  "data_sources\\file": [
+    "dijit/registry",
+    "dojo/_base/window",
+    "dojo/dom-construct",
+    "dojo/topic"
+  ],
+  "grid": [
+    "dgrid/Grid",
+    "dgrid/Keyboard",
+    "dgrid/OnDemandGrid",
+    "dgrid/Selection",
+    "dgrid/extensions/ColumnResizer",
+    "dgrid/extensions/DijitRegistry",
+    "dgrid/extensions/Pagination",
+    "dojo/_base/declare"
+  ],
+  "main": [
+    "custom/backend",
+    "custom/configuration/configuration",
+    "custom/data/data",
+    "custom/data_sources/file",
+    "custom/splash",
+    "custom/visualisation/visualisation",
+    "dojo/ready",
+    "dojo/topic"
+  ],
+  "splash": [
+    "dojo/_base/fx",
+    "dojo/dom-style",
+    "dojo/fx",
+    "dojo/query"
+  ],
+  "visualisation\\latex": [
+    "dijit/registry",
+    "dojo/dom"
+  ],
+  "visualisation\\raw": [
+    "dijit/registry",
+    "dojo/dom",
+    "dojo/store/Memory"
+  ],
+  "visualisation\\visualisation": [
+    "custom/visualisation/latex",
+    "custom/visualisation/raw",
+    "dojo/store/Memory",
+    "dojo/topic"
+  ]
+}

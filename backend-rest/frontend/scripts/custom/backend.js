@@ -45,7 +45,21 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
             "Content-Type": "application/json; charset=UTF-8"
           }
         }).then((function(output) {
+          var downloadLink, textFileAsBlob;
           humane.log("Export completed");
+          textFileAsBlob = new Blob([output], {
+            type: 'text/plain'
+          });
+          downloadLink = document.createElement("a");
+          downloadLink.download = "sample.aq21";
+          downloadLink.innerHTML = "Download File";
+          downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+          downloadLink.onclick = function(event) {
+            return document.body.removeChild(event.target);
+          };
+          downloadLink.style.display = "none";
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
           return console.log(output);
         }), function(error) {
           return console.log("Couldn't run experiment");
@@ -55,7 +69,6 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
     },
     convert: {
       AQ21: function(file_content) {
-        topic.publish("experiment raw text loaded", file_content);
         return request.post(internal.hostname + "fromAQ21", {
           data: file_content,
           handleAs: "json",
@@ -70,7 +83,6 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
         });
       },
       CSV: function(file_content) {
-        topic.publish("experiment raw text loaded", file_content);
         return request.post(internal.hostname + "fromCSV", {
           data: file_content,
           handleAs: "json",

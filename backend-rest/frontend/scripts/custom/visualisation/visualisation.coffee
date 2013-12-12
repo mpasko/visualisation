@@ -1,8 +1,8 @@
 define [
-  "dojo/topic","dojo/store/Memory",
+  "dojo/store/Memory",
   "custom/visualisation/latex",
   "custom/visualisation/raw",
-  ], (topic, Memory, latex, raw) ->
+  ], (Memory, latex, raw) ->
   internal =
     stores:
       output : new Memory()

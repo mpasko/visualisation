@@ -62,7 +62,7 @@ define [
           parameters = runs.runs.reduce(
             ((x,y) -> x.concat(y.runSpecificParameters)), [])
           parameters = parameters.concat(runs.globalLearningParameters)
-
+          
           internal.stores.params.setData parameters
           internal.stores.runs.setData (id: x, selected: true for x in runs.runsNames.concat(["globalLearningParameters"]))
           
