@@ -82,6 +82,8 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
       var conf_grid, parameters, params_grid, runs, x;
       conf_grid = registry.byId("runs");
       params_grid = registry.byId("parameters");
+      console.log("aaa");
+      console.log(input);
       runs = input.runsGroup;
       parameters = runs.runs.reduce((function(x, y) {
         return x.concat(y.runSpecificParameters);

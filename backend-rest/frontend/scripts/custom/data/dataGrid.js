@@ -30,6 +30,27 @@ define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "
       div.innerHTML = value;
       return div;
     },
+    integer: function(object, value, node, options, parameters, attr_name) {
+      var color, div, max, min, val;
+      div = document.createElement("div");
+      div.className = "renderedCell";
+      min = parseFloat(parameters[0]);
+      max = parseFloat(parameters[1]);
+      val = Math.round(100 * ((parseFloat(value)) - min) / (max - min));
+      if (val < 33) {
+        color = "#3FFF00";
+      } else if (val < 66) {
+        color = "#FFD300";
+      } else {
+        color = "#ED1C24";
+      }
+      div.style.backgroundColor = color;
+      div.style.width = val + "%";
+      div.style.textAlign = "center";
+      div.style.borderRadius = "15px";
+      div.innerHTML = value;
+      return div;
+    },
     continuous: function(object, value, node, options, parameters, attr_name) {
       var color, div, max, min, val;
       div = document.createElement("div");
@@ -55,17 +76,20 @@ define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "
   module = {
     setup: function() {},
     update: function(stores) {
-      var attribute, attributes, column, columns, eventsGrid, pad, selected_attributes;
+      var attribute, attributes, column, columns, eventsGrid, pad, selected_attributes, width;
       attributes = stores.attr.query({});
       selected_attributes = stores.attr.query({
         selected: true
       });
-      pad = function(n) {
-        if (n < 10) {
-          return '0' + n;
-        } else {
-          return '' + n;
+      width = String(attributes.length + 1).length;
+      pad = function(n, width) {
+        var i, n_str;
+        n_str = String(n);
+        i = 0;
+        while (n_str.length !== width) {
+          n_str = '0' + n_str;
         }
+        return n_str;
       };
       columns = (function() {
         var _i, _len, _results;
@@ -73,7 +97,7 @@ define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "
         for (_i = 0, _len = selected_attributes.length; _i < _len; _i++) {
           attribute = selected_attributes[_i];
           _results.push({
-            field: 'attribute' + pad(attributes.indexOf(attribute) + 1),
+            field: 'attribute' + pad(attributes.indexOf(attribute) + 1, width),
             label: attribute.name,
             autoSave: true,
             renderCell: internal.get(attribute, stores.domains.query({
