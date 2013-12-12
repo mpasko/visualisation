@@ -1,15 +1,15 @@
 define [
   "dojo/store/Memory",
   "dijit/registry",  "dijit/layout/ContentPane", "dijit/form/TextBox", 
-  "dgrid/editor", "custom/grid", "dojo/topic"
-], (Memory, registry, ContentPane, TextBox, editor, grid,  topic) ->
+  "dgrid/editor", "custom/grid", "dojo/topic","dijit/form/Button" 
+], (Memory, registry, ContentPane, TextBox, editor, grid,  topic, Button) ->
   # private
   internal =
     stores:
       params : new Memory()
       runs : new Memory()
+      
     getConfiguration : () ->
-      console.log "aaa"
       runsStore = internal.stores.runs
       parametersStore = internal.stores.params
       runNames = (x.id for x in runsStore.query(selected: true) when x.id isnt "globalLearningParameters")
@@ -24,6 +24,34 @@ define [
 
       input
   
+    deleteRun : (object, data, cell) ->
+        # we cannot delete global parameters
+        if object.id is "globalLearningParameters"
+          return null
+        
+        btnDelete = new Button(
+            rowId : object.id
+            label: "Remove"
+            onClick: ->
+                internal.stores.runs.remove @rowId
+                registry.byId("runs").refresh()
+        , cell.appendChild document.createElement "div" )
+
+        btnDelete._destroyOnRemove = true
+        btnDelete
+        
+    deleteParameter : (object, data, cell) ->
+      btnDelete = new Button(
+          rowId : object.id
+          label: "Remove"
+          onClick: ->
+              internal.stores.params.remove @rowId
+              registry.byId("parameters").refresh()
+
+      , cell.appendChild document.createElement "div" )
+
+      btnDelete._destroyOnRemove = true
+      btnDelete
   # public    
   module =
     update : (input) ->
@@ -53,21 +81,29 @@ define [
               autoSave: true, 
               'checkbox'
             )
+          ,
+            label:""
+            field:"id"
+            renderCell: internal.deleteRun
           ], 
           store: internal.stores.runs
           "runs")
       
       param_grid = new grid.onDemand(
-        columns:
-          name:
-            label: "Name"
-
-          value: editor(
+        columns: [ 
+          field : "name"
+          label: "Name"
+        ,
+          editor(
             label: "Value"
             field: "value"
             autoSave: true
           , TextBox, "click")
-
+        ,
+          label:"", 
+          field:"id", 
+          renderCell: internal.deleteParameter
+        ]
         store: internal.stores.params
         query: parent: "globalLearningParameters",
         "parameters"

@@ -1,4 +1,4 @@
-define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "dijit/form/TextBox", "dgrid/editor", "custom/grid", "dojo/topic"], function(Memory, registry, ContentPane, TextBox, editor, grid, topic) {
+define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "dijit/form/TextBox", "dgrid/editor", "custom/grid", "dojo/topic", "dijit/form/Button"], function(Memory, registry, ContentPane, TextBox, editor, grid, topic, Button) {
   var internal, module;
   internal = {
     stores: {
@@ -7,7 +7,6 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
     },
     getConfiguration: function() {
       var input, parametersStore, runNames, runsStore, x;
-      console.log("aaa");
       runsStore = internal.stores.runs;
       parametersStore = internal.stores.params;
       runNames = (function() {
@@ -47,6 +46,35 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
         }
       };
       return input;
+    },
+    deleteRun: function(object, data, cell) {
+      var btnDelete;
+      if (object.id === "globalLearningParameters") {
+        return null;
+      }
+      btnDelete = new Button({
+        rowId: object.id,
+        label: "Remove",
+        onClick: function() {
+          internal.stores.runs.remove(this.rowId);
+          return registry.byId("runs").refresh();
+        }
+      }, cell.appendChild(document.createElement("div")));
+      btnDelete._destroyOnRemove = true;
+      return btnDelete;
+    },
+    deleteParameter: function(object, data, cell) {
+      var btnDelete;
+      btnDelete = new Button({
+        rowId: object.id,
+        label: "Remove",
+        onClick: function() {
+          internal.stores.params.remove(this.rowId);
+          return registry.byId("parameters").refresh();
+        }
+      }, cell.appendChild(document.createElement("div")));
+      btnDelete._destroyOnRemove = true;
+      return btnDelete;
     }
   };
   module = {
@@ -87,21 +115,29 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
             field: "selected",
             label: "Selected",
             autoSave: true
-          }, 'checkbox')
+          }, 'checkbox'), {
+            label: "",
+            field: "id",
+            renderCell: internal.deleteRun
+          }
         ],
         store: internal.stores.runs
       }, "runs");
       param_grid = new grid.onDemand({
-        columns: {
-          name: {
+        columns: [
+          {
+            field: "name",
             label: "Name"
-          },
-          value: editor({
+          }, editor({
             label: "Value",
             field: "value",
             autoSave: true
-          }, TextBox, "click")
-        },
+          }, TextBox, "click"), {
+            label: "",
+            field: "id",
+            renderCell: internal.deleteParameter
+          }
+        ],
         store: internal.stores.params,
         query: {
           parent: "globalLearningParameters"
