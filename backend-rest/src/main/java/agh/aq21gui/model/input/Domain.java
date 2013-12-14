@@ -162,7 +162,18 @@ public class Domain implements IAQ21Serializable{
 		build.append("}");
 		this.parameters = build.toString();
 		*/
-		setRange(Util.strings(min.toString(),max.toString()));
+        if (this.domain.equalsIgnoreCase("integer")) {
+            
+            Integer a = min.intValue();
+            Integer b = max.intValue();
+            setRange(Util.strings(a.toString(),b.toString()));
+            
+        }
+        else {
+            
+            setRange(Util.strings(min.toString(),max.toString()));
+        }
+		
 	}
 
 	public void setRange(List<String> values) {
