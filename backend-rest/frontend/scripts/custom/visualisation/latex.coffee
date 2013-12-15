@@ -20,11 +20,12 @@ define [
         index = 0
         output = ["(", selector.name, "\\in\\{"]
         selector.set_elements.forEach (element) ->
-          output = output.join(element)
+          output.push(element)
           ++index
-          output = output.join(",\\ ") unless index is selector.set_elements.length
+          output.push(",\\ ") unless index is selector.set_elements.length
 
-        output.join("\\})").join " "
+        output.push("\\})")
+        output.join " "
       else
         ["(", selector.name, @dict[selector.comparator], selector.value, ")"].join " "  
           

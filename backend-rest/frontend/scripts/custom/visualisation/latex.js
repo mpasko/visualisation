@@ -19,13 +19,14 @@ define(["dojo/dom", "dijit/registry"], function(dom, registry) {
         index = 0;
         output = ["(", selector.name, "\\in\\{"];
         selector.set_elements.forEach(function(element) {
-          output = output.join(element);
+          output.push(element);
           ++index;
           if (index !== selector.set_elements.length) {
-            return output = output.join(",\\ ");
+            return output.push(",\\ ");
           }
         });
-        return output.join("\\})").join(" ");
+        output.push("\\})");
+        return output.join(" ");
       } else {
         return ["(", selector.name, this.dict[selector.comparator], selector.value, ")"].join(" ");
       }
