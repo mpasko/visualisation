@@ -1,6 +1,6 @@
 define [], () ->
   hasDefaultDomain : (attribute) ->
-    attribute.domain in ["linear", "nominal", "continuous"]
+    attribute.domain in ["linear", "nominal", "integer", "continuous"]
 
   getBaseDomain : (attribute, domain_query) ->
     if @hasDefaultDomain(attribute) then attribute.domain
@@ -36,7 +36,28 @@ define [], () ->
       arr.push
         id : i
         value : params[i]
-
       i++
-
     arr
+    
+  pad : (n, width) ->
+    n_str = String(n)
+    while n_str.length != width
+      n_str = '0' + n_str
+    n_str
+  
+   getMapping : (stores, arr) ->
+    attributes = stores.attr.query {}
+    selected_attributes = stores.attr.query {selected : true}
+    
+    discretes = (attribute for attribute in selected_attributes when (@getBaseDomain attribute, stores.domains.query(name: attribute.domain)) in arr)
+    width = String(attributes.length + 1).length
+    
+    (
+          (
+            field : 'attribute' + @pad(attributes.indexOf(attribute)+1, width)
+            parameters : (@getBaseParameters attribute, stores.domains.query(name: attribute.domain))
+            attribute : attribute
+            
+          )  for attribute in discretes
+    )
+    

@@ -1,14 +1,13 @@
 define ["dijit/registry","dojo/dom-construct","custom/grid", "dgrid/editor", "custom/data/attributes","dijit/form/TextBox"], 
-(registry,domConstruct,grid,editor,attributeUtils,TextBox) ->
+(registry,domConstruct,grid,editor,utils,TextBox) ->
   # private
   internal = 
+    renderers : {}
     get : (attribute, domain_query) ->
-      baseDomain = attributeUtils.getBaseDomain attribute, domain_query
-      baseParameters = attributeUtils.getBaseParameters attribute, domain_query
-
-      a = @partialRight @[baseDomain], attribute.name
+      baseDomain = utils.getBaseDomain attribute, domain_query
+      baseParameters = utils.getBaseParameters attribute, domain_query
       
-      internal.partialRight a, baseParameters
+      internal.partialRight @renderers[baseDomain], baseParameters
     
     partialRight : ( fn , args) ->
         aps = Array.prototype.slice
@@ -16,19 +15,13 @@ define ["dijit/registry","dojo/dom-construct","custom/grid", "dgrid/editor", "cu
         () ->
           fn.apply this, aps.call( arguments ).concat args  
 
-    nominal: (object, value, node, options, parameters, attr_name) ->
+    plainCellRenderer : (object, value, node, options, parameters) ->
         div = document.createElement "div"
         div.className = "renderedCell"
         div.innerHTML = value
         div
 
-    linear: (object, value, node, options, parameters, attr_name) ->
-        div = document.createElement "div"
-        div.className = "renderedCell"
-        div.innerHTML = value
-        div
-        
-    integer: (object, value, node, options, parameters, attr_name) ->
+    numberCellRenderer: (object, value, node, options, parameters) ->
         div = document.createElement "div"
         div.className = "renderedCell"
         min = parseFloat parameters[0]
@@ -39,60 +32,32 @@ define ["dijit/registry","dojo/dom-construct","custom/grid", "dgrid/editor", "cu
         else color = "#ED1C24"
         div.style.backgroundColor = color
         div.style.width = val + "%"
-
         div.style.textAlign = "center"
         div.style.borderRadius = "15px"
-
         div.innerHTML = value
-
         div
 
-    continuous: (object, value, node, options, parameters, attr_name) ->
-        div = document.createElement "div"
-        div.className = "renderedCell"
-        min = parseFloat parameters[0]
-        max = parseFloat parameters[1]
-        val = Math.round 100 * ((parseFloat value) - min) / (max - min)
-        if val < 33 then color = "#3FFF00"
-        else if val < 66 then color = "#FFD300"
-        else color = "#ED1C24"
-        div.style.backgroundColor = color
-        div.style.width = val + "%"
-
-        div.style.textAlign = "center"
-        div.style.borderRadius = "15px"
-
-        div.innerHTML = value
-
-        div
-     
+  internal.renderers = 
+    nominal : internal.plainCellRenderer
+    linear : internal.plainCellRenderer
+    integer : internal.numberCellRenderer
+    continuous : internal.numberCellRenderer
+  
   # public 
   module = 
-    setup : ->
-      return
+    setup : (stores) ->
+      internal.stores = stores
       
-    update : (stores) ->
-       attributes = stores.attr.query {}
-       selected_attributes = stores.attr.query {selected: true}
-       
-       width = String(attributes.length + 1).length
-       
-       pad  = (n, width) ->
-        n_str = String(n)
-        i = 0
-        while n_str.length != width
-          n_str = '0' + n_str
-        
-        n_str
-
+    update : () ->
+       mapping = utils.getMapping internal.stores, ["linear", "nominal","integer", "continuous"]
        
        columns = (
           (
-            field : 'attribute' + pad(attributes.indexOf(attribute)+1, width)
-            label : attribute.name
+            field : item.field
+            label : item.attribute.name
             autoSave : true
-            renderCell : internal.get attribute, stores.domains.query(name: attribute.domain)
-          )  for attribute in selected_attributes
+            renderCell : internal.get item.attribute, internal.stores.domains.query(name: item.attribute.domain)
+          )  for item in mapping
        )
        
        registry.byId("events").destroyDescendants false
@@ -102,7 +67,7 @@ define ["dijit/registry","dojo/dom-construct","custom/grid", "dgrid/editor", "cu
        , "events")
        
        eventsGrid = new grid.paginated(
-         store : stores.events, 
+         store : internal.stores.events, 
          columns : editor(column, TextBox, "click") for column in columns
          pagingLinks: 3
          firstLastArrows: true

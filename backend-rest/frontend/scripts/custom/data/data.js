@@ -1,4 +1,4 @@
-define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/data/attributes", "custom/data/dataGrid"], function(Memory, registry, grid, editor, TextBox, utils, datagrid) {
+define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "dijit/form/TextBox", "custom/data/attributes", "custom/data/dataGrid", "custom/data/scatterPlot"], function(Memory, registry, grid, editor, TextBox, utils, datagrid, scatterPlot) {
   var internal, module;
   internal = {
     stores: {
@@ -6,7 +6,7 @@ define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "d
       domains: new Memory(),
       events: new Memory()
     },
-    visualisations: [datagrid]
+    visualisations: [datagrid, scatterPlot]
   };
   module = {
     update: function(input) {
@@ -23,7 +23,7 @@ define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "d
       _ref1 = internal.visualisations;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         item = _ref1[_j];
-        item.update(internal.stores);
+        item.update();
       }
       registry.byId("statistics").refresh();
       registry.byId("attributes").refresh();
@@ -43,7 +43,12 @@ define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "d
       });
     },
     setup: function() {
-      var attr_grid, domains_grid, statistics_grid;
+      var attr_grid, domains_grid, item, statistics_grid, _i, _len, _ref;
+      _ref = internal.visualisations;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        item = _ref[_i];
+        item.setup(internal.stores);
+      }
       attr_grid = new grid.onDemand({
         store: internal.stores.attr,
         columns: [
@@ -85,7 +90,7 @@ define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "d
         ]
       }, "statistics");
       attr_grid.on("dgrid-select", function(event) {
-        var a, array, attribute, desc, domain_query, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+        var a, array, attribute, desc, domain_query, _j, _k, _l, _len1, _len2, _len3, _len4, _m, _ref1, _ref2, _ref3, _ref4;
         attribute = event.rows[0].data;
         domain_query = internal.stores.domains.query({
           name: attribute.domain
@@ -102,23 +107,30 @@ define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "d
         ];
         switch (desc.baseDomain) {
           case "linear":
-            _ref = utils.getDiscreteValues(desc.parameters);
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              a = _ref[_i];
-              array.push(a);
-            }
-            break;
-          case "nominal":
             _ref1 = utils.getDiscreteValues(desc.parameters);
             for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
               a = _ref1[_j];
               array.push(a);
             }
             break;
-          case "continuous":
-            _ref2 = utils.getContinuousValues(desc.parameters);
+          case "nominal":
+            _ref2 = utils.getDiscreteValues(desc.parameters);
             for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
               a = _ref2[_k];
+              array.push(a);
+            }
+            break;
+          case "integer":
+            _ref3 = utils.getContinuousValues(desc.parameters);
+            for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+              a = _ref3[_l];
+              array.push(a);
+            }
+            break;
+          case "continuous":
+            _ref4 = utils.getContinuousValues(desc.parameters);
+            for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
+              a = _ref4[_m];
               array.push(a);
             }
         }
@@ -126,15 +138,15 @@ define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "d
         return registry.byId("statistics").renderArray(array);
       });
       return attr_grid.on("dgrid-datachange", function(event) {
-        var el, item, _i, _len, _ref, _results;
+        var el, _j, _len1, _ref1, _results;
         el = event.cell.row.data;
         el[event.cell.column.field] = event.value;
         internal.stores.attr.put(el);
-        _ref = internal.visualisations;
+        _ref1 = internal.visualisations;
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          item = _ref[_i];
-          _results.push(item.update(internal.stores));
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          item = _ref1[_j];
+          _results.push(item.update());
         }
         return _results;
       });

@@ -26,13 +26,36 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
             "Content-Type": "application/json; charset=UTF-8"
           }
         }).then((function(output) {
-          humane.log("Experiment completed");
+          if (output["outputHypotheses"].length === 0) {
+            humane.log("Couldn't run experiment, check raw output");
+          } else {
+            humane.log("Experiment completed");
+          }
           return topic.publish("visualise results", output);
         }), function(error) {
           return console.log("Couldn't run experiment");
         });
       };
       return internal.sendMessage(configuration, callback);
+    },
+    getExperimentList: function() {
+      return request.get(internal.hostname + "browse", {
+        handleAs: "json"
+      }).then((function(output) {
+        return topic.publish("render database experiments", output);
+      }), function(error) {
+        return humane.log("some error");
+      });
+    },
+    getExperiment: function(link) {
+      return request.get(internal.hostname + "browseExperiment/" + link, {
+        handleAs: "json"
+      }).then((function(output) {
+        topic.publish("experiment loaded from backend", output);
+        return humane.log("Data successfully loaded from database");
+      }), function(error) {
+        return humane.log("some error");
+      });
     },
     runExport: function(configuration) {
       var callback;

@@ -57,8 +57,6 @@ define [
     update : (input) ->
           conf_grid = registry.byId("runs")
           params_grid = registry.byId("parameters")
-          console.log "aaa"
-          console.log input
           runs = input.runsGroup
           parameters = runs.runs.reduce(
             ((x,y) -> x.concat(y.runSpecificParameters)), [])
