@@ -51,8 +51,8 @@ public class IntegrationTests {
 		GLDOutput gld_output = optimizer.getInitialData();
 		gld_output.print();
 		GLDOutput.printCellValues(gld_output);
-		assertEquals(2, gld_output.width());
-		assertEquals(2, gld_output.height());
+		assertEquals(2, gld_output.getWidth());
+		assertEquals(2, gld_output.getHeight());
 		assertEquals(3, countMatches("attribute5", gld_output,"t"));
 		assertEquals(1, countMatches("attribute5", gld_output,"f"));
 	}
@@ -65,8 +65,8 @@ public class IntegrationTests {
 		GLDOutput gld_output = optimizer.optimize();
 		gld_output.print();
 		GLDOutput.printCellValues(gld_output);
-		assertEquals(2, gld_output.width());
-		assertEquals(2, gld_output.height());
+		assertEquals(2, gld_output.getWidth());
+		assertEquals(2, gld_output.getHeight());
 		assertEquals(3, countMatches("attribute5", gld_output,"t"));
 		assertEquals(1, countMatches("attribute5", gld_output,"f"));
 	}
@@ -80,7 +80,7 @@ public class IntegrationTests {
 		GLDOutput gld_output = optimizer.getInitialData();
 		gld_output.print();
 		GLDOutput.printCellValues(gld_output);
-		int num_cells = gld_output.width()*gld_output.height();
+		int num_cells = gld_output.getWidth()*gld_output.getHeight();
 		if(5384!=num_cells){
 			skip_iris_all = true;
 		}
@@ -100,7 +100,7 @@ public class IntegrationTests {
 		GLDOutput gld_output = optimizer.optimize();
 		gld_output.print();
 		GLDOutput.printCellValues(gld_output);
-		assertEquals(5184, gld_output.width()*gld_output.height());
+		assertEquals(5184, gld_output.getWidth()*gld_output.getHeight());
 	}
 	
 	@Test

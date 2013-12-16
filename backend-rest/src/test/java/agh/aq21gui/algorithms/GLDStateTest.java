@@ -82,11 +82,11 @@ public class GLDStateTest {
 		double prob = 0.0;
 		GLDState instance = StubFactory.getGLDState();
 		instance.setRepartitionProb(prob);
-		int h_before = instance.getData().height();
-		int w_before = instance.getData().width();
+		int h_before = instance.getData().getHeight();
+		int w_before = instance.getData().getWidth();
 		instance.modifyItself();
-		assertEquals(h_before, instance.getData().height());
-		assertEquals(w_before, instance.getData().width());
+		assertEquals(h_before, instance.getData().getHeight());
+		assertEquals(w_before, instance.getData().getWidth());
 	}
 
 	/**

@@ -86,15 +86,15 @@ public class Invoker {
 		}
 */ 
 		Logger.getLogger(Aq21Resource.class.getName()).info("Request accepted");
-		String result;
+		String result="";
 		try {
 			result = run(input.toString());
 			return parser.parse(result);
-		} catch (IOException ex) {
-			Logger.getLogger(Aq21Resource.class.getName()).log(Level.WARNING, null, ex);
-		} catch (ProgramExecutionException ex) {
+		} catch (Exception ex) {
 			Logger.getLogger(Aq21Resource.class.getName()).log(Level.WARNING, null, ex);
 		}
-		return null;
+		Output stub = new Output();
+		stub.setRaw(result);
+		return stub;
 	}
 }

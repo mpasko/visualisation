@@ -49,7 +49,7 @@ public class GLDState extends State{
 		if (clusterscache != -1){
 			return clusterscache;
 		}
-		int maxClusters = data.height()*data.width();
+		int maxClusters = data.getHeight()*data.getWidth();
 		MergingSets sets = new ArrayMergingSets(maxClusters);
 		MeshCell<CellValue> prevCell = null;
 		List<Coordinate> colSeq = data.getHCoordSequence();
@@ -89,8 +89,8 @@ public class GLDState extends State{
 	}
 	
 	public double getGoldenRatioCloseness(){
-		double width = data.width();
-		double height = data.height();
+		double width = data.getWidth();
+		double height = data.getHeight();
 		return Math.abs(width/height - 377.0/233.0);
 	}
 

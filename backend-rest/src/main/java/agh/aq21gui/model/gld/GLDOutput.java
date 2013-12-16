@@ -103,11 +103,13 @@ public class GLDOutput {
 		return this.presenter.getValues(extractCells(mesh_cells));
 	}
 
-	public int width() {
+	@JsonProperty("width")
+	public int getWidth() {
 		return columns.width();
 	}
 
-	public int height() {
+	@JsonProperty("height")
+	public int getHeight() {
 		return rows.width();
 	}
 	
