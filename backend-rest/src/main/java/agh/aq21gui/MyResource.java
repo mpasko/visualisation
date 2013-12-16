@@ -55,6 +55,8 @@ public class MyResource {
 	@Path("templateGLDOutput")
 	@Produces(MediaType.APPLICATION_JSON)
 	public GLDOutput getGLD(){
-		return StubFactory.getGLDOutputBaloons();
+		final GLDOutput gld_output = StubFactory.getGLDOutputBaloons();
+		GLDOutput.printCellValues(gld_output);
+		return gld_output;
 	}
 }

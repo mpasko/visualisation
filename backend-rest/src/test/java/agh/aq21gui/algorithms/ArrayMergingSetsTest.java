@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.algorithms;
 
+import agh.aq21gui.algorithms.structures.ArrayMergingSets;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.After;

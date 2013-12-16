@@ -4,19 +4,17 @@
  */
 package agh.aq21gui.model.gld;
 
-import agh.aq21gui.Invoker;
 import agh.aq21gui.algorithms.GLDOptimizer;
 import agh.aq21gui.algorithms.SimulatedAnnealing;
+import agh.aq21gui.model.gld.processing.CellValue;
+import agh.aq21gui.model.gld.processing.Coordinate;
 import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.stubs.StubFactory;
-import agh.aq21gui.utils.OutputParser;
-import java.io.FileInputStream;
-import java.io.IOException;
 import org.junit.After;
-import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
@@ -27,7 +25,7 @@ public class IntegrationTests {
 	private static Output iris;
 	private static Output aq21example;
 	private static Output alternateCovers;
-	private boolean skip_iris_all = false;
+	private boolean skip_iris_all = true;
 	
 	public IntegrationTests() {
 	}
@@ -55,8 +53,8 @@ public class IntegrationTests {
 		GLDOutput.printCellValues(gld_output);
 		assertEquals(2, gld_output.width());
 		assertEquals(2, gld_output.height());
-		assertEquals(3, countMatches(gld_output,"t"));
-		assertEquals(1, countMatches(gld_output,"f"));
+		assertEquals(3, countMatches("attribute5", gld_output,"t"));
+		assertEquals(1, countMatches("attribute5", gld_output,"f"));
 	}
 	@Test
 	public void testAll() {
@@ -69,8 +67,8 @@ public class IntegrationTests {
 		GLDOutput.printCellValues(gld_output);
 		assertEquals(2, gld_output.width());
 		assertEquals(2, gld_output.height());
-		assertEquals(3, countMatches(gld_output,"t"));
-		assertEquals(1, countMatches(gld_output,"f"));
+		assertEquals(3, countMatches("attribute5", gld_output,"t"));
+		assertEquals(1, countMatches("attribute5", gld_output,"f"));
 	}
 	
 	@Test
@@ -139,6 +137,7 @@ public class IntegrationTests {
 		gld_output.print();
 		GLDOutput.printCellValues(gld_output);
 		assertEquals(3, gld_output.getColumns().size()+gld_output.getRows().size());
+		assertEquals(5, countMatches("c", gld_output, "1"));
 	}
 	
 	@Test
@@ -151,12 +150,13 @@ public class IntegrationTests {
 		gld_output.print();
 		GLDOutput.printCellValues(gld_output);
 		assertEquals(3, gld_output.getColumns().size()+gld_output.getRows().size());
+		assertEquals(5, countMatches("c", gld_output, "1"));
 	}
 	
-	public static int countMatches(GLDOutput data, String value){
+	public static int countMatches(String name, GLDOutput data, String value){
 		int i = 0;
 		ClassDescriptor desc = new ClassDescriptor();
-		desc.name="attribute5";
+		desc.name=name;
 		desc.comparator="=";
 		desc.setValue(value);
 		for (Coordinate x : data.getHCoordSequence()){

@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.algorithms;
+package agh.aq21gui.algorithms.structures;
 
 import agh.aq21gui.algorithms.structures.MergingSets;
-import agh.aq21gui.model.gld.Coordinate;
+import agh.aq21gui.model.gld.processing.Coordinate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author marcin
  */
-class ArrayMergingSets implements MergingSets {
+public class ArrayMergingSets implements MergingSets {
 	
 	ArrayList <Integer> array;
 	int generator;

@@ -19,27 +19,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author marcin
  */
 @XmlRootElement
-public class Domain implements IAQ21Serializable{
-	private long dbid = 0;
-	
-	public long id;
+public class Domain extends NameValueEntity{
 	
 	private static long generator = 0;
 	
-	private String name;
-	private String domain;
-	private String parameters;
-	private List<String> range = new LinkedList<String>();
+	private String domain="";
+	private String parameters="";
 	//private boolean brace=false;
-	
-	@XmlElement(name="id")
-	public long getId(){
-		return id;
-	}
-	
-	public void setId(long id){
-		this.id = id;
-	}
 	
 	@JsonProperty("name")
 	public String getname(){
@@ -68,10 +54,10 @@ public class Domain implements IAQ21Serializable{
 	
 	public void setparameters(String params){
 		String params_nonbre = params.replace("{", "").replace("}", "").replace(" ", "");
-		this.range = new LinkedList<String>();
+		this.set_elements = new LinkedList<String>();
 		for (String item : params_nonbre.split(",")) {
 			if (!item.isEmpty()) {
-				this.range.add(item);
+				this.set_elements.add(item);
 			}
 		}
 		this.parameters = params_nonbre;
@@ -84,7 +70,7 @@ public class Domain implements IAQ21Serializable{
 	
 	private boolean estimate_brace(){
 		boolean nobrace=false;
-		if (domain != null) {
+		if (!domain.isEmpty()) {
 			nobrace	= domain.equalsIgnoreCase("continuous");
 			nobrace |= domain.equalsIgnoreCase("integer");
 		}
@@ -134,24 +120,20 @@ public class Domain implements IAQ21Serializable{
 	private void parseRange(CommonTree args) {
 		for(Object item : args.getChildren()){
 			CommonTree arg = (CommonTree) item;
-			this.range.add(arg.getText());
+			this.set_elements.add(arg.getText());
 		}
 		buildParams();
 	}
 
 	private void buildParams() {
 		StringBuilder pbuild = new StringBuilder();
-		for(String param : this.range){
+		for(String param : this.set_elements){
 			if(pbuild.length()>0){
 				pbuild.append(", ");
 			}
 			pbuild.append(param);
 		}
 		this.parameters = pbuild.toString();
-	}
-
-	void traverse() {
-		if(name.isEmpty());
 	}
 
 	public void setRange(Double min, Double max) {
@@ -177,19 +159,19 @@ public class Domain implements IAQ21Serializable{
 	}
 
 	public void setRange(List<String> values) {
-		this.range = values;
+		this.set_elements = values;
 		buildParams();
 	}
 	
 	
 	public List<String> getRange() {
-		return this.range;
+		return this.set_elements;
 	}
 
 	public boolean emptyParams() {
 		Util.isNull(parameters, "parameters");
-		Util.isNull(range, "range");
-		return ((this.parameters==null)||this.parameters.isEmpty()) && (this.range.isEmpty());
+		Util.isNull(set_elements, "range");
+		return this.parameters.isEmpty() && (this.set_elements.isEmpty());
 	}
 
 	

@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.model.gld;
 
+import agh.aq21gui.model.gld.processing.CellValue;
 import agh.aq21gui.model.output.ClassDescriptor;
 import java.util.LinkedList;
 import java.util.List;

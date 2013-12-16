@@ -16,38 +16,42 @@ import java.util.Map;
  */
 public class Mesh<K,V> implements IMesh<K, V> {
 	
-	private Map<K,IMesh<K,V>> map = new HashMap<K,IMesh<K,V>>();
+	private Map<K,IMesh<K,V>> map;
+	
+	public Mesh(){
+		this.clear();
+	}
 	
 	@Override
 	public MeshCell<V> transform(K ...list){
 		LinkedList<K> xses= new LinkedList<K>(Arrays.asList(list));
-		K x = xses.removeFirst();
-		IMesh<K, V> current;
-		if (xses.size()==1){
-			current = retrieveLast(x);
+		K x;
+		if (map.containsKey(xses.getLast())) {
+			x = xses.removeLast();
 		} else {
-			current = retrieveFirst(x);
+			x = xses.removeFirst();
 		}
+		IMesh<K, V> current;
+		current = retrieve(x, xses.size());
 		return current.transform((K[])xses.toArray());
 	}
 	
-	private IMesh<K,V> retrieveFirst(K elem){
+	private IMesh<K,V> retrieve(K elem, int remaining){
 		if (map.containsKey(elem)){
 			return map.get(elem);
 		} else {
-			Mesh<K,V> row = new Mesh<K,V>();
+			IMesh<K,V> row;
+			if (remaining == 1) {
+				row = new MeshRow<K,V>();
+			} else {
+				row = new Mesh<K,V>();
+			}
 			map.put(elem, row);
 			return row;
 		}
 	}
-	
-		private IMesh<K,V> retrieveLast(K elem){
-		if (map.containsKey(elem)){
-			return map.get(elem);
-		} else {
-			MeshRow<K,V> row = new MeshRow<K,V>();
-			map.put(elem, row);
-			return row;
-		}
+
+	public final void clear() {
+		map = new HashMap<K,IMesh<K,V>>();
 	}
 }

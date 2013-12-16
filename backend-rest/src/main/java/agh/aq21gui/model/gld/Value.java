@@ -4,8 +4,8 @@
  */
 package agh.aq21gui.model.gld;
 
-import agh.aq21gui.algorithms.conversion.ContinuousElement;
 import agh.aq21gui.algorithms.conversion.RangeRecognizer;
+import agh.aq21gui.model.gld.processing.Recognizer;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -44,7 +44,27 @@ public class Value {
 		this.name = name;
 	}
 
-	boolean notWildcard() {
+	public boolean notWildcard() {
 		return !name.equalsIgnoreCase("*");
+	}
+	
+	@Override
+	public boolean equals(Object other){
+		if (other == null){
+			return false;
+		}
+		if (other instanceof Value) {
+			Value next = (Value) other;
+			return next.getName().equalsIgnoreCase(next.getName());
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 97 * hash + (this.name != null ? this.name.hashCode() : 0);
+		return hash;
 	}
 }

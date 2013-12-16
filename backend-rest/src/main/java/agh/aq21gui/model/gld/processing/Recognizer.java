@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.model.gld;
+package agh.aq21gui.model.gld.processing;
 
 import agh.aq21gui.model.input.Attribute;
 import agh.aq21gui.model.input.DomainsGroup;

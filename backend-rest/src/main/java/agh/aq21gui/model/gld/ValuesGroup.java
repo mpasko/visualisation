@@ -6,7 +6,6 @@ package agh.aq21gui.model.gld;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *

@@ -4,15 +4,18 @@
  */
 package agh.aq21gui.model.gld;
 
+import agh.aq21gui.model.gld.processing.CellValue;
+import agh.aq21gui.model.gld.processing.Coordinate;
+import agh.aq21gui.model.gld.processing.ValueEvaluator;
 import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.Rule;
 import agh.aq21gui.model.output.Selector;
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

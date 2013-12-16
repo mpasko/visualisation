@@ -4,12 +4,17 @@
  */
 package agh.aq21gui.model.gld;
 
-import agh.aq21gui.algorithms.GLDState;
-import agh.aq21gui.algorithms.State;
 import agh.aq21gui.algorithms.structures.Mesh;
 import agh.aq21gui.algorithms.structures.MeshCell;
-import agh.aq21gui.model.output.Hypothesis;
+import agh.aq21gui.model.gld.presentation.ListPresenter;
+import agh.aq21gui.model.gld.presentation.MapPresenter;
+import agh.aq21gui.model.gld.presentation.Presenter;
+import agh.aq21gui.model.gld.processing.CellValue;
+import agh.aq21gui.model.gld.processing.Coordinate;
+import agh.aq21gui.model.gld.processing.Evaluator;
+import agh.aq21gui.model.gld.processing.ValueEvaluator;
 import agh.aq21gui.model.output.Output;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,9 +32,11 @@ public class GLDOutput {
 	private ArgumentsGroup columns;
 	private Evaluator elements;
 	private Output hypo;
-	public Mesh mesh;
+	public Mesh<Coordinate,CellValue> mesh;
+	private Presenter presenter;
 	
 	public GLDOutput(Output out) {
+		mesh = new Mesh<Coordinate,CellValue>();
 		this.hypo = out;
 		rows = new ArgumentsGroup(new LinkedList<Argument>());
 		columns = new ArgumentsGroup(new LinkedList<Argument>());
@@ -59,7 +66,7 @@ public class GLDOutput {
 	 * 
 	 * @return cols in full sequence
 	 */
-	@JsonIgnore
+	@JsonProperty("column_sequence")
 	public List<Coordinate> getHCoordSequence(){
 		return this.columns.getCoordSequence();
 	}
@@ -68,7 +75,7 @@ public class GLDOutput {
 	 * 
 	 * @return rows in full sequence
 	 */
-	@JsonIgnore
+	@JsonProperty("row_sequence")
 	public List<Coordinate> getVCoordSequence(){
 		return this.rows.getCoordSequence();
 	}
@@ -89,15 +96,11 @@ public class GLDOutput {
 	}
 
 	@JsonProperty("values")
-	public List<Cell> getElements() {
+	public Object getElements() {
 		this.resetMesh();
-		Iterable<MeshCell<CellValue>> mesh_cells = this.getCells(this.getVCoordSequence(), this.getHCoordSequence());
-		List<Cell> cells = new LinkedList<Cell>();
-		for (MeshCell<CellValue> mesh_value: mesh_cells) {
-			Cell c = new Cell(mesh_value.get());
-			cells.add(c);
-		}
-		return cells;
+		Iterable<MeshCell<CellValue>> mesh_cells = this.getMeshCellValues(this.getVCoordSequence(), this.getHCoordSequence());
+		presenter = new MapPresenter();
+		return this.presenter.getValues(extractCells(mesh_cells));
 	}
 
 	public int width() {
@@ -107,18 +110,23 @@ public class GLDOutput {
 	public int height() {
 		return rows.width();
 	}
+	
+	@JsonIgnore
+	public void setEvaluator(Evaluator eval){
+		this.elements = eval;
+	}
 
 	/**
 	 * Returns cell value
 	 * @param row ==V
 	 * @param col ==H
-	 * @return cellvalue
+	 * @return CellValue
 	 */
 	public CellValue eval(Coordinate row, Coordinate col) {
 		return this.elements.eval(row,col);
 	}
 	
-	static void printCellValues(GLDOutput gld_output) {
+	public static void printCellValues(GLDOutput gld_output) {
 		List<Coordinate> v = gld_output.getVCoordSequence();
 		List<Coordinate> h = gld_output.getHCoordSequence();
 		System.out.print("Width:");
@@ -127,12 +135,16 @@ public class GLDOutput {
 		System.out.println(v.size());
 
 		System.out.println();
-		for(Coordinate row : v){
-			for(Coordinate col : h){
-				CellValue value = gld_output.eval(row, col);
+		
+		gld_output.resetMesh();
+		Iterable<MeshCell<CellValue>> values = gld_output.getMeshCellValues(v, h);
+		Iterator<MeshCell<CellValue>> iterator = values.iterator();
+		for (int i=0; i<v.size(); ++i){
+			for (int j=0; j<h.size(); ++j) {
+				CellValue value = iterator.next().get();
 				System.out.print(value.toString());
 			}
-			System.out.println();
+			System.out.println(String.format(" ==[%s]", i));
 		}
 	}
 
@@ -144,7 +156,11 @@ public class GLDOutput {
 		this.rows=argumentsGroupSample;
 	}
 
-	public Iterable<MeshCell<CellValue>> getCells(Iterable<Coordinate> rowSeq, Iterable<Coordinate> colSeq) {
+	/*
+	 * @param rowSeq = V
+	 * @param colSeq = H
+	 */
+	public Iterable<MeshCell<CellValue>> getMeshCellValues(Iterable<Coordinate> rowSeq, Iterable<Coordinate> colSeq) {
 		List<MeshCell<CellValue>> list = new LinkedList<MeshCell<CellValue>>();
 		for (Coordinate row: rowSeq) {
 			for (Coordinate col : colSeq) {
@@ -155,16 +171,29 @@ public class GLDOutput {
 		return list;
 	}
 
-	public void resetMesh() {
-		mesh = new Mesh<Coordinate,CellValue>();
+	public final void resetMesh() {
+		mesh.clear();
 		List<Coordinate> rowSeq=this.getVCoordSequence();
 		List<Coordinate> colSeq=this.getHCoordSequence();
 		for (Coordinate row : rowSeq) {
 			for (Coordinate col : colSeq) {
 				CellValue value = eval(row, col);
-				MeshCell cell = mesh.transform(col, row);
+				MeshCell<CellValue> cell = mesh.transform(col, row);
 				cell.set(value);
 			}
 		}
+	}
+
+	/**
+	 * Converts representation
+	 * @param mesh_cells list of mesh cells
+	 * @return list of CellValue
+	 */
+	public static Iterable<CellValue> extractCells(Iterable<MeshCell<CellValue>> mesh_cells) {
+		List<CellValue> list = new LinkedList<CellValue>();
+		for (MeshCell<CellValue> meshcell : mesh_cells){
+			list.add(meshcell.get());
+		}
+		return list;
 	}
 }

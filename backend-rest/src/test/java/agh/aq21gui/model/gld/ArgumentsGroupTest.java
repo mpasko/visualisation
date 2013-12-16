@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.model.gld;
 
+import agh.aq21gui.model.gld.processing.Coordinate;
 import agh.aq21gui.algorithms.structures.StopIterator;
 import agh.aq21gui.stubs.StubFactory;
 import java.util.LinkedList;

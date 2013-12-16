@@ -6,6 +6,7 @@ package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.model.gld.Value;
+import agh.aq21gui.model.input.NameValueEntity;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,23 +19,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author marcin
  */
 @XmlRootElement
-public class ClassDescriptor {
+public class ClassDescriptor extends NameValueEntity{
 
-	public String name;
-	public String comparator;
+	public String comparator="";
 	private String value="";
 	public String range_begin="";
 	public String range_end="";
-	public List<String> set_elements=new LinkedList<String>();
-		
-	@XmlElement(name="name")
-	public void setName(String nm){
-		this.name = nm;
-	}
-	
-	public String getName(){
-		return this.name; 
-	}
 	
 	@XmlElement(name="comparator")
 	public void setComparator(String comp){
@@ -123,10 +113,6 @@ public class ClassDescriptor {
 		}
 	}
 
-	void traverse() {
-		if(name.isEmpty());
-	}
-
 	public boolean contains(ClassDescriptor other) {
 		if (equals(other)){
 			return true;
@@ -138,20 +124,35 @@ public class ClassDescriptor {
 		return false;
 	}
 	
-	public boolean equals(ClassDescriptor other){
-		if (other==null){
+	@Override
+	public boolean equals(Object next){
+		if (next==null){
 			return false;
 		}
-		if (!this.name.equalsIgnoreCase(other.name)){
+		if (next instanceof ClassDescriptor) {
+			ClassDescriptor other = (ClassDescriptor)next;
+			if (!this.name.equalsIgnoreCase(other.name)){
+				return false;
+			}
+			if (!this.comparator.equalsIgnoreCase(other.comparator)){
+				return false;
+			}
+			if (!this.getValue().equalsIgnoreCase(other.getValue())){
+				return false;
+			}
+			return true;
+		} else {
 			return false;
 		}
-		if (!this.comparator.equalsIgnoreCase(other.comparator)){
-			return false;
-		}
-		if (!this.getValue().equalsIgnoreCase(other.getValue())){
-			return false;
-		}
-		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
+		hash = 67 * hash + (this.comparator != null ? this.comparator.hashCode() : 0);
+		hash = 67 * hash + (this.getValue() != null ? this.value.hashCode() : 0);
+		return hash;
 	}
 	
 	private void setToString(){

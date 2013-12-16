@@ -9,7 +9,7 @@ import agh.aq21gui.algorithms.conversion.RangeRecognizer;
 import agh.aq21gui.model.gld.Argument;
 import agh.aq21gui.model.gld.GLDInput;
 import agh.aq21gui.model.gld.GLDOutput;
-import agh.aq21gui.model.gld.Recognizer;
+import agh.aq21gui.model.gld.processing.Recognizer;
 import agh.aq21gui.model.gld.Value;
 import agh.aq21gui.model.input.Attribute;
 import agh.aq21gui.model.input.DomainsGroup;

@@ -4,12 +4,13 @@
  */
 package agh.aq21gui.algorithms;
 
+import agh.aq21gui.algorithms.structures.ArrayMergingSets;
 import agh.aq21gui.algorithms.structures.MergingSets;
 import agh.aq21gui.algorithms.structures.Mesh;
 import agh.aq21gui.algorithms.structures.MeshCell;
 import agh.aq21gui.model.gld.Argument;
-import agh.aq21gui.model.gld.CellValue;
-import agh.aq21gui.model.gld.Coordinate;
+import agh.aq21gui.model.gld.processing.CellValue;
+import agh.aq21gui.model.gld.processing.Coordinate;
 import agh.aq21gui.model.gld.GLDOutput;
 import agh.aq21gui.model.gld.Value;
 import java.util.List;
@@ -54,7 +55,7 @@ public class GLDState extends State{
 		List<Coordinate> colSeq = data.getHCoordSequence();
 		List<Coordinate> rowSeq = data.getVCoordSequence();
 		data.resetMesh();
-		for (MeshCell<CellValue> cell:data.getCells(rowSeq,colSeq)){
+		for (MeshCell<CellValue> cell:data.getMeshCellValues(rowSeq,colSeq)){
 			sets.newElement(cell);
 		}
 		//left to right

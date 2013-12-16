@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.model.gld;
+package agh.aq21gui.model.gld.processing;
 
 import agh.aq21gui.model.output.ClassDescriptor;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
@@ -19,8 +19,8 @@ public class CellValue {
 	
 	private List<ClassDescriptor> descriptors = new LinkedList<ClassDescriptor>();
 
-	public CellValue(ClassDescriptor desc) {
-		this.descriptors.add(desc);
+	public CellValue(ClassDescriptor ...desc) {
+		this.descriptors.addAll(Arrays.asList(desc));
 	}
 
 	public CellValue() {
@@ -66,7 +66,6 @@ public class CellValue {
 		return build.toString();
 	}
 
-	@JsonProperty("name")
 	public String getName(){
 		StringBuilder build = new StringBuilder();
 		int cnt = 0;
@@ -83,7 +82,6 @@ public class CellValue {
 	/**
 	 * @return the descriptors
 	 */
-	@JsonProperty("descriptors")
 	public List<ClassDescriptor> getDescriptors() {
 		return descriptors;
 	}

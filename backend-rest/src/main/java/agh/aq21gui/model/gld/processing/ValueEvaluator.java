@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.model.gld;
+package agh.aq21gui.model.gld.processing;
 
+import agh.aq21gui.model.gld.presentation.Cell;
+import agh.aq21gui.model.gld.Value;
 import agh.aq21gui.model.input.Attribute;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
@@ -16,14 +18,14 @@ import java.util.List;
  *
  * @author marcin
  */
-class ValueEvaluator implements Evaluator {
+public class ValueEvaluator implements Evaluator {
 //	private final ArgumentsGroup rows;
 //	private final ArgumentsGroup cols;
 	private final List<Hypothesis> hypotheses;
 	private List<CellValue> contrdomain;
 	private final Output out;
 
-	ValueEvaluator(Output out/*, ArgumentsGroup rows, ArgumentsGroup columns*/) {
+	public ValueEvaluator(Output out/*, ArgumentsGroup rows, ArgumentsGroup columns*/) {
 		this.out = out;
 		this.hypotheses = out.getOutputHypotheses();
 //		this.rows = rows;

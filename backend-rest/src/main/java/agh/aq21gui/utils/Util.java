@@ -4,7 +4,9 @@
  */
 package agh.aq21gui.utils;
 
+import agh.aq21gui.model.gld.processing.CellValue;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,5 +25,13 @@ public class Util {
 		List<String> elems1 = new LinkedList<String>();
 		elems1.addAll(Arrays.asList(elem));
 		return elems1;
+	}
+
+	public static void collectionIntoArray(Iterable<CellValue> mesh_cells, List<CellValue> array) {
+		Iterator<CellValue> iter = mesh_cells.iterator();
+		while (iter.hasNext()) {
+			CellValue val = iter.next();
+			array.add(val);
+		}
 	}
 }

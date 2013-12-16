@@ -4,7 +4,7 @@
  */
 package agh.aq21gui.algorithms.conversion;
 
-import agh.aq21gui.model.gld.Recognizer;
+import agh.aq21gui.model.gld.processing.Recognizer;
 import agh.aq21gui.model.input.Attribute;
 import agh.aq21gui.model.input.DomainsGroup;
 import agh.aq21gui.model.output.ClassDescriptor;

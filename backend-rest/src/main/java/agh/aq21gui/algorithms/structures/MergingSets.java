@@ -4,7 +4,7 @@
  */
 package agh.aq21gui.algorithms.structures;
 
-import agh.aq21gui.model.gld.Coordinate;
+import agh.aq21gui.model.gld.processing.Coordinate;
 import java.util.List;
 
 /**

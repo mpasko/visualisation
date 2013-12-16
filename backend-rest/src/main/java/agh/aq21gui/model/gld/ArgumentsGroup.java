@@ -5,14 +5,10 @@
 package agh.aq21gui.model.gld;
 
 import agh.aq21gui.algorithms.structures.StopIterator;
-import agh.aq21gui.utils.Util;
-import java.util.Collection;
+import agh.aq21gui.model.gld.processing.Coordinate;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

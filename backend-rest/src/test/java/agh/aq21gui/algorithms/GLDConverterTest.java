@@ -5,8 +5,8 @@
 package agh.aq21gui.algorithms;
 
 import agh.aq21gui.model.gld.Argument;
-import agh.aq21gui.model.gld.CellValue;
-import agh.aq21gui.model.gld.Coordinate;
+import agh.aq21gui.model.gld.processing.CellValue;
+import agh.aq21gui.model.gld.processing.Coordinate;
 import agh.aq21gui.model.gld.GLDInput;
 import agh.aq21gui.model.gld.GLDOutput;
 import agh.aq21gui.model.gld.Value;
