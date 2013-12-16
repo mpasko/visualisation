@@ -40,9 +40,7 @@ public class InputPair {
 	}
 	
 	public String getLink(){
-		StringBuilder build = new StringBuilder("localhost/jersey/aq21/browseExperiment/");
-		build.append(name);
-		return build.toString();
+		return name;
 	}
 	
 	@JsonIgnore

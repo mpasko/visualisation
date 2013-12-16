@@ -38,4 +38,6 @@ public abstract class Repository {
 	public abstract Output getResult(String name);
 	
 	public abstract void onStop();
+	
+	public abstract void dropDataBase();
 }

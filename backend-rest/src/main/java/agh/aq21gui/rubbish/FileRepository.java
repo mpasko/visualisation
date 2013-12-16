@@ -123,5 +123,10 @@ public class FileRepository extends Repository{
 			}
 		}
 	}
+
+	@Override
+	public void dropDataBase() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 	
 }

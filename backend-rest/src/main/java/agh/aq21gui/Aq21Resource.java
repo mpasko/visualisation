@@ -199,6 +199,23 @@ public class Aq21Resource {
 		}
 	}
 	
+	@GET
+	@Path("drop")
+	public String dropDatabase() throws Exception{
+		try{
+			Repository repo = Repository.getRepository();
+	//		System.out.println("To save in database:");
+	//		System.out.println(input.toString());
+			repo.dropDataBase();
+		}catch (Exception e) {
+			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
+            //e.printStackTrace();
+            //System.exit(100);
+			throw e;
+		}
+		return new String();
+	}
+	
 	@POST
 	@Path("debug")
 	@Consumes({"text/plain"})

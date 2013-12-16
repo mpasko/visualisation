@@ -75,5 +75,10 @@ public class HibernateRepository extends Repository{
 	public Output getResult(String name) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
+
+	@Override
+	public void dropDataBase() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 	
 }

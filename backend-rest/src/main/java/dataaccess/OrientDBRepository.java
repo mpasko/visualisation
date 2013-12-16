@@ -181,4 +181,10 @@ public class OrientDBRepository extends Repository {
 		}
 		return value;
 	}
+
+	@Override
+	public void dropDataBase() {
+		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
+		db.drop();
+	}
 }

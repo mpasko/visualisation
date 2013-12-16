@@ -45,9 +45,7 @@ public class OutputPair {
 	}
 	
 	public String getLink(){
-		StringBuilder build = new StringBuilder("localhost/jersey/aq21/browseResult/");
-		build.append(name);
-		return build.toString();
+		return name;
 	}
 	
 	@JsonIgnore
