@@ -34,7 +34,7 @@ public class RepositoryTest {
 	@BeforeClass
 	public static void setUpClass() {
 		try {
-			instance = Repository.getRepository();
+			instance = Repository.getRepository("testdb");
 		} catch ( Exception ex ) {
 			ex.printStackTrace();
 		}

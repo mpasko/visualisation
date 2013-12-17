@@ -9,8 +9,10 @@ import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.model.output.Output;
+import com.orientechnologies.orient.client.remote.OServerAdmin;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -20,9 +22,11 @@ import java.util.logging.Logger;
 public class OrientDBRepository extends Repository {
 	
 	private OrientDBServerStarter starter;
+	private final String dbname;
 	
-	public OrientDBRepository () throws Exception{
+	public OrientDBRepository (String dbname) throws Exception{
 		
+		this.dbname = dbname;
 		starter = new OrientDBServerStarter();
 		starter.start();
 		//sessionFactory=null;
@@ -61,7 +65,7 @@ public class OrientDBRepository extends Repository {
 	
 	@Override
 	public Directory getDirectory() throws Exception{
-		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
+		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/"+dbname, "root", "ala123");
   
 		generateSchemaForAll(db);
 		
@@ -106,7 +110,7 @@ public class OrientDBRepository extends Repository {
 	
 	@Override
 	public void saveExperiment(InputPair experiment){
-		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
+		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/"+dbname, "root", "ala123");
   
 		generateSchemaForAll(db);
   
@@ -129,7 +133,7 @@ public class OrientDBRepository extends Repository {
 	
 	@Override
 	public void saveResult(OutputPair result){
-		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
+		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/"+dbname, "root", "ala123");
 		generateSchemaForAll(db);
   
 		try {
@@ -156,7 +160,7 @@ public class OrientDBRepository extends Repository {
 
 	@Override
 	public Input getExperiment(String name) {
-		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
+		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/"+dbname, "root", "ala123");
 		generateSchemaForAll(db);
 		Input value = null;
 		for (InputPair exp : db.browseClass(InputPair.class).setFetchPlan("*:-1")){
@@ -170,7 +174,7 @@ public class OrientDBRepository extends Repository {
 
 	@Override
 	public Output getResult(String name) {
-		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
+		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/"+dbname, "root", "ala123");
 		generateSchemaForAll(db);
 		Output value = null;
 		for (OutputPair exp : db.browseClass(OutputPair.class).setFetchPlan("*:-1")){
@@ -183,8 +187,16 @@ public class OrientDBRepository extends Repository {
 	}
 
 	@Override
-	public void dropDataBase() {
-		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/aq21db", "root", "ala123");
-		db.drop();
+	public void dropDataBase() throws Exception{
+		OObjectDatabaseTx db= OObjectDatabasePool.global().acquire("remote:localhost/"+dbname, "root", "ala123");
+		db.close();
+		OServerAdmin admin = new OServerAdmin("remote:localhost/"+dbname).connect("root", "ala123");
+		if (admin.existsDatabase("local")) {
+			admin.dropDatabase("local");
+		}
+		admin.createDatabase(dbname, "local", "local");
+		starter.stop();
+		Thread.sleep(2000);
+		starter.start();
 	}
 }

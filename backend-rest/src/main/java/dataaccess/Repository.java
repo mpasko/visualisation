@@ -21,8 +21,12 @@ public abstract class Repository {
 	private static Repository __sole_instance = null;
 	
 	public static Repository getRepository() throws Exception{
+		return getRepository("aq21db");
+	}
+
+	static Repository getRepository(String dbname) throws Exception{
 		if(__sole_instance == null){
-			__sole_instance = new OrientDBRepository();
+			__sole_instance = new OrientDBRepository(dbname);
 		}
 		return __sole_instance;
 	}
@@ -39,5 +43,5 @@ public abstract class Repository {
 	
 	public abstract void onStop();
 	
-	public abstract void dropDataBase();
+	public abstract void dropDataBase() throws Exception;
 }

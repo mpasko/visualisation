@@ -23,5 +23,6 @@ public class OrientDBServerStarter {
 	
 	public void stop(){
 		server.shutdown();
+		server = null;
 	}
 }
