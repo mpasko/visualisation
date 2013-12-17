@@ -11,6 +11,7 @@ require(["dojo/ready", "dijit/registry", "custom/data_sources/file", "custom/dat
     topic.subscribe("run experiment", backend.runExperiment);
     topic.subscribe("get database experiments", backend.getExperimentList);
     topic.subscribe("get saved experiment", backend.getExperiment);
+    topic.subscribe("create gld diagram", backend.getGLD);
     topic.subscribe("experiment loaded from backend", data.update);
     topic.subscribe("experiment loaded from backend", conf.update);
     topic.subscribe("collect experiment data", data.collectForExperiment);

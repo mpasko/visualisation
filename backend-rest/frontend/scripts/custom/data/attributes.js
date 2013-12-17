@@ -95,7 +95,38 @@ define([], function() {
         }
         return _results;
       }).call(this);
-      width = String(attributes.length + 1).length;
+      width = String(attributes.length).length;
+      _results = [];
+      for (_i = 0, _len = discretes.length; _i < _len; _i++) {
+        attribute = discretes[_i];
+        _results.push({
+          field: 'attribute' + this.pad(attributes.indexOf(attribute) + 1, width),
+          parameters: this.getBaseParameters(attribute, stores.domains.query({
+            name: attribute.domain
+          })),
+          attribute: attribute
+        });
+      }
+      return _results;
+    },
+    getDiscreteMapping: function(stores, arr) {
+      var attribute, attributes, discretes, selected_attributes, width, _i, _len, _results;
+      attributes = stores.attr.query({});
+      selected_attributes = stores.attr.query({});
+      discretes = (function() {
+        var _i, _len, _ref, _results;
+        _results = [];
+        for (_i = 0, _len = selected_attributes.length; _i < _len; _i++) {
+          attribute = selected_attributes[_i];
+          if (_ref = this.getBaseDomain(attribute, stores.domains.query({
+            name: attribute.domain
+          })), __indexOf.call(arr, _ref) >= 0) {
+            _results.push(attribute);
+          }
+        }
+        return _results;
+      }).call(this);
+      width = String(attributes.length).length;
       _results = [];
       for (_i = 0, _len = discretes.length; _i < _len; _i++) {
         attribute = discretes[_i];

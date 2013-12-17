@@ -54,7 +54,19 @@ define [
       ), (error) ->
         humane.log "some error"
           
-      
+    getGLD: (gld_input) ->
+      console.log "sadfsafsafa"
+      console.log gld_input
+      request.post(internal.hostname + "gld",
+        handleAs: "json"
+        data:  JSON.stringify gld_input
+        headers:
+            "Content-Type": "application/json; charset=UTF-8"
+      ).then ((output) ->
+        console.log output
+        console.log "Data successfully loaded from database"
+      ), (error) ->
+        console.log "some error"  
     
     runExport: (configuration) ->
       callback = (message) ->

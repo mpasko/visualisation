@@ -50,14 +50,27 @@ define [], () ->
     selected_attributes = stores.attr.query {selected : true}
     
     discretes = (attribute for attribute in selected_attributes when (@getBaseDomain attribute, stores.domains.query(name: attribute.domain)) in arr)
-    width = String(attributes.length + 1).length
+    width = String(attributes.length).length
     
     (
           (
             field : 'attribute' + @pad(attributes.indexOf(attribute)+1, width)
             parameters : (@getBaseParameters attribute, stores.domains.query(name: attribute.domain))
             attribute : attribute
-            
           )  for attribute in discretes
     )
+   
+   getDiscreteMapping : (stores, arr) ->
+    attributes = stores.attr.query {}
+    selected_attributes = stores.attr.query {}
     
+    discretes = (attribute for attribute in selected_attributes when (@getBaseDomain attribute, stores.domains.query(name: attribute.domain)) in arr)
+    width = String(attributes.length).length
+    
+    (
+          (
+            field : 'attribute' + @pad(attributes.indexOf(attribute)+1, width)
+            parameters : (@getBaseParameters attribute, stores.domains.query(name: attribute.domain))
+            attribute : attribute
+          )  for attribute in discretes
+    )    

@@ -11,7 +11,46 @@
         <script src="scripts/vendor/d3/d3.js"></script>
         <script src="scripts/vendor/nvd3/nv.d3.js"></script>
         <script src="scripts/vendor/humane-js/humane.js"></script>
+<style>
 
+svg {
+  font: 10px sans-serif;
+  padding: 10px;
+}
+
+.axis,
+.frame {
+  shape-rendering: crispEdges;
+}
+
+.axis line {
+  stroke: #ddd;
+}
+
+.axis path {
+  display: none;
+}
+
+.frame {
+  fill: none;
+  stroke: #aaa;
+}
+
+circle {
+  fill-opacity: .7;
+}
+
+circle.hidden {
+  fill: #ccc !important;
+}
+
+.extent {
+  fill: #000;
+  fill-opacity: .125;
+  stroke: #fff;
+}
+
+</style>
         <link href="app.css" rel="stylesheet"/>
         <script src="scripts/vendor/dojo/dojo.js" data-dojo-config="async: true, parseOnLoad:true,
         packages: [ { name: 'custom', location: '../../custom' }]"></script>
@@ -61,9 +100,11 @@
                 <div data-dojo-type="dijit/layout/ContentPane" id="events" style="width: 100%; height: 100%;">
                 </div>
             </div>
-            <div data-dojo-type="dijit/layout/ContentPane" title="Scatter plot" style="width:75%;">
-                <div data-dojo-type="dijit/layout/ContentPane" id="scatter" style="width: 100%; height: 100%;">
-                </div>
+            <div data-dojo-type="dijit/layout/ContentPane" title="Scatter plot"  style="width:75%;">
+                Colour category: <div id="categories"></div> Plot size: 
+                <div data-dojo-type="dijit/form/NumberTextBox" id="plotSize"></div>
+                <div data-dojo-type="dijit/form/Button" id="changePlotSize">Change</div> 
+                <div id="scatter"></div>
             </div>
         </div> 
     </div>
@@ -121,6 +162,15 @@
                                 <div id="MathOutput" style="font-size: 98%;"></div>
                             </div>
                             <div id="LatexCode" style="height: 29%; width:98%;" data-dojo-props="region:'center'"  data-dojo-type="dijit/form/SimpleTextarea"></div>
+                        </div>
+                    </div>
+                    
+                    <div data-dojo-type="dijit/layout/ContentPane" title="GLD">
+                        <div data-dojo-type="dijit/layout/BorderContainer"  data-dojo-props="design:'headline'">
+                            <div data-dojo-type="dijit/layout/ContentPane" style="height: 100%; width:100%;" data-dojo-props="region:'center'">
+                                <div data-dojo-type="dijit/form/TextBox" id="gldParameter"></div> 
+                                <div data-dojo-type="dijit/form/Button" id="load_gld" >Load gld</div> 
+                            </div>
                         </div>
                     </div>
                 </div>

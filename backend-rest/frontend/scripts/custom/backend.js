@@ -57,6 +57,22 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
         return humane.log("some error");
       });
     },
+    getGLD: function(gld_input) {
+      console.log("sadfsafsafa");
+      console.log(gld_input);
+      return request.post(internal.hostname + "gld", {
+        handleAs: "json",
+        data: JSON.stringify(gld_input),
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8"
+        }
+      }).then((function(output) {
+        console.log(output);
+        return console.log("Data successfully loaded from database");
+      }), function(error) {
+        return console.log("some error");
+      });
+    },
     runExport: function(configuration) {
       var callback;
       callback = function(message) {

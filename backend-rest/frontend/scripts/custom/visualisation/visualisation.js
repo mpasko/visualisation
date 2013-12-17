@@ -1,10 +1,11 @@
-define(["dojo/topic", "dojo/store/Memory", "custom/visualisation/latex", "custom/visualisation/raw"], function(topic, Memory, latex, raw) {
+define(["dojo/store/Memory", "custom/visualisation/latex", "custom/visualisation/raw", "custom/visualisation/gld"], function(Memory, latex, raw, gld) {
   var internal, module;
   internal = {
     stores: {
       output: new Memory()
     },
-    visualisations: [raw, latex]
+    visualisations: [raw, latex, gld],
+    results: null
   };
   return module = {
     update: function(results) {
@@ -20,7 +21,8 @@ define(["dojo/topic", "dojo/store/Memory", "custom/visualisation/latex", "custom
     },
     setup: function() {
       latex.setup();
-      return raw.setup();
+      raw.setup();
+      return gld.setup();
     }
   };
 });
