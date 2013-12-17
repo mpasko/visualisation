@@ -1,12 +1,12 @@
-define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "custom/data/attributes", "dijit/form/TextBox"], function(registry, domConstruct, grid, editor, attributeUtils, TextBox) {
+define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "custom/data/attributes", "dijit/form/TextBox"], function(registry, domConstruct, grid, editor, utils, TextBox) {
   var internal, module;
   internal = {
+    renderers: {},
     get: function(attribute, domain_query) {
-      var a, baseDomain, baseParameters;
-      baseDomain = attributeUtils.getBaseDomain(attribute, domain_query);
-      baseParameters = attributeUtils.getBaseParameters(attribute, domain_query);
-      a = this.partialRight(this[baseDomain], attribute.name);
-      return internal.partialRight(a, baseParameters);
+      var baseDomain, baseParameters;
+      baseDomain = utils.getBaseDomain(attribute, domain_query);
+      baseParameters = utils.getBaseParameters(attribute, domain_query);
+      return internal.partialRight(this.renderers[baseDomain], baseParameters);
     },
     partialRight: function(fn, args) {
       var aps;
@@ -16,42 +16,14 @@ define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "
         return fn.apply(this, aps.call(arguments).concat(args));
       };
     },
-    nominal: function(object, value, node, options, parameters, attr_name) {
+    plainCellRenderer: function(object, value, node, options, parameters) {
       var div;
       div = document.createElement("div");
       div.className = "renderedCell";
       div.innerHTML = value;
       return div;
     },
-    linear: function(object, value, node, options, parameters, attr_name) {
-      var div;
-      div = document.createElement("div");
-      div.className = "renderedCell";
-      div.innerHTML = value;
-      return div;
-    },
-    integer: function(object, value, node, options, parameters, attr_name) {
-      var color, div, max, min, val;
-      div = document.createElement("div");
-      div.className = "renderedCell";
-      min = parseFloat(parameters[0]);
-      max = parseFloat(parameters[1]);
-      val = Math.round(100 * ((parseFloat(value)) - min) / (max - min));
-      if (val < 33) {
-        color = "#3FFF00";
-      } else if (val < 66) {
-        color = "#FFD300";
-      } else {
-        color = "#ED1C24";
-      }
-      div.style.backgroundColor = color;
-      div.style.width = val + "%";
-      div.style.textAlign = "center";
-      div.style.borderRadius = "15px";
-      div.innerHTML = value;
-      return div;
-    },
-    continuous: function(object, value, node, options, parameters, attr_name) {
+    numberCellRenderer: function(object, value, node, options, parameters) {
       var color, div, max, min, val;
       div = document.createElement("div");
       div.className = "renderedCell";
@@ -73,35 +45,30 @@ define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "
       return div;
     }
   };
+  internal.renderers = {
+    nominal: internal.plainCellRenderer,
+    linear: internal.plainCellRenderer,
+    integer: internal.numberCellRenderer,
+    continuous: internal.numberCellRenderer
+  };
   module = {
-    setup: function() {},
-    update: function(stores) {
-      var attribute, attributes, column, columns, eventsGrid, pad, selected_attributes, width;
-      attributes = stores.attr.query({});
-      selected_attributes = stores.attr.query({
-        selected: true
-      });
-      width = String(attributes.length + 1).length;
-      pad = function(n, width) {
-        var i, n_str;
-        n_str = String(n);
-        i = 0;
-        while (n_str.length !== width) {
-          n_str = '0' + n_str;
-        }
-        return n_str;
-      };
+    setup: function(stores) {
+      return internal.stores = stores;
+    },
+    update: function() {
+      var column, columns, eventsGrid, item, mapping;
+      mapping = utils.getMapping(internal.stores, ["linear", "nominal", "integer", "continuous"]);
       columns = (function() {
         var _i, _len, _results;
         _results = [];
-        for (_i = 0, _len = selected_attributes.length; _i < _len; _i++) {
-          attribute = selected_attributes[_i];
+        for (_i = 0, _len = mapping.length; _i < _len; _i++) {
+          item = mapping[_i];
           _results.push({
-            field: 'attribute' + pad(attributes.indexOf(attribute) + 1, width),
-            label: attribute.name,
+            field: item.field,
+            label: item.attribute.name,
             autoSave: true,
-            renderCell: internal.get(attribute, stores.domains.query({
-              name: attribute.domain
+            renderCell: internal.get(item.attribute, internal.stores.domains.query({
+              name: item.attribute.domain
             }))
           });
         }
@@ -113,7 +80,7 @@ define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "
         style: "height : 100%;"
       }, "events");
       eventsGrid = new grid.paginated({
-        store: stores.events,
+        store: internal.stores.events,
         columns: (function() {
           var _i, _len, _results;
           _results = [];

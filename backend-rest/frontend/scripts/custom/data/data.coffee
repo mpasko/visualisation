@@ -1,8 +1,8 @@
 define [
   "dojo/store/Memory", "dijit/registry",
   "custom/grid", "dgrid/editor", "dijit/form/TextBox", 
-   "custom/data/attributes", "custom/data/dataGrid"
-], (Memory, registry, grid, editor, TextBox, utils, datagrid) ->
+   "custom/data/attributes", "custom/data/dataGrid", "custom/data/scatterPlot"
+], (Memory, registry, grid, editor, TextBox, utils, datagrid, scatterPlot) ->
   # private
   internal =
     stores:
@@ -10,7 +10,8 @@ define [
       domains : new Memory()
       events : new Memory()
     visualisations : [
-      datagrid
+      datagrid,
+      scatterPlot
     ]
     
   # public 
@@ -22,7 +23,7 @@ define [
         internal.stores.domains.setData input.domains
         internal.stores.events.setData input.events
 
-        item.update internal.stores for item in internal.visualisations
+        item.update() for item in internal.visualisations
 
         registry.byId("statistics").refresh()
         registry.byId("attributes").refresh()
@@ -39,6 +40,8 @@ define [
           events     : internal.stores.events.query({})
           
     setup : ->
+      item.setup internal.stores for item in internal.visualisations
+    
       attr_grid = new grid.onDemand(
         store : internal.stores.attr
         columns: [
@@ -79,6 +82,8 @@ define [
           label: "Value"
         ], 
         "statistics")
+        
+       
       
       attr_grid.on "dgrid-select", (event) ->
         attribute = event.rows[0].data
@@ -96,6 +101,7 @@ define [
         switch desc.baseDomain
           when "linear" then array.push a for a in utils.getDiscreteValues desc.parameters
           when "nominal" then array.push a for a in utils.getDiscreteValues desc.parameters
+          when "integer" then array.push a for a in utils.getContinuousValues desc.parameters
           when "continuous" then array.push a for a in utils.getContinuousValues desc.parameters
         
         registry.byId("statistics").refresh()
@@ -106,6 +112,6 @@ define [
         el[event.cell.column.field] = event.value
         internal.stores.attr.put el
 
-        item.update internal.stores for item in internal.visualisations
+        item.update() for item in internal.visualisations
                  
   module

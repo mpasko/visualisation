@@ -55,6 +55,8 @@ define [
     
     update : (results) ->
       hypotheses = results["outputHypotheses"]
+      if hypotheses.length == 0
+        return
       console.log "The server returned: ", hypotheses
       text = internal.convertToLaTex hypotheses 
       internal.updateMath "MathOutput", text

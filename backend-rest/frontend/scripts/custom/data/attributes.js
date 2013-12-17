@@ -1,8 +1,10 @@
+var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
 define([], function() {
   return {
     hasDefaultDomain: function(attribute) {
       var _ref;
-      return (_ref = attribute.domain) === "linear" || _ref === "nominal" || _ref === "continuous";
+      return (_ref = attribute.domain) === "linear" || _ref === "nominal" || _ref === "integer" || _ref === "continuous";
     },
     getBaseDomain: function(attribute, domain_query) {
       if (this.hasDefaultDomain(attribute)) {
@@ -65,6 +67,47 @@ define([], function() {
         i++;
       }
       return arr;
+    },
+    pad: function(n, width) {
+      var n_str;
+      n_str = String(n);
+      while (n_str.length !== width) {
+        n_str = '0' + n_str;
+      }
+      return n_str;
+    },
+    getMapping: function(stores, arr) {
+      var attribute, attributes, discretes, selected_attributes, width, _i, _len, _results;
+      attributes = stores.attr.query({});
+      selected_attributes = stores.attr.query({
+        selected: true
+      });
+      discretes = (function() {
+        var _i, _len, _ref, _results;
+        _results = [];
+        for (_i = 0, _len = selected_attributes.length; _i < _len; _i++) {
+          attribute = selected_attributes[_i];
+          if (_ref = this.getBaseDomain(attribute, stores.domains.query({
+            name: attribute.domain
+          })), __indexOf.call(arr, _ref) >= 0) {
+            _results.push(attribute);
+          }
+        }
+        return _results;
+      }).call(this);
+      width = String(attributes.length + 1).length;
+      _results = [];
+      for (_i = 0, _len = discretes.length; _i < _len; _i++) {
+        attribute = discretes[_i];
+        _results.push({
+          field: 'attribute' + this.pad(attributes.indexOf(attribute) + 1, width),
+          parameters: this.getBaseParameters(attribute, stores.domains.query({
+            name: attribute.domain
+          })),
+          attribute: attribute
+        });
+      }
+      return _results;
     }
   };
 });

@@ -25,12 +25,36 @@ define [
           headers:
             "Content-Type": "application/json; charset=UTF-8"
         ).then ((output) ->
-          humane.log "Experiment completed"
+          if output["outputHypotheses"].length == 0
+            humane.log "Couldn't run experiment, check raw output"
+          else
+             humane.log "Experiment completed"
           topic.publish "visualise results", output
         ), (error) ->
           console.log "Couldn't run experiment"
           
       internal.sendMessage(configuration,callback) 
+      
+      
+    getExperimentList: () ->
+      request.get(internal.hostname + "browse",
+        handleAs: "json"
+      ).then ((output) ->
+        topic.publish "render database experiments", output
+      ), (error) ->
+        humane.log "some error"
+        
+    getExperiment: (link) ->
+      request.get(internal.hostname + "browseExperiment/" + link,
+        handleAs: "json"
+      ).then ((output) ->
+        topic.publish "experiment loaded from backend", output
+        
+        humane.log "Data successfully loaded from database"
+      ), (error) ->
+        humane.log "some error"
+          
+      
     
     runExport: (configuration) ->
       callback = (message) ->
