@@ -55,7 +55,21 @@ public class CellValue {
 	}
 
 	public void addAll(List<ClassDescriptor> classes) {
-		this.getDescriptors().addAll(classes);
+		for (ClassDescriptor source: classes) {
+			if (!existsDescriptor(source)){
+				this.descriptors.add(source);
+			}
+		}
+	}
+	
+	private boolean existsDescriptor(ClassDescriptor checking){
+		boolean exists=false;
+		for (ClassDescriptor item: getDescriptors()) {
+			if (item != null) {
+				exists |= (item.equals(checking));
+			}
+		}
+		return exists;
 	}
 	
 	@Override

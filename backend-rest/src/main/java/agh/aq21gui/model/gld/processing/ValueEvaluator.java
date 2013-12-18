@@ -4,8 +4,8 @@
  */
 package agh.aq21gui.model.gld.processing;
 
-import agh.aq21gui.model.gld.presentation.Cell;
 import agh.aq21gui.model.gld.Value;
+import agh.aq21gui.model.gld.presentation.Cell;
 import agh.aq21gui.model.input.Attribute;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;

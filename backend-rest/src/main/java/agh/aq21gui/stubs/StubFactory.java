@@ -291,20 +291,10 @@ public class StubFactory {
 		"{\n"+
 		"positive_events           = 4\n"+
 		"negative_events           = 2\n"+
-		"(# Alternative ruleset 1\n"+
-		"Number of rules      = 2\n"+
-		"Number of conditions = 3\n"+
-		"Complexity           = 23\n"+
 		"[c=1]\n"+
-		"<-- [x2=0] [x3=0,2]  : p=3,np=1,cx=16,c=1,s=3 # 51\n"+
-		"<-- [x4=1]  : p=3,np=1,enp=0,n=0,en=0,cx=7,c=1,s=3 # 52\n"+
-		"#)\n"+
-		"[c=1]\n"+
-		"# Rule 1\n"+
 		"<-- [x2=0 : 3,1,75%,3,1,75%]\n"+
 		"[x3=0,2 : 4,1,80%,3,0,100%]\n"+
 		": p=3,np=1,u=2,cx=16,c=1,s=3 # 49\n"+
-		"# Rule 2\n"+
 		"<-- [x1=1 : 2,0,100%,2,0,100%]\n"+
 		": p=2,np=1,enp=0,n=0,en=0,u=1,cx=7,c=1,s=2 # 50\n"+
 		"}\n";

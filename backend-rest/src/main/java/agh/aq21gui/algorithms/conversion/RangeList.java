@@ -82,8 +82,8 @@ public class RangeList {
 		List<RangeRecognizer> recogns = new LinkedList<RangeRecognizer>();
 		if(list.size()>0){
 			for (int i=0; i<=list.size(); ++i) {
-				final RangeElement right;
-				final RangeElement left;
+				RangeElement right;
+				RangeElement left;
 				if (i<list.size()) {
 					right = list.get(i);
 				} else {
@@ -93,6 +93,11 @@ public class RangeList {
 					left = list.get(i-1);
 				} else {
 					left = null;
+				}
+				if ((right!=null)&&right.isSingleNumber()&&!right.isLeftOpened()){
+					left = null;
+				} else if ((left!=null)&&left.isSingleNumber()&&!left.isLeftOpened()){
+					right = null;
 				}
 				RangeRecognizer reco = new RangeRecognizer(left,right);
 				recogns.add(reco);

@@ -15,11 +15,17 @@ public abstract class RangeElement {
 	
 	public static int classify(RangeElement elem) {
 		if (elem.isSingleNumber()) {
-			return 2;
-		} else if (elem.isLeftOpened()) {
-			return 1;
+			if (elem.isLeftOpened()) {
+				return 2;
+			} else {
+				return 3;
+			}
 		} else {
-			return 3;
+			if (elem.isLeftOpened()) {
+				return 1;
+			} else {
+				return 4;
+			}
 		}
 	}
 	public abstract int minus(RangeElement next);

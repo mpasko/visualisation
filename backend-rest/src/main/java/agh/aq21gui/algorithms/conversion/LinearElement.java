@@ -13,8 +13,6 @@ import java.util.List;
  */
 public class LinearElement extends RangeElement{
 	private final Attribute attr;
-	private boolean leftOpened;
-	private boolean singleNumber;
 	private String value;
 	
 	public LinearElement(Attribute attr){
@@ -30,6 +28,14 @@ public class LinearElement extends RangeElement{
 	@Override
 	public int minus(RangeElement other) {
 		LinearElement next = (LinearElement)other;
+		if ((this.getAttrIndex()==-1) || (next.getAttrIndex()==-1)){
+			boolean matches = true;
+			int tmp = classify(this)-classify(next);
+			if (tmp == 0) {
+				tmp = this.value.compareToIgnoreCase(next.value);
+			}
+			return tmp;
+		}
 		if (next.getAttrIndex()==this.getAttrIndex()){
 			return classify(this)-classify(next);
 		} else {
