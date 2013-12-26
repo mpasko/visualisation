@@ -11,6 +11,7 @@ import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.utils.OutputParser;
+import agh.aq21gui.utils.Util;
 import dataaccess.Repository;
 import java.io.File;
 import java.io.FileInputStream;
@@ -94,7 +95,7 @@ public class FileRepository extends Repository{
 		try {
 			fis = new FileInputStream("C:\\aq21repository\\"+name+extension);
 			OutputParser parser = new OutputParser();
-			exp = parser.parse(Invoker.streamToString(fis));
+			exp = parser.parse(Util.streamToString(fis));
 		} catch (IOException ex) {
 			Logger.getLogger(FileRepository.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -112,7 +113,7 @@ public class FileRepository extends Repository{
 		String content = out.toString();
 		try {
 			fos = new FileOutputStream("C:\\aq21repository\\"+name);
-			Invoker.stringToStream(content, fos);
+			Util.stringToStream(content, fos);
 		} catch (IOException ex) {
 			Logger.getLogger(FileRepository.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {

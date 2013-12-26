@@ -47,9 +47,8 @@ public class ContinuousElementTest {
 		System.out.println("minus2");
 		RangeElement other = new ContinuousElement("1", "<");
 		ContinuousElement instance = new ContinuousElement("5", "=");
-		int expResult = 1;
 		int result = instance.minus(other);
-		assertEquals(expResult, result);
+		assertTrue(result>0);
 	}
 	
 	/**
@@ -60,9 +59,8 @@ public class ContinuousElementTest {
 		System.out.println("minus_comparator");
 		RangeElement other = new ContinuousElement("2", "<");
 		ContinuousElement instance = new ContinuousElement("2", "=");
-		int expResult = 1;
 		int result = instance.minus(other);
-		assertEquals(expResult, result);
+		assertTrue(result>0);
 	}
 	
 	/**
@@ -73,9 +71,8 @@ public class ContinuousElementTest {
 		System.out.println("minus_comparator2");
 		RangeElement other = new ContinuousElement("2", "=");
 		ContinuousElement instance = new ContinuousElement("2", "<=");
-		int expResult = 1;
 		int result = instance.minus(other);
-		assertEquals(expResult, result);
+		assertTrue(result>0);
 	}
 	
 	/**

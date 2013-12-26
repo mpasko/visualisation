@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import agh.aq21gui.aq21grammar.TParser.output_return;
+import agh.aq21gui.utils.Util;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -86,7 +87,7 @@ public class TokenStreeamTest {
 		TLexer lexer = new TLexer();
 		//FileInputStream stream = new FileInputStream("test_inputs/template1.txt");
 		FileInputStream stream = new FileInputStream("test_inputs/output.log");
-		String out = Invoker.streamToString(stream);
+		String out = Util.streamToString(stream);
 		lexer.setCharStream(new ANTLRStringStream(out));
 		lexer.reset();
 		CommonTokenStream tokens = new CommonTokenStream(lexer);

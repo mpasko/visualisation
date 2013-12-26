@@ -6,6 +6,7 @@ package agh.aq21gui.model.output;
 
 import agh.aq21gui.utils.OutputParser;
 import agh.aq21gui.Invoker;
+import agh.aq21gui.utils.Util;
 import java.io.FileInputStream;
 import java.io.IOException;
 import org.junit.After;
@@ -47,7 +48,7 @@ public class OutputParserTest {
 	public void testParse_OutputHypothesis() throws IOException {
 		OutputParser instance = new OutputParser();
 		FileInputStream stream = new FileInputStream("test_inputs/output_hypotheses_test.txt");
-		Output result = instance.parse(Invoker.streamToString(stream));
+		Output result = instance.parse(Util.streamToString(stream));
 		assertEquals(1, 1);
 	}
 	
@@ -58,7 +59,7 @@ public class OutputParserTest {
 	public void testParse_SIMPE_OutputHypothesis() throws IOException {
 		OutputParser instance = new OutputParser();
 		FileInputStream stream = new FileInputStream("test_inputs/output_hypotheses_simple_test.txt");
-		String out = Invoker.streamToString(stream);
+		String out = Util.streamToString(stream);
 		Output result = instance.parse(out);
 		assertEquals(1, 1);
 	}
@@ -70,7 +71,7 @@ public class OutputParserTest {
 	public void testParse_template1() throws IOException {
 		OutputParser instance = new OutputParser();
 		FileInputStream stream = new FileInputStream("test_inputs/template1.txt");
-		String out = Invoker.streamToString(stream);
+		String out = Util.streamToString(stream);
 		Output result = instance.parse(out);
 		assertEquals(1, 1);
 	}
@@ -82,7 +83,7 @@ public class OutputParserTest {
 	public void testParse_template1_in() throws IOException {
 		OutputParser instance = new OutputParser();
 		FileInputStream stream = new FileInputStream("test_inputs/template1_in.txt");
-		String out = Invoker.streamToString(stream);
+		String out = Util.streamToString(stream);
 		Output result = instance.parse(out);
 		assertEquals(1, 1);
 	}

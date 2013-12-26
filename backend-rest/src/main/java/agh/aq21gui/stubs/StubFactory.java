@@ -309,7 +309,7 @@ public class StubFactory {
 			OutputParser parser = new OutputParser();
 			FileInputStream stream = new FileInputStream("iris.aq21");
 			Invoker invoker = new Invoker();
-			String out2 = Invoker.streamToString(stream);
+			String out2 = Util.streamToString(stream);
 			outp = invoker.invoke(parser.parse(out2));
 		} catch (IOException exception) {
 			System.out.println("Unable to load test data from file \"iris.aq21\"");

@@ -10,6 +10,7 @@ import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.utils.CSVConverter;
+import agh.aq21gui.utils.Downloader;
 import agh.aq21gui.utils.OutputParser;
 import dataaccess.Repository;
 import java.util.logging.Level;
@@ -46,33 +47,18 @@ public class Aq21Resource {
 	@Consumes({MediaType.APPLICATION_JSON})
     @Produces({
 		MediaType.APPLICATION_JSON
-	//	,MediaType.APPLICATION_XML
 	})
     public Output postIt(Input input) {
 		Invoker inv = new Invoker();
 		return inv.invoke(input);
     }
-	
-	/* Get cannot consume any arguments */
-	/* *x/ 
-	@GET
-	@Path("getIt")
-	@Consumes({MediaType.APPLICATION_JSON})
-    @Produces({
-		MediaType.APPLICATION_JSON
-	//	,MediaType.APPLICATION_XML
-	})
-    public Output getIt(Input input) {
-		return run(input);
-    }
-	/* */ 
+	 
 	
 	@PUT
 	@Path("putIt")
 	@Consumes({MediaType.APPLICATION_JSON})
     @Produces({
 		MediaType.APPLICATION_JSON
-	//	,MediaType.APPLICATION_XML
 	})
     public Output putIt(Input input) {
 		Invoker inv = new Invoker();
@@ -80,11 +66,24 @@ public class Aq21Resource {
     }
 	
 	@POST
+	@Path("downloadCSV")
+	@Consumes({MediaType.TEXT_PLAIN})
+	@Produces({
+		MediaType.APPLICATION_JSON
+	})
+	public Input downloadCSV(String url){
+		Downloader down = new Downloader();
+		down.download(url);
+		CSVConverter conv = new CSVConverter();
+		Input in = conv.convert(down.getContent());
+		return in;
+	}
+	
+	@POST
 	@Path("fromCSV")
 	@Consumes({MediaType.TEXT_PLAIN})
 	@Produces({
 		MediaType.APPLICATION_JSON
-	//	,MediaType.APPLICATION_XML
 	})
 	public Input fromCSV(String csv){
 		CSVConverter conv = new CSVConverter();
@@ -97,7 +96,6 @@ public class Aq21Resource {
 	@Consumes({MediaType.TEXT_PLAIN})
 	@Produces({
 		MediaType.APPLICATION_JSON
-	//	,MediaType.APPLICATION_XML
 	})
 	public Input fromAQ21(String aq21){
 		OutputParser parser = new OutputParser();
@@ -110,7 +108,6 @@ public class Aq21Resource {
 	@Path("toAQ21")
 	@Consumes({
 		MediaType.APPLICATION_JSON
-	//	,MediaType.APPLICATION_XML
 	})
 	@Produces({MediaType.TEXT_PLAIN})
 	public String toAQ21(Output aq21){
