@@ -20,7 +20,7 @@ public class OutputPair {
 	
 	private String name;
 	private Output value;
-	private String description;
+	private String description="";
 	
 	public long getId(){
 		return id;

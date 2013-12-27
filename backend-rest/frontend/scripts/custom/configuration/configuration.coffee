@@ -119,7 +119,19 @@ define [
       registry.byId("export_button").on "click", 
         ->
           topic.publish "run export", internal.getConfiguration()
-      
+          
+      registry.byId("save_button").on "click",
+        ->
+          registry.byId("nameDialog").show()
+          
+      registry.byId("save_experiment").on "click",
+        ->
+          registry.byId("nameDialog").hide()
+          name = registry.byId("exp_name").value
+          desc = registry.byId("exp_description").value
+          value = internal.getConfiguration()
+          topic.publish "save experiment", "name":name, "value":value, "description":desc
+          
       registry.byId("newRunButton").on "click", 
         ->
           internal.stores.runs.put

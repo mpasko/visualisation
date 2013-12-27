@@ -94,4 +94,27 @@ public class RepositoryTest {
 		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 	}
+	
+	@Test
+	@SuppressWarnings("all")
+	public void testDescriptionSaved() {
+		System.out.println("testDescriptionSaved");
+		final String name = "testDescription";
+		final String description = "Description for an instance";
+		InputPair input = new InputPair(name, StubFactory.getInput());
+		input.setDescription(description);
+		instance.saveExperiment(input);
+		int i = 0;
+		try{
+			for (InputPair ip : instance.getDirectory().getExperiments()){
+				if (ip.getName().equalsIgnoreCase(name)){
+					assertEquals(description, ip.getDescription());
+					++i;
+				}
+			}
+		}catch(Exception e){
+			fail(String.format("Exception:%s caught", e.getMessage()));
+		}
+		assertEquals(1, i);
+	}
 }

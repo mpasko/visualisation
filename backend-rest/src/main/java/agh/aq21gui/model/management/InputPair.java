@@ -24,7 +24,7 @@ public class InputPair {
 	
 	private String name;
 	private Input value;
-	private String description;
+	private String description="";
 	
 	public long getId(){
 		return id;

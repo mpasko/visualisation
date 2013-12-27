@@ -120,6 +120,8 @@ circle.hidden {
                  style="font-weight:bold;margin-left: 10px;margin-right: 10px; font-size: 20px;">Run</div>
             <div data-dojo-type="dijit/form/Button" id="export_button" 
                  style="font-weight:bold;margin-left: 10px;margin-right: 10px; font-size: 20px;">Export</div> 
+            <div data-dojo-type="dijit/form/Button" id="save_button" 
+                 style="font-weight:bold;margin-left: 10px;margin-right: 10px; font-size: 20px;">Export to database</div> 
         </div>
         <div data-dojo-type="dijit/layout/BorderContainer" 
              data-dojo-props="region:'left'" style="width: 30%; height: 100%;">
@@ -191,5 +193,14 @@ circle.hidden {
                 <div data-dojo-type="dijit/form/Button" id="load_experiment" >Load experiment</div> 
             </div>
         </div>
+		<div data-dojo-type="dijit/Dialog" id="nameDialog" title="Enter experiment name" >
+			<div data-dojo-type="dijit/layout/ContentPane" style="width: 300px;" >
+				Name: 
+				<div data-dojo-type="dijit/form/TextBox" id="exp_name"></div><br/>
+				<br/>Description:
+				<textarea name="exp_description" data-dojo-type="dijit/form/Textarea" id="exp_description" style="width: 280px;height: 70px;"></textarea>
+				<div data-dojo-type="dijit/form/Button" id="save_experiment" >Save experiment</div> 
+			</div>
+		</div>
     </body>
 </html>

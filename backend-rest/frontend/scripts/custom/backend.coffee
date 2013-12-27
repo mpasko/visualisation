@@ -53,7 +53,20 @@ define [
         humane.log "Data successfully loaded from database"
       ), (error) ->
         humane.log "some error"
-          
+				
+    saveExperiment: (configuration) ->
+      callback = (message)
+        console.log experiment
+        request.post(internal.hostname + "saveExperiment",
+          data: message
+          headers:
+              "Content-Type": "application/json; charset=UTF-8"
+        ).then ((output) ->
+          console.log "Data successfully saved"
+        ), (error) ->
+          console.log "some error"
+      internal.sendMessage(configuration,callback)
+    
     getGLD: (gld_input) ->
       console.log "sadfsafsafa"
       console.log gld_input

@@ -25,6 +25,7 @@ require [
         topic.subscribe "get database experiments", backend.getExperimentList
         topic.subscribe "get saved experiment", backend.getExperiment
         topic.subscribe "create gld diagram", backend.getGLD
+        topic.subscribe "save experiment", backend.saveExperiment
         
         topic.subscribe "experiment loaded from backend", data.update
         topic.subscribe "experiment loaded from backend", conf.update
@@ -40,20 +41,19 @@ require [
             
         
         database_grid = new grid.simple(
-              columns: [
+              columns: [ {
                 field: "name"
                 label: "Experiment name"
-              ], 
+              }, {
+                field: "description"
+                label: "Description"
+              }], 
               "database_grid")
         
         
         current = null
         database_grid.on "dgrid-select", (event) ->
-          current = event.rows[0].data.value
-          
-          
-          
-        
+          current = event.rows[0].data
         
         database_grid.startup()
         
@@ -64,7 +64,9 @@ require [
         registry.byId("load_experiment").on "click", 
           ->
             registry.byId("myDialog").hide()
-            topic.publish "get saved experiment", current
+            registry.byId("exp_description").value = current.description
+            registry.byId("exp_name").value = current.name
+            topic.publish "get saved experiment", current.value
         
         splash.play()
         return

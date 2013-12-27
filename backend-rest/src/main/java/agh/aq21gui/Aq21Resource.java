@@ -168,13 +168,9 @@ public class Aq21Resource {
 	public void saveExp(InputPair input) throws Exception{
 		try{
 			Repository repo = Repository.getRepository();
-	//		System.out.println("To save in database:");
-	//		System.out.println(input.toString());
 			repo.saveExperiment(input);
 		}catch (Exception e) {
 			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
-            //e.printStackTrace();
-            //System.exit(100);
 			throw e;
 		}
 	}
@@ -185,13 +181,9 @@ public class Aq21Resource {
 	public void saveRes(OutputPair output) throws Exception{
 		try{
 			Repository repo = Repository.getRepository();
-	//		System.out.println("To save in database:");
-	//		System.out.println(input.toString());
 			repo.saveResult(output);
 		}catch (Exception e) {
 			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
-            //e.printStackTrace();
-            //System.exit(100);
 			throw e;
 		}
 	}
@@ -201,13 +193,9 @@ public class Aq21Resource {
 	public String dropDatabase() throws Exception{
 		try{
 			Repository repo = Repository.getRepository();
-	//		System.out.println("To save in database:");
-	//		System.out.println(input.toString());
 			repo.dropDataBase();
 		}catch (Exception e) {
 			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
-            //e.printStackTrace();
-            //System.exit(100);
 			throw e;
 		}
 		return new String();

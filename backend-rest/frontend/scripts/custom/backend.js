@@ -57,6 +57,19 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
         return humane.log("some error");
       });
     },
+    saveExperiment: function(experiment) {
+      console.log(experiment);
+      return request.post(internal.hostname + "saveExperiment", {
+        data: JSON.stringify(experiment),
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8"
+        }
+      }).then((function(output) {
+        return console.log("Data successfully saved");
+      }), function(error) {
+        return console.log("some error");
+      });
+    },
     getGLD: function(gld_input) {
       console.log("sadfsafsafa");
       console.log(gld_input);

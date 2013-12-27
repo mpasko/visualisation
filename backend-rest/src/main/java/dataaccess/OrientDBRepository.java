@@ -119,6 +119,7 @@ public class OrientDBRepository extends Repository {
 			for (InputPair exp : db.browseClass(InputPair.class).setFetchPlan("*:-1")){
 				if(exp.getName().equals(experiment.getName())){
 					exp.setValue(experiment.getValue());
+					exp.setDescription(experiment.getDescription());
 					db.save(exp);
 					exists=true;
 				}
@@ -141,6 +142,7 @@ public class OrientDBRepository extends Repository {
 			for (OutputPair res : db.browseClass(OutputPair.class).setFetchPlan("*:-1")){
 				if(res.getName().equals(result.getName())){
 					res.setValue(result.getValue());
+					res.setDescription(result.getDescription());
 					db.save(res);
 					exists=true;
 				}
@@ -194,7 +196,7 @@ public class OrientDBRepository extends Repository {
 		if (admin.existsDatabase("local")) {
 			admin.dropDatabase("local");
 		}
-		admin.createDatabase(dbname, "local", "local");
+//		admin.createDatabase(dbname, "local", "local");
 		starter.stop();
 		Thread.sleep(2000);
 		starter.start();
