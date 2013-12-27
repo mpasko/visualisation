@@ -91,7 +91,6 @@ define(["dojo/dom", "dijit/registry"], function(dom, registry) {
       if (hypotheses.length === 0) {
         return;
       }
-      console.log("The server returned: ", hypotheses);
       text = internal.convertToLaTex(hypotheses);
       internal.updateMath("MathOutput", text);
       textbox = registry.byId("LatexCode");

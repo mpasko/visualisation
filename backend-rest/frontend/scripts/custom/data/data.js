@@ -16,7 +16,6 @@ define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "d
         attribute = _ref[_i];
         attribute["selected"] = true;
       }
-      console.log(input.attributes);
       internal.stores.attr.setData(input.attributes);
       internal.stores.domains.setData(input.domains);
       internal.stores.events.setData(input.events);
