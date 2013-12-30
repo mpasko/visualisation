@@ -12,6 +12,7 @@ import agh.aq21gui.model.gld.Argument;
 import agh.aq21gui.model.gld.processing.CellValue;
 import agh.aq21gui.model.gld.processing.Coordinate;
 import agh.aq21gui.model.gld.GLDOutput;
+import agh.aq21gui.model.gld.GLDProperties;
 import agh.aq21gui.model.gld.Value;
 import java.util.List;
 
@@ -24,25 +25,33 @@ public class GLDState extends State{
 	public static GLDState build(GLDOutput initialData) {
 		GLDState state = new GLDState();
 		state.data = initialData;
+		state.properties = initialData.getProps();
 		return state;
 	}
 	
-	private double p=1.0;
+	//private double p=1.0;
 	private GLDOutput data;
-	public double repartition_prob=0.05;
 	private int clusterscache=-1;
+	
+	private GLDProperties properties=null;
 
 	@Override
 	public double targetFunction() {
-		return this.getClusters() + p*this.getGoldenRatioCloseness();
+		return this.getClusters() + properties.p*this.getGoldenRatioCloseness();
 	}
 	
-	public void setRatioImportance(int newp){
-		this.p = newp;
+	public void setRatioImportance(Double newp){
+		if (properties==null){
+			properties = new GLDProperties();
+		}
+		this.properties.p = newp;
 	}
 	
 	public void setRepartitionProb(double prob) {
-		this.repartition_prob = prob;
+		if (properties==null){
+			properties = new GLDProperties();
+		}
+		properties.repartition_prob = prob;
 	}
 	
 	public double getClusters(){
@@ -103,29 +112,43 @@ public class GLDState extends State{
 		clusterscache = -1;
 		List<Argument> rows = data.getRows();
 		List<Argument> cols = data.getColumns();
-		if (Math.random()<repartition_prob) {
-			if ((rows.size()>1) && (Math.random()>0.5)){
-				int selected = (int) Math.round((rows.size()-1)*Math.random());
+		if (Math.random()<properties.repartition_prob) {
+			if ((rows.size()>1) && randomBool()){
+				int selected = randomElem(rows.size());
 				moveItem(rows, selected, cols, 0);
 			} else if (cols.size()>1) {
-				int selected = (int) Math.round((cols.size()-1)*Math.random());
+				int selected = randomElem(cols.size());
 				moveItem(cols, selected, rows, 0);
 			}
+		} else if (Math.random()<properties.swap_prob) {
+			if ((rows.size()>1) && randomBool()){
+				swapValues(rows);
+			} else if (cols.size()>1) {
+				swapValues(cols);
+			}
 		} else {
-			if ( (rows.size()>=2) && (Math.random()>0.5) ) {
-				int from = (int) Math.round((rows.size()-1)*Math.random());
-				int to = (int) Math.round((rows.size()-2)*Math.random());
+			if ( (rows.size()>=2) && randomBool() ) {
+				int from = randomElem(rows.size());
+				int to = randomElem(rows.size()-1);
 				moveItem(rows, from, rows, to);
 			} else if (cols.size()>=2) {
-				int from = (int) Math.round((cols.size()-1)*Math.random());
-				int to = (int) Math.round((cols.size()-2)*Math.random());
+				int from = randomElem(cols.size());
+				int to = randomElem(cols.size()-1);
 				moveItem(cols, from, cols, to);
 			}
 		}
 	}
 	
-	static void moveItem(List<Argument> from, int from_at, List<Argument> to, int to_at){
-		Argument removed = from.remove(from_at);
+	static boolean randomBool(){
+		return (Math.random()>0.5);
+	}
+	
+	static int randomElem(int size){
+		return (int) Math.round((size-1)*Math.random());
+	}
+	
+	static <T> void moveItem(List<T> from, int from_at, List<T> to, int to_at){
+		T removed = from.remove(from_at);
 		to.add(to_at, removed);
 	}
 
@@ -133,6 +156,7 @@ public class GLDState extends State{
 	public State cloneItself() {
 		GLDState state = new GLDState();
 		state.data = this.data.cloneItself();
+		state.properties = this.properties;
 		return state;
 	}
 
@@ -140,5 +164,17 @@ public class GLDState extends State{
 	public void printIt() {
 		this.data.print();
 		System.out.printf("Clusters:%f, GoldenRatio closeness:%f\n", this.getClusters(),this.getGoldenRatioCloseness());
+	}
+
+	public void swapValues(List<Argument> rows) {
+		int selected = randomElem(rows.size());
+		Argument arg = rows.get(selected);
+		List<Value> vals = arg.getValues();
+		if (vals.size()>=2){
+			int from = randomElem(vals.size());
+			int to = randomElem(vals.size()-1);
+			moveItem(vals,from,vals,to);
+			arg.setValues(vals);
+		}
 	}
 }

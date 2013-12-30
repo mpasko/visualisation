@@ -39,6 +39,10 @@ public class StubFactory {
 		input.addAttribute("number", "linear", "{ 0, 1, 2 }");
 		input.addAttribute("length", "continuous", "0, 200");
 		input.addAttribute("class", "nominal", "{c1, c2}");
+		input.addEvent("red", "1", "34.6", "c1");
+		input.addEvent("green", "0", "2.45", "c2");
+		input.addEvent("red", "1", "33.0", "c1");
+		input.addEvent("blue", "0", "33.5", "c2");
 		RunsGroup runs = new RunsGroup();
 		Run run_c1 = new Run();
 		run_c1.name = "Run_c1";
@@ -81,10 +85,6 @@ public class StubFactory {
 		run_multi_head.addParameter("Maxrule", "1");
 		runs.runs.add(run_multi_head);
 		input.runsGroup = runs;
-		input.addEvent("red", "1", "34.6", "c1");
-		input.addEvent("green", "0", "2.45", "c2");
-		input.addEvent("red", "1", "33.0", "c1");
-		input.addEvent("blue", "0", "33.5", "c2");
 		return input;
 	}
 	

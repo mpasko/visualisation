@@ -34,6 +34,7 @@ public class GLDOutput {
 	private Output hypo;
 	public Mesh<Coordinate,CellValue> mesh;
 	private Presenter presenter;
+	private GLDProperties properties=null;
 	
 	public GLDOutput(Output out) {
 		mesh = new Mesh<Coordinate,CellValue>();
@@ -42,6 +43,16 @@ public class GLDOutput {
 		columns = new ArgumentsGroup(new LinkedList<Argument>());
 		elements = new ValueEvaluator(out/*,rows,columns*/);
 		this.resetMesh();
+	}
+	
+	@JsonIgnore
+	public void setProps(GLDProperties props){
+		this.properties=props;
+	}
+	
+	@JsonIgnore
+	public GLDProperties getProps(){
+		return properties;
 	}
 	
 	@JsonProperty("rows")

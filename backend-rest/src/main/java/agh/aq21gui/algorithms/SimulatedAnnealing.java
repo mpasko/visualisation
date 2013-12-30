@@ -13,12 +13,13 @@ public class SimulatedAnnealing extends OptimizationAlgorithm{
 	private double temperature;
 	private double energyBefore,energyNow;
 	private State previousState,currentState;
-	private static final int MAX_ITERATIONS=400;
-	private static final double START_TEMP=1;
-	private static final double END_TEMP=0.001;
+	private SAProperties properties;
 
 	@Override
 	public void init(State state) {
+		if (properties == null){
+			this.properties = new SAProperties();
+		}
 		currentState = state;
 		previousState = state;
 		energyNow = currentState.targetFunction();
@@ -38,7 +39,7 @@ public class SimulatedAnnealing extends OptimizationAlgorithm{
 
 	@Override
 	public boolean toBeStopped() {
-		return this.getIteration()>=MAX_ITERATIONS;
+		return this.getIteration()>=properties.iterations;
 	}
 
 	@Override
@@ -59,8 +60,8 @@ public class SimulatedAnnealing extends OptimizationAlgorithm{
 	}
 	
 	private void recalcTemperature(){
-		double alpha = (this.END_TEMP - this.START_TEMP)/(this.MAX_ITERATIONS);
-		this.temperature = alpha * this.getIteration() + this.START_TEMP;
+		double alpha = (properties.end_temperature - properties.start_temperature)/(properties.iterations);
+		this.temperature = alpha * this.getIteration() + properties.start_temperature;
 	}
 
 	@Override
@@ -73,6 +74,11 @@ public class SimulatedAnnealing extends OptimizationAlgorithm{
 		if (this.getIteration() % 50 == 0){
 			this.currentState.printIt();
 		}
+	}
+
+	@Override
+	public void setProperties(Object props) {
+		this.properties = (SAProperties)props;
 	}
 	
 }

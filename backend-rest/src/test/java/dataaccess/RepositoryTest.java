@@ -72,27 +72,34 @@ public class RepositoryTest {
 	 * Test of saveExperiment method, of class Repository.
 	 */
 	@Test
+	@SuppressWarnings("all")
 	public void testSaveExperiment() {
 		System.out.println("saveExperiment");
 		Input input = StubFactory.getInput();
-		InputPair experiment = new InputPair("component_test_case_01", input);
+		final String name = "component_test_case_01";
+		InputPair experiment = new InputPair(name, input);
 		instance.saveExperiment(experiment);
-		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
+		experiment = null;
+		input = null;
+		Input experiment2 = instance.getExperiment(name);
+		assertEquals(4,experiment2.getAttributes().size());
+		assertEquals(4,experiment2.getEvents().size());
 	}
 
 	/**
 	 * Test of saveResult method, of class Repository.
 	 */
 	@Test
+	@SuppressWarnings("all")
 	public void testSaveResult() {
 		System.out.println("saveResult");
 		Input input = StubFactory.getInput();
 		Output output = new Invoker().invoke(input);
-		OutputPair result = new OutputPair("component_test_case_02", output);
+		final String name = "component_test_case_02";
+		OutputPair result = new OutputPair(name, output);
 		instance.saveResult(result);
 		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
+		//		fail("The test case is a prototype.");
 	}
 	
 	@Test

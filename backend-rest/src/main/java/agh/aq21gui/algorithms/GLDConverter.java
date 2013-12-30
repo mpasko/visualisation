@@ -9,6 +9,7 @@ import agh.aq21gui.algorithms.conversion.RangeRecognizer;
 import agh.aq21gui.model.gld.Argument;
 import agh.aq21gui.model.gld.GLDInput;
 import agh.aq21gui.model.gld.GLDOutput;
+import agh.aq21gui.model.gld.GLDProperties;
 import agh.aq21gui.model.gld.processing.Recognizer;
 import agh.aq21gui.model.gld.Value;
 import agh.aq21gui.model.input.Attribute;
@@ -34,6 +35,7 @@ public class GLDConverter {
 	private final Output data;
 	private final DomainsGroup domains;
 	public List<Argument> args;
+	private final GLDProperties props;
 
 	public GLDConverter(GLDInput input) {
 		cols = new LinkedList<Argument>();
@@ -43,6 +45,7 @@ public class GLDConverter {
 		data = input.getData();
 		out = new GLDOutput(data);
 		args = new LinkedList<Argument>();
+		props = input.getGLDProperties();
 	}
 
 	public GLDOutput convert() {
@@ -51,7 +54,9 @@ public class GLDConverter {
 			agh.aq21gui.model.input.Attribute attr = attrs.get(i);
 			processAttribute(attr);
 		}
-		return offerPartition();
+		final GLDOutput initial_state = offerPartition();
+		initial_state.setProps(props);
+		return initial_state;
 	}
 	
 	public List<Selector> extractSelectors(){

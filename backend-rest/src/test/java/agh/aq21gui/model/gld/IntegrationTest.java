@@ -20,14 +20,14 @@ import org.junit.Test;
  *
  * @author marcin
  */
-public class IntegrationTests {
+public class IntegrationTest {
 	private static Output baloons;
 	private static Output iris;
 	private static Output aq21example;
 	private static Output alternateCovers;
 	private boolean skip_iris_all = true;
 	
-	public IntegrationTests() {
+	public IntegrationTest() {
 	}
 	
 	@BeforeClass
@@ -53,8 +53,8 @@ public class IntegrationTests {
 		GLDOutput.printCellValues(gld_output);
 		assertEquals(2, gld_output.getWidth());
 		assertEquals(2, gld_output.getHeight());
-		assertEquals(3, countMatches("attribute5", gld_output,"t"));
-		assertEquals(1, countMatches("attribute5", gld_output,"f"));
+		assertEquals(3, countMatches(gld_output, "attribute5","t"));
+		assertEquals(1, countMatches(gld_output, "attribute5","f"));
 	}
 	@Test
 	public void testAll() {
@@ -67,8 +67,8 @@ public class IntegrationTests {
 		GLDOutput.printCellValues(gld_output);
 		assertEquals(2, gld_output.getWidth());
 		assertEquals(2, gld_output.getHeight());
-		assertEquals(3, countMatches("attribute5", gld_output,"t"));
-		assertEquals(1, countMatches("attribute5", gld_output,"f"));
+		assertEquals(3, countMatches(gld_output, "attribute5","t"));
+		assertEquals(1, countMatches(gld_output, "attribute5","f"));
 	}
 	
 	@Test
@@ -113,6 +113,7 @@ public class IntegrationTests {
 		gld_output.print();
 		GLDOutput.printCellValues(gld_output);
 		assertEquals(1, gld_output.getColumns().size()+gld_output.getRows().size());
+	//	assertEquals(2, gld_output.getHeight()*gld_output.getWidth());
 	}
 	
 	@Test
@@ -125,6 +126,7 @@ public class IntegrationTests {
 		gld_output.print();
 		GLDOutput.printCellValues(gld_output);
 		assertEquals(1, gld_output.getColumns().size()+gld_output.getRows().size());
+	//	assertEquals(2, gld_output.getHeight()*gld_output.getWidth());
 	}
 	
 	@Test
@@ -137,7 +139,7 @@ public class IntegrationTests {
 		gld_output.print();
 		GLDOutput.printCellValues(gld_output);
 		assertEquals(3, gld_output.getColumns().size()+gld_output.getRows().size());
-		assertEquals(5, countMatches("c", gld_output, "1"));
+		assertEquals(5, countMatches(gld_output, "c", "1"));
 	}
 	
 	@Test
@@ -150,10 +152,10 @@ public class IntegrationTests {
 		gld_output.print();
 		GLDOutput.printCellValues(gld_output);
 		assertEquals(3, gld_output.getColumns().size()+gld_output.getRows().size());
-		assertEquals(5, countMatches("c", gld_output, "1"));
+		assertEquals(5, countMatches(gld_output, "c", "1"));
 	}
 	
-	public static int countMatches(String name, GLDOutput data, String value){
+	public static int countMatches(GLDOutput data, String name, String value){
 		int i = 0;
 		ClassDescriptor desc = new ClassDescriptor();
 		desc.name=name;

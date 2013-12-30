@@ -36,4 +36,6 @@ public abstract class OptimizationAlgorithm {
 	public abstract State getResult();
 
 	abstract void logState();
+
+	public abstract void setProperties(Object props);
 }

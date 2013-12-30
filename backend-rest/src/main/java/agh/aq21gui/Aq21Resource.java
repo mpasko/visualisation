@@ -1,6 +1,7 @@
 package agh.aq21gui;
 
 import agh.aq21gui.algorithms.GLDOptimizer;
+import agh.aq21gui.algorithms.OptimizationAlgorithm;
 import agh.aq21gui.algorithms.SimulatedAnnealing;
 import agh.aq21gui.model.gld.GLDInput;
 import agh.aq21gui.model.gld.GLDOutput;
@@ -142,7 +143,10 @@ public class Aq21Resource {
 	public Input getExperiment(@PathParam("name")String name) throws Exception{
 		try {
 			Repository repo = Repository.getRepository();
-			return repo.getExperiment(name);
+			final Input experiment = repo.getExperiment(name);
+			System.out.println("Experiment -reloaded:");
+			System.out.println(experiment.toString());
+			return experiment;
 		} catch (Exception ex) {
 			Logger.getLogger(Aq21Resource.class.getName()).log(Level.SEVERE, null, ex);
 			throw ex;
@@ -167,6 +171,8 @@ public class Aq21Resource {
 	@Consumes({MediaType.APPLICATION_JSON})
 	public void saveExp(InputPair input) throws Exception{
 		try{
+			System.out.println("Experiment -before save:");
+			System.out.println(input.toString());
 			Repository repo = Repository.getRepository();
 			repo.saveExperiment(input);
 		}catch (Exception e) {
@@ -215,7 +221,9 @@ public class Aq21Resource {
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	public GLDOutput optimizeGLD(GLDInput input){
-		GLDOptimizer optimizer = new GLDOptimizer(input, new SimulatedAnnealing());
+		final OptimizationAlgorithm algorithm = new SimulatedAnnealing();
+		algorithm.setProperties(input.getSAProperties());
+		GLDOptimizer optimizer = new GLDOptimizer(input, algorithm);
 		return optimizer.optimize();
 	}
 	

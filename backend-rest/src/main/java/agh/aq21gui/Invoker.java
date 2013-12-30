@@ -12,6 +12,8 @@ import agh.aq21gui.utils.Util;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,24 +24,32 @@ import java.util.logging.Logger;
 public class Invoker {
 	
 	Runtime runtime;
+	static Lock lock = new ReentrantLock();
 	
 	public Invoker(){
 		runtime = Runtime.getRuntime();
 	}
 	
 	public String run(String input) throws IOException, ProgramExecutionException{
-		FileOutputStream fos = new FileOutputStream("input.aq21");
-		fos.flush();
-		
-		Util.stringToStream(input, fos);
-		Process process = runtime.exec(Configuration.AQ21PATH+" input.aq21");
-		InputStream stdin = process.getInputStream();
+		String result="";
+		lock.lock();
+		try {
+			FileOutputStream fos = new FileOutputStream("input.aq21");
+			fos.flush();
 
-		String result = Util.streamToString(stdin);
-		
-		FileOutputStream diagnostic = new FileOutputStream("output.log");
-		diagnostic.flush();
-		Util.stringToStream(result, diagnostic);
+			Util.stringToStream(input, fos);
+			Process process = runtime.exec(Configuration.AQ21PATH+" input.aq21");
+			InputStream stdin = process.getInputStream();
+
+
+			result = Util.streamToString(stdin);
+
+			FileOutputStream diagnostic = new FileOutputStream("output.log");
+			diagnostic.flush();
+			Util.stringToStream(result, diagnostic);
+		} finally {
+			lock.unlock();
+		}
 		return result;
 	}
 
