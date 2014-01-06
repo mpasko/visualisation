@@ -164,7 +164,7 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
         name = registry.byId("exp_name").value;
         desc = registry.byId("exp_description").value;
         value = internal.getConfiguration();
-        return topic.publish("save experiment", {
+        topic.publish("save experiment", {
           "name": name,
           "value": value,
           "description": desc

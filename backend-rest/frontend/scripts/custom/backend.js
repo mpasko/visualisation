@@ -8,9 +8,24 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
         id: 0
       };
       message = lang.mixin(message, configuration);
-      return topic.publish("collect experiment data", function(data) {
+      topic.publish("collect experiment data", function(data) {
         message = lang.mixin(message, data);
-        return onEnd(JSON.stringify(message));
+        onEnd(JSON.stringify(message));
+      });
+    },
+    saveExperiment: function(configuration, onEnd) {
+      var message;
+      message = {
+        id: 0
+      };
+      
+      configuration.value = lang.mixin(configuration.value, message);
+      message = lang.mixin(configuration, message);
+      
+      topic.publish("collect experiment data", function(data) {
+        message.value = lang.mixin(message.value, data);
+        
+        onEnd(JSON.stringify(message));
       });
     }
   };
@@ -19,7 +34,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
       var callback;
       callback = function(message) {
         console.log(message);
-        return request.post(internal.hostname + "postIt", {
+        request.post(internal.hostname + "postIt", {
           data: message,
           handleAs: "json",
           headers: {
@@ -36,15 +51,18 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
           return console.log("Couldn't run experiment");
         });
       };
-      return internal.sendMessage(configuration, callback);
+      
+      internal.sendMessage(configuration, callback);
     },
     getExperimentList: function() {
+      console.log("output");
       return request.get(internal.hostname + "browse", {
         handleAs: "json"
       }).then((function(output) {
-        return topic.publish("render database experiments", output);
+        console.log(output);
+        topic.publish("render database experiments", output);
       }), function(error) {
-        return humane.log("some error");
+        humane.log("some error");
       });
     },
     getExperiment: function(link) {
@@ -52,28 +70,27 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
         handleAs: "json"
       }).then((function(output) {
         topic.publish("experiment loaded from backend", output);
-        return humane.log("Data successfully loaded from database");
+        humane.log("Data successfully loaded from database");
       }), function(error) {
-        return humane.log("some error");
+        humane.log("some error");
       });
     },
-    saveExperiment: function(configuration) {
+    saveExperiment: function(template) {
       var callback;
       callback = function(message) {
-        console.log("aaaaa");
-        console.log(message);
-        return request.post(internal.hostname + "saveExperiment", {
+         
+        request.post(internal.hostname + "saveExperiment", {
           data: message,
           headers: {
             "Content-Type": "application/json; charset=UTF-8"
           }
         }).then((function(output) {
-          return console.log("Data successfully saved");
+          console.log("Data successfully saved");
         }), function(error) {
-          return console.log("some error");
+          console.log("some error");
         });
       };
-      return internal.sendMessage(configuration, callback);
+      return internal.saveExperiment(template, callback);
     },
     getGLD: function(gld_input) {
       console.log("sadfsafsafa");

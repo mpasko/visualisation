@@ -117,7 +117,9 @@ public class OrientDBRepository extends Repository {
 		try {
 			boolean exists=false;
 			for (InputPair exp : db.browseClass(InputPair.class).setFetchPlan("*:-1")){
-				if(exp.getName().equals(experiment.getName())){
+                String name = exp.getName();
+
+				if((name != null)&&(name.equals(experiment.getName()))){
 					exp.setValue(experiment.getValue());
 					exp.setDescription(experiment.getDescription());
 					db.save(exp);
@@ -166,7 +168,8 @@ public class OrientDBRepository extends Repository {
 		generateSchemaForAll(db);
 		Input value = null;
 		for (InputPair exp : db.browseClass(InputPair.class).setFetchPlan("*:-1")){
-				if(exp.getName().equals(name)){
+                String dbname = exp.getName();
+				if((dbname != null)&&(dbname.equals(name))){
 					value=exp.getValue();
 					value = db.detachAll(value, true);
 				}

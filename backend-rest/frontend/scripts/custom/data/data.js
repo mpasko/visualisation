@@ -10,6 +10,7 @@ define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "d
   };
   module = {
     update: function(input) {
+      console.log(input);
       var attribute, item, _i, _j, _len, _len1, _ref, _ref1;
       _ref = input.attributes;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
