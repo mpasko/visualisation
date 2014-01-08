@@ -8,23 +8,23 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
         id: 0
       };
       message = lang.mixin(message, configuration);
+      
       topic.publish("collect experiment data", function(data) {
         message = lang.mixin(message, data);
         onEnd(JSON.stringify(message));
       });
     },
     saveExperiment: function(configuration, onEnd) {
-      var message;
-      message = {
+      var message = {
         id: 0
       };
       
       configuration.value = lang.mixin(configuration.value, message);
       message = lang.mixin(configuration, message);
       
+      // sending it to attributes to give us the data
       topic.publish("collect experiment data", function(data) {
         message.value = lang.mixin(message.value, data);
-        
         onEnd(JSON.stringify(message));
       });
     }
@@ -33,7 +33,6 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
     runExperiment: function(configuration) {
       var callback;
       callback = function(message) {
-        console.log(message);
         request.post(internal.hostname + "postIt", {
           data: message,
           handleAs: "json",
@@ -46,9 +45,9 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
           } else {
             humane.log("Experiment completed");
           }
-          return topic.publish("visualise results", output);
+          topic.publish("visualise results", output);
         }), function(error) {
-          return console.log("Couldn't run experiment");
+          console.log("Couldn't run experiment");
         });
       };
       
@@ -56,7 +55,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
     },
     getExperimentList: function() {
       console.log("output");
-      return request.get(internal.hostname + "browse", {
+      request.get(internal.hostname + "browse", {
         handleAs: "json"
       }).then((function(output) {
         console.log(output);
@@ -95,17 +94,16 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
     getGLD: function(gld_input) {
       console.log("sadfsafsafa");
       console.log(gld_input);
-      return request.post(internal.hostname + "gld", {
+      request.post(internal.hostname + "gld", {
         handleAs: "json",
         data: JSON.stringify(gld_input),
         headers: {
           "Content-Type": "application/json; charset=UTF-8"
         }
       }).then((function(output) {
-        console.log(output);
-        return console.log("Data successfully loaded from database");
+        topic.publish("visualise gld", output);
       }), function(error) {
-        return console.log("some error");
+        console.log("some error");
       });
     },
     runExport: function(configuration) {
@@ -119,31 +117,30 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
             "Content-Type": "application/json; charset=UTF-8"
           }
         }).then((function(output) {
-          var downloadLink, textFileAsBlob;
           humane.log("Export completed");
-          textFileAsBlob = new Blob([output], {
+          var textFileAsBlob = new Blob([output], {
             type: 'text/plain'
           });
-          downloadLink = document.createElement("a");
+          var downloadLink = document.createElement("a");
           downloadLink.download = "sample.aq21";
           downloadLink.innerHTML = "Download File";
           downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
           downloadLink.onclick = function(event) {
-            return document.body.removeChild(event.target);
+            document.body.removeChild(event.target);
           };
           downloadLink.style.display = "none";
           document.body.appendChild(downloadLink);
           downloadLink.click();
-          return console.log(output);
+          console.log(output);
         }), function(error) {
-          return console.log("Couldn't run experiment");
+          console.log("Couldn't run experiment");
         });
       };
       return internal.sendMessage(configuration, callback);
     },
     convert: {
       AQ21: function(file_content) {
-        return request.post(internal.hostname + "fromAQ21", {
+        request.post(internal.hostname + "fromAQ21", {
           data: file_content,
           handleAs: "json",
           headers: {
@@ -151,9 +148,9 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
           }
         }).then((function(input) {
           topic.publish("experiment loaded from backend", input);
-          return humane.log("Data successfully loaded");
+          humane.log("Data successfully loaded");
         }), function(error) {
-          return console.log("Couldn't convert AQ21 to JSON form");
+          console.log("Couldn't convert AQ21 to JSON form");
         });
       },
       CSV: function(file_content) {
@@ -166,9 +163,9 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
         }).then((function(input) {
           console.log(input);
           topic.publish("experiment loaded from backend", input);
-          return humane.log("Data successfully loaded");
+          humane.log("Data successfully loaded");
         }), function(error) {
-          return console.log("Couldn't convert AQ21 to JSON form");
+          console.log("Couldn't convert AQ21 to JSON form");
         });
       }
     }

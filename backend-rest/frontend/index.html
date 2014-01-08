@@ -150,33 +150,57 @@ circle.hidden {
 
 
 
-            <!--Knowledge pane-->
-            <div data-dojo-type="dijit/layout/ContentPane"  title="Knowledge">
-                <div data-dojo-type="dijit/layout/TabContainer"
-                     style="width: 100%; height: 100%;"  data-dojo-props="tabPosition:'bottom'">
-                    <div data-dojo-type="dijit/layout/BorderContainer" title="Raw" style="height: 100%;">
-                        <div id="RawAq21" title="Raw" style="height: 100%;" data-dojo-props="region:'center'"  data-dojo-type="dijit/form/SimpleTextarea"></div>
+<!--Knowledge pane-->
+<div data-dojo-type="dijit/layout/ContentPane"  title="Knowledge">
+    <div data-dojo-type="dijit/layout/TabContainer"
+         style="width: 100%; height: 100%;"  data-dojo-props="tabPosition:'bottom'">
+        <div data-dojo-type="dijit/layout/BorderContainer" title="Raw" style="height: 100%;">
+            <div id="RawAq21" title="Raw" style="height: 100%;" data-dojo-props="region:'center'"  data-dojo-type="dijit/form/SimpleTextarea"></div>
+        </div>
+
+        <div data-dojo-type="dijit/layout/ContentPane" title="LaTex">
+            <div data-dojo-type="dijit/layout/BorderContainer"  data-dojo-props="design:'headline'">
+                <div data-dojo-type="dijit/layout/ContentPane" style="height: 69%; width:98%;" data-dojo-props="region:'top'">
+                    <div id="MathOutput" style="font-size: 98%;"></div>
+                </div>
+                <div id="LatexCode" style="height: 29%; width:98%;" data-dojo-props="region:'center'"  data-dojo-type="dijit/form/SimpleTextarea"></div>
+            </div>
+        </div>
+
+            <div data-dojo-type="dijit/layout/BorderContainer"  data-dojo-props="design:'headline'" title="GLD">
+                <div data-dojo-type="dijit/layout/BorderContainer" style="height: 100%; width:100%;" 
+                     data-dojo-props="region:'center',design:'headline'">
+                    <div data-dojo-type="dijit/Toolbar" data-dojo-props="region:'top'">
+                        Ratio importance
+                        <div data-dojo-type="dijit/form/TextBox" style="width:100px" id="ratio_importance"></div> 
+                        Repartition prob.
+                        <div data-dojo-type="dijit/form/TextBox" style="width:100px" id="repartition_probability"></div> 
+                        Swap prob.
+                        <div data-dojo-type="dijit/form/TextBox" style="width:100px" id="swap_probability"></div> 
+                        Iterations
+                        <div data-dojo-type="dijit/form/TextBox" style="width:100px" id="iterations"></div> 
+                        Swap enabled
+                        <div data-dojo-type="dijit/form/CheckBox" id="swap_enabled"></div> 
+                        Tile size
+                        <div data-dojo-type="dijit/form/TextBox" style="width:30px" id="tile_size"></div> 
+                        <div data-dojo-type="dijit/form/Button"
+                             id="load_gld" style="font-weight:bold;margin-left: 10px;margin-right: 10px; font-size: 20px;">Load gld</div> 
+                    </div>
+                    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+                        <canvas id="myCanvas" ></canvas> 
+                    </div>
+                    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'" style="width:20%;">
+                        <br/>Select rule to visualise<br/>
+                        <div  id="rules_to_select" style="height:200px;" ></div>
+                        <br/>Current element properties<br/>
+                        <div id="gld_text"></div>
                     </div>
 
-                    <div data-dojo-type="dijit/layout/ContentPane" title="LaTex">
-                        <div data-dojo-type="dijit/layout/BorderContainer"  data-dojo-props="design:'headline'">
-                            <div data-dojo-type="dijit/layout/ContentPane" style="height: 69%; width:98%;" data-dojo-props="region:'top'">
-                                <div id="MathOutput" style="font-size: 98%;"></div>
-                            </div>
-                            <div id="LatexCode" style="height: 29%; width:98%;" data-dojo-props="region:'center'"  data-dojo-type="dijit/form/SimpleTextarea"></div>
-                        </div>
-                    </div>
-                    
-                    <div data-dojo-type="dijit/layout/ContentPane" title="GLD">
-                        <div data-dojo-type="dijit/layout/BorderContainer"  data-dojo-props="design:'headline'">
-                            <div data-dojo-type="dijit/layout/ContentPane" style="height: 100%; width:100%;" data-dojo-props="region:'center'">
-                                <div data-dojo-type="dijit/form/TextBox" id="gldParameter"></div> 
-                                <div data-dojo-type="dijit/form/Button" id="load_gld" >Load gld</div> 
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
+
+    </div>
+</div>
 
 
             
