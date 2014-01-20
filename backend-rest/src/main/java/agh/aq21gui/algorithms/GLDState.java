@@ -87,7 +87,7 @@ public class GLDState extends State{
 		return clusterscache;
 	}
 
-    private int getMaxClusters() {
+    public int getMaxClusters() {
         return data.getHeight()*data.getWidth();
     }
 

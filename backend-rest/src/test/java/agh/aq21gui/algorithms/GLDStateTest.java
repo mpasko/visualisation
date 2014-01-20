@@ -54,7 +54,7 @@ public class GLDStateTest {
 		System.out.println("targetFunction");
 		GLDState instance = StubFactory.getGLDState();
 		instance.setRatioImportance(0.0);
-		double expResult = instance.getClusters();
+		double expResult = instance.getClusters()/instance.getMaxClusters();
 		double result = instance.targetFunction();
 		assertEquals(expResult, result, 0.0);
 	}
@@ -68,7 +68,7 @@ public class GLDStateTest {
 		int newp = 0;
 		GLDState instance = StubFactory.getGLDState();
 		instance.setRatioImportance(1.0);
-		double expResult = instance.getClusters()+instance.getGoldenRatioCloseness();
+		double expResult = instance.getClusters()/instance.getMaxClusters()+instance.getGoldenRatioCloseness();
 		double result = instance.targetFunction();
 		assertEquals(expResult, result, 0.01);
 	}
