@@ -37,7 +37,7 @@ public class GLDState extends State{
 
 	@Override
 	public double targetFunction() {
-		return this.getClusters() + properties.p*this.getGoldenRatioCloseness();
+		return this.getClusters()/getMaxClusters() + properties.p*this.getGoldenRatioCloseness();
 	}
 	
 	public void setRatioImportance(Double newp){
@@ -53,12 +53,14 @@ public class GLDState extends State{
 		}
 		properties.repartition_prob = prob;
 	}
+    
+    
 	
 	public double getClusters(){
 		if (clusterscache != -1){
 			return clusterscache;
 		}
-		int maxClusters = data.getHeight()*data.getWidth();
+		int maxClusters = getMaxClusters();
 		MergingSets sets = new ArrayMergingSets(maxClusters);
 		MeshCell<CellValue> prevCell = null;
 		List<Coordinate> colSeq = data.getHCoordSequence();
@@ -84,6 +86,10 @@ public class GLDState extends State{
 		clusterscache = sets.count();
 		return clusterscache;
 	}
+
+    private int getMaxClusters() {
+        return data.getHeight()*data.getWidth();
+    }
 
 	public MeshCell mergeCell(Coordinate col, Coordinate row, MeshCell<CellValue> prevCell, MergingSets sets) {
 		MeshCell<CellValue> cell = data.mesh.transform(col, row);

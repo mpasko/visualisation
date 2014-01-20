@@ -33,7 +33,7 @@ define(["dojo/dom", "dijit/registry", "dojo/topic","custom/grid"], function(dom,
             
             var sx = columns.map(function(x) { return x[0] + ": " +  x[1];}).join("</br>");
             var sy = rows.map(function(x) { return x[0] + ": " +  x[1];}).join("</br>");
-            dom.byId("gld_text").innerHTML = 'Properties: </br>' +sx + '</br>' + sy + "</br>";
+            dom.byId("gld_text").innerHTML = 'Column properties: </br>' +sx + '</br>Row properties:</br>' + sy + "</br>";
         }
     },
     visualise_gld: function(gld) {
@@ -56,6 +56,13 @@ define(["dojo/dom", "dijit/registry", "dojo/topic","custom/grid"], function(dom,
             ]
       }, "rules_to_select");
 
+registry.byId("ratio_importance").set("value" , "1");
+      registry.byId("repartition_probability").set("value" , "0.5"); 
+      registry.byId("swap_probability").set("value" , "0.5");
+      registry.byId("iterations").set("value" , "10"); 
+      registry.byId("tile_size").set("value" , "8"); 
+      
+      
       rules_grid.on("dgrid-select", function(event) {
             var name = event.rows[0].data.id;
             var gld = internal.gld;
@@ -66,19 +73,34 @@ define(["dojo/dom", "dijit/registry", "dojo/topic","custom/grid"], function(dom,
             c.height = step * gld.height + 1;
             c.width = step * gld.width + 1;
 
+            var getWidths = function(arr) {
+                var grid = [ 1 ];
+                for (_i = 1;_i < arr.length;_i++) {
+                    var w = 0;
 
+                    var next = arr[_i];
+                    var prev = arr[_i-1];
+
+                    var _j;
+                    for (_j = 0;_j < next.values.length;_j++) {
+                        if (next.values[_j].name !== prev.values[_j].name) {
+                            w++;
+                        }
+                    }
+                    grid.push(w);
+
+                }
+
+                grid.push(1);
+                return grid;
+            };
+           
+            
+            
+            
             var ctx = c.getContext("2d");
             // drawing black grid
             var _i;
-            ctx.fillStyle = "#000000";
-            for(_i=0;_i < step *gld.width +1;_i+= step) {
-                ctx.fillRect(_i, 0, 1, step * gld.height + 1);
-            }
-
-            for(_i=0;_i < step *gld.height +1;_i+= step) {
-                ctx.fillRect(0,_i, step * gld.width + 1,  1);
-            }
-
             // drawing items
             ctx.fillStyle = "#00FF00";
             var _ref = gld.values[name].exists_in;
@@ -86,11 +108,31 @@ define(["dojo/dom", "dijit/registry", "dojo/topic","custom/grid"], function(dom,
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               item = _ref[_i];
               // getting coords from index
-              i = item % gld.width;
-              j = Math.floor(item / gld.width);
+              var i = item % gld.width;
+              var j = Math.floor(item / gld.width);
               // filling one tile
               ctx.fillRect(step * i + 1, step * j + 1, internal.tileSize, internal.tileSize);
             }
+            
+            var columnWidths = getWidths(gld.column_sequence);
+            var _j = 0;
+            ctx.fillStyle = "#000000";
+            for(_i=0;_i < step *gld.width +1;_i+= step) {
+                ctx.fillRect(_i, 0, columnWidths[_j], step * gld.height + 1);
+                
+                _j++;
+            }
+            
+            var rowWidths = getWidths(gld.row_sequence);
+            _j = 0;
+            for(_i=0;_i < step *gld.height +1;_i+= step) {
+                ctx.fillRect(0,_i, step * gld.width + 1,  rowWidths[_j]);
+                
+                
+                _j++;
+            }
+
+            
       });
       
       
@@ -103,7 +145,7 @@ define(["dojo/dom", "dijit/registry", "dojo/topic","custom/grid"], function(dom,
           repartition_probability: parseFloat(registry.byId("repartition_probability").value),
           swap_probability: parseFloat(registry.byId("swap_probability").value),
           iterations: parseInt(registry.byId("iterations").value),
-          swap_enabled: registry.byId("swap_enabled").checked
+          swap_enabled: true
         };
         topic.publish("create gld diagram", diagram_input);
       });
@@ -112,6 +154,12 @@ define(["dojo/dom", "dijit/registry", "dojo/topic","custom/grid"], function(dom,
       internal.results = results;
       internal.gld = null;
       internal.tileSize = 0;
+      var c = dom.byId("myCanvas");
+      var ctx = c.getContext("2d");
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, c.height, c.width);
+      registry.byId("rules_to_select").refresh();
+      registry.byId("rules_to_select").renderArray([]);
     }
   };
   return module;
