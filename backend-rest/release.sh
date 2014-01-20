@@ -11,4 +11,4 @@ cp orientdb.config release/
 cp jetty.* release/
 cp keystore release/
 cp pom.xml release/
-cp runner.sh release/
+cp runner.* release/
