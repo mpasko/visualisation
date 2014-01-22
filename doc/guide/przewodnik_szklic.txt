@@ -1,0 +1,27 @@
+
+1. Cel prac i wizja produktu
+
+Problem, jaki sta³ przed zespo³em do zrealizowania to stworzenie interfejsu graficznego do istniej±cego programu konsolowego AQ21. Problemem wymaganym przez nasz zespó³ do rozwi±zania by³ te¿ brak wizualizacji danych zwracanych w wyniku dzia³ania programu AQ21. Sposób dzia³ania naszego rozwi±zania mia³ byæ wzorowany na programie Weka, jednak mia³ byæ znacznie mniej rozbudowany. Pocz±tkowo pozornie najwiêkszym zagro¿eniem by³o zaimplementowanie parsera formatu AQ21. W rzeczywisto¶ci okaza³ siê nim brak pe³nego wyobra¿enia zespo³u co do stopnia z³o¿ono¶ci zaimplementowania optymalizacji diagramu GLD.
+
+2. Zakres funkcjonalno¶ci
+
+U¿ytkownikiem produktu jest osoba wykonuj±ca eksperymenty przy pomocy programu AQ21. U¿ytkownik u¿ywa naszego produktu jako wygodne medium komunikacji z tym programem oraz dodatkowo u¿ywa go do wizualizacji. Zewnêtrznym systemem jest tutaj program AQ21. Do komunikacji z nim wymagane jest u¿ycie specyficznego dla niego formatu danych.
+
+Najwa¿niejsze wymagania to:
+
+    Mo¿liwo¶æ wykonywania eksperymentów
+    Wizualizacja wiedzy za pomoc± zoptymalizowanego diagramu GLD
+    Persystencja eksperymentów
+
+3. Wybrane aspekty realizacji
+
+System podzielono na dwie g³ówne czê¶ci. Jedn± z nich jest interfejs przegl±darkowy (Frontend) umo¿liwiaj±cy sterowanie systemem przez u¿ytkownika i dokonuj±cy wizualizacji wiedzy. Drug± czê¶ci± jest serwis webowy (Backend) opakowuj±cy program AQ21 i udostêpniaj±cy mo¿liwo¶æ persystencji danych w bazie danych. Po stronie Frontendu u¿yto jêzyka JavaScript poniewa¿ jest najpowszechniejszym jêzykiem do oprogramowania strony internetowej, paradygmatu publish-subscribe poniewa¿ umo¿liwi³o ³atw± dystrybucjê stopniowo przetwarzanych danych. Po stronie Backendu u¿yto jêzyka Java z powodu subiektywnych preferencji zespo³u, dokumentowej bazy danych z powodu braku konieczno¶ci utrzymywania mapowañ obiektowo-relacyjnych.
+
+4. Organizacja pracy
+
+Nasz zespó³ sk³ada³ siê z dwóch osób, jedna osoba (Micha³ Drza³) by³a odpowiedzialna za rozwój interfejsu przegl±darkowego. Druga osoba (Marcin Pa¶ko) by³a odpowiedzialna za stworzenie serwisu webowego. W pierwszym etapie prac od maja do wrze¶nia 2013 roku, spotykali¶my siê z klientem raz na 5 tygodni. Od momentu gdy posiadali¶my ju¿ przejrzysty interfejs u¿ytkownika, planowali¶my spotykaæ siê z klientem i menad¿erem na przemian raz w tygodniu. Do zarz±dzania czê¶ci± wa¿niejszych zadañ pos³u¿y³a JIRA, pozosta³ymi zadaniami ka¿dy cz³onek zespo³u zarz±dza³ we w³asnym zakresie.
+
+5. Wyniki projektu
+
+Uda³o siê uzyskaæ oprogramowanie dobrej jako¶ci, które co prawda nie spe³nia³o wszystkich wymagañ funkcjonalnych przyjêtych na pocz±tku projektu, jednak zosta³o bardzo dobrze przyjête przez klienta. Poprawne dzia³anie najbardziej z³o¿onych aspektów funkcjonalno¶ci zosta³o potwierdzone dok³adnymi testami. Uzyskana dokumentacja projektu mog³a by byæ lepszej jako¶ci, gdyby by³a uzupe³niana i aktualizowana na bie¿±co ju¿ od samego pocz±tku istnienia projektu.
+

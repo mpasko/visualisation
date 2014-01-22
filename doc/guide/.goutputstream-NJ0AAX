@@ -1,0 +1,24 @@
+% By zmienic jezyk na angielski/polski, dodaj opcje do klasy english lub polish
+\documentclass[polish,12pt]{aghthesis}
+\usepackage[latin2]{inputenc}
+\usepackage{url}
+
+\author{Jan Kowalski, Jan Malinowski\\ Wojciech Kowalski}
+
+\title{Zarys szczególnych podstaw\\ ogólnej teorii wszystkiego}
+
+\supervisor{dr hab.\ in¿.\ Krzysztof Iksiñski, prof.\ nadzw.\ AGH}
+
+\date{2011}
+
+% Szablon przystosowany jest do druku dwustronnego, 
+\begin{document}
+
+\maketitle
+
+
+
+\section{Cel prac i wizja produktu}
+%\section{Project goals and vision}
+\label{sec:cel-wizja}
+\emph{Problem, jaki sta

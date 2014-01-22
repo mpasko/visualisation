@@ -1,0 +1,60 @@
+\begin{thebibliography}{1}
+
+\bibitem{projekt2011}
+Dr Janusz Wojtusiak.
+\newblock AQ21.
+\newblock \url{http://www.mli.gmu.edu/software}, 2005.
+
+\bibitem{projekt2011}
+University of Waikato.
+\newblock Weka.
+\newblock \url{http://www.cs.waikato.ac.nz/ml/weka/}, 2013.
+
+\bibitem{ksiazka2011}
+Janusz Wojtusiak.
+\newblock {Machine Learning and Inference Laboratory: AQ21 User's Guide}.
+\newblock George Mason University, 2005.
+
+\bibitem{ksiazka2011}
+Pawe{\l} Cichosz.
+\newblock {\em Systemy ucz{\k{a}}ce si{\k{e}}}.
+\newblock Wydawnictwa Naukowo-Techniczne Warszawa, 2000.
+
+\bibitem{narzedzie2011}
+Dojo Toolkit.
+\newblock \url{http://dojotoolkit.org/}.
+\bibitem{narzedzie2011}
+D3.
+\newblock \url{http://d3js.org/}.
+\bibitem{narzedzie2011}
+CoffeeScript.
+\newblock \url{http://coffeescript.org/}.
+\bibitem{narzedzie2011}
+RequireJS.
+\newblock \url{http://requirejs.org/}.
+\bibitem{narzedzie2011}
+MathJax.
+\newblock \url{http://www.mathjax.org/}.
+\bibitem{narzedzie2011}
+ANTLR.
+\newblock \url{http://www.antlr.org/}.
+\bibitem{narzedzie2011}
+OrientDB.
+\newblock \url{http://www.orientechnologies.com/orientdb/}.
+\bibitem{narzedzie2011}
+Jersey.
+\newblock \url{https://jersey.java.net/}.
+\bibitem{narzedzie2011}
+Jetty.
+\newblock \url{http://www.eclipse.org/jetty/}.
+\bibitem{narzedzie2011}
+Jackson.
+\newblock \url{http://jackson.codehaus.org/}.
+\bibitem{narzedzie2011}
+Maven.
+\newblock \url{http://maven.apache.org/}.
+\bibitem{narzedzie2011}
+NetBeans.
+\newblock \url{http://netbeans.org/}.
+
+\end{thebibliography}
