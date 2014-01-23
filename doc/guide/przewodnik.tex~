@@ -21,15 +21,23 @@
 \section{Cel prac i wizja produktu}
 %\section{Project goals and vision}
 \label{sec:cel-wizja}
-Problem, jaki sta³ przed zespo³em do zrealizowania to stworzenie interfejsu graficznego do istniej±cego programu konsolowego AQ21. Problemem wymaganym przez nasz zespó³ do rozwi±zania by³ te¿ brak wizualizacji danych zwracanych w wyniku dzia³ania programu AQ21. Sposób dzia³ania naszego rozwi±zania mia³ byæ wzorowany na programie Weka, jednak mia³ byæ znacznie mniej rozbudowany. Pocz±tkowo pozornie najwiêkszym zagro¿eniem by³o zaimplementowanie parsera formatu AQ21. W rzeczywisto¶ci okaza³ siê nim brak pe³nego wyobra¿enia zespo³u co do stopnia z³o¿ono¶ci zaimplementowania optymalizacji diagramu GLD.
+Problem, jaki sta³ przed zespo³em do zrealizowania to stworzenie interfejsu graficznego do istniej±cego programu konsolowego AQ21. Problemem wymaganym przez nasz zespó³ do rozwi±zania by³ te¿ brak wizualizacji danych zwracanych w wyniku dzia³ania programu AQ21. Sposób dzia³ania naszego rozwi±zania mia³ byæ wzorowany na programie Weka, jednak mia³ byæ znacznie mniej rozbudowany. 
+Pocz±tkowo pozornie do najwiêkszch zagro¿eñ zaliczyæ mo¿na by³o: 
+\begin{itemize}
+   \item Du¿± ilo¶æ zadañ w stosunku do posiadanych zasobów.
+   \item Brak do¶wiadczenia cz³onków zespo³u w zakresie implementacji webserwisów.
+   \item Mo¿liwe trudno¶ci w zaimplementowaniu parsera formatu AQ21
+\end{itemize}
+W rzeczywisto¶ci najwiêkszym zagro¿eniem okaza³ siê brak pe³nego wyobra¿enia zespo³u co do tego, jak bardzo z³o¿one jest zaimplementowanie optymalizacji diagramu GLD.
 
 \section{Zakres funkcjonalno¶ci}
 %\section{Functional scope}
 \label{sec:zakres-funkcjonalnosci}
 
-U¿ytkownikiem produktu jest osoba wykonuj±ca eksperymenty przy pomocy programu AQ21. U¿ytkownik u¿ywa naszego produktu jako wygodne medium komunikacji z tym programem oraz dodatkowo u¿ywa go do wizualizacji. Zewnêtrznym systemem jest tutaj program AQ21. Do komunikacji z nim wymagane jest u¿ycie specyficznego dla niego formatu danych.
-\vspace
-Najwa¿niejsze wymagania to:
+U¿ytkownikiem produktu jest osoba wykonuj±ca eksperymenty przy pomocy programu AQ21. U¿ytkownik u¿ywa naszego produktu jako medium komunikacji z tym programem, które ma zast±piæ edytor tekstowy i konsolê. Dodatkowo u¿ytkownik u¿ywa produkt do wizualizacji danych wej¶ciowych i wyj¶ciowych eksperymentu. Zewnêtrznym systemem jest tutaj program AQ21. Do komunikacji pomiêdzy nim a naszym systemem wymagane jest u¿ycie specyficznego dla niego formatu danych.
+System powinien byæ dostêpny na komputerze stacjonarnym wyposa¿onym w przegl±darkê internetow±.
+
+Najwa¿niejsze wymagania funkcjonalne to:
 
 \begin{itemize}
     \item Mo¿liwo¶æ wykonywania eksperymentów
@@ -42,13 +50,36 @@ Najwa¿niejsze wymagania to:
 %\section{Selected realization aspects}
 \label{sec:wybrane-aspekty-realizacji}
 
-System podzielono na dwie g³ówne czê¶ci. Jedn± z nich jest interfejs przegl±darkowy (Frontend) umo¿liwiaj±cy sterowanie systemem przez u¿ytkownika i dokonuj±cy wizualizacji wiedzy. Drug± czê¶ci± jest serwis webowy (Backend) opakowuj±cy program AQ21 i udostêpniaj±cy mo¿liwo¶æ persystencji danych w bazie danych. Po stronie Frontendu u¿yto jêzyka JavaScript poniewa¿ jest najpowszechniejszym jêzykiem do oprogramowania strony internetowej, paradygmatu publish-subscribe poniewa¿ umo¿liwi³o ³atw± dystrybucjê stopniowo przetwarzanych danych. Po stronie Backendu u¿yto jêzyka Java z powodu subiektywnych preferencji zespo³u, dokumentowej bazy danych z powodu braku konieczno¶ci utrzymywania mapowañ obiektowo-relacyjnych.
+System podzielono na dwie g³ówne czê¶ci. Jedn± z nich jest interfejs przegl±darkowy (Frontend) umo¿liwiaj±cy sterowanie systemem przez u¿ytkownika i dokonuj±cy wizualizacji wiedzy. Drug± czê¶ci± jest serwis webowy (Backend) opakowuj±cy program AQ21 i udostêpniaj±cy mo¿liwo¶æ persystencji danych w bazie danych. 
+
+Po stronie Frontendu u¿yto jêzyka JavaScript poniewa¿ jest najpowszechniejszym jêzykiem do oprogramowania strony internetowej, paradygmatu publish-subscribe poniewa¿ umo¿liwi³o ³atw± dystrybucjê stopniowo przetwarzanych danych. 
+
+Po stronie Backendu u¿yto jêzyka Java z powodu subiektywnych preferencji zespo³u. Do persystencji danych u¿yto dokumentowej bazy danych OrientDB, poniewa¿ nie wymaga ona utrzymywania mapowañ obiektowo-relacyjnych w przeciwieñstwie do relacyjnych baz danych. Do wygenerowania parsera formatu AQ21 u¿yto generatora ANTLR poniewa¿ jest najlepszym wyborem dla rodziny technologii Java.
+
+Do komunikacji pomiêdzy Frontendem a Backendem uzyto formatu JSON ze wzglêdu na ³atwo¶æ kodowania/dekodowania po stronie zarówno Frontendu, jak i Backendu.
 
 \section{Organizacja pracy}
 %\section{Work organization}
 \label{sec:organizacja-pracy}
 
-Nasz zespó³ sk³ada³ siê z dwóch osób, jedna osoba (Micha³ Drza³) by³a odpowiedzialna za rozwój interfejsu przegl±darkowego. Druga osoba (Marcin Pa¶ko) by³a odpowiedzialna za stworzenie serwisu webowego. W pierwszym etapie prac od maja do wrze¶nia 2013 roku, spotykali¶my siê z klientem raz na 5 tygodni. Od momentu gdy posiadali¶my ju¿ przejrzysty interfejs u¿ytkownika, planowali¶my spotykaæ siê z klientem i menad¿erem na przemian raz w tygodniu. Do zarz±dzania czê¶ci± wa¿niejszych zadañ pos³u¿y³a JIRA, pozosta³ymi zadaniami ka¿dy cz³onek zespo³u zarz±dza³ we w³asnym zakresie.
+Nasz zespó³ sk³ada³ siê z dwóch osób. Podzia³ prac zespo³u by³ nastêpuj±cy. Zadania Micha³a:
+\begin{itemize}
+   \item Rozwój Frontendu i Dokumentacja techniczna Frontendu
+   \item Kontakty z Klientem
+   \item Dokumentacja u¿ytkownika z wyj±tkiem Opisu API REST
+   \item Szkic interfejsu u¿ytkownika, opis iteracji i Podsumowanie pracy inzynierskiej.
+\end{itemize}
+Zadania Marcina:
+\begin{itemize}
+   \item Rozwój Backendu i Dokumentacja techniczna Backendu
+   \item Kontakty z Menad¿erem
+   \item Dokumentacja procesowa z wyj±tkiem Szkicu interfejsu u¿ytkownika, opisu iteracji i podsumowania
+   \item API REST (API us³ug serwisu webowego)
+\end{itemize}
+Nasza praca zosta³a wykonana w dwóch etapach.
+W pierwszym etapie trwaj±cym do wrze¶nia 2013 roku, spotykali¶my siê z klientem raz na 5 tygodni. W trakcie trwania tego etapu g³ównie by³y analizowane wymagania oraz tworzone prototypy.
+Drugi etap nast±pi³ od momentu gdy posiadali¶my ju¿ prototyp interfejsu u¿ytkownika. Pracowali¶my wtedy iteracyjnie, spotykaj±c siê na przemian z Menad¿erem i Klientem. 
+Do zarz±dzania czê¶ci± wa¿niejszych zadañ pos³u¿y³a JIRA, pozosta³ymi zadaniami ka¿dy cz³onek zespo³u zarz±dza³ we w³asnym zakresie. Wszystkie zadania do wykonania w trakcie danej iteracji by³y zapisywane w notatkach po spotkaniu z Klientem b±d¼ Menad¼erem.
 
 \section{Wyniki projektu}
 %\section{Project results}
