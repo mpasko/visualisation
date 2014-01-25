@@ -21,13 +21,18 @@
 \section{Cel prac i wizja produktu}
 %\section{Project goals and vision}
 \label{sec:cel-wizja}
-Przed zespo³em zosta³o postawione zadanie stworzenia interfejsu graficznego dla istniej±cego programu konsolowego AQ21. Dodatkowym wyzwaniem postawionym przed naszym zspo³em by³o stworzenie wizualizacji danych zwracanych w wyniku dzia³ania programu AQ21. Sposób dzia³ania naszego rozwi±zania mia³ byæ wzorowany na programie Weka, jednak mia³ byæ znacznie mniej rozbudowany. Pocz±tkowa estymacja ryzyka wychwyci³a potencjalne zagro¿enia:
+Przed zespo³em zosta³o postawione zadanie stworzenia interfejsu graficznego dla istniej±cego programu konsolowego AQ21. Dodatkowym wyzwaniem postawionym przed naszym zespo³em by³o stworzenie wizualizacji danych zwracanych w wyniku dzia³ania programu AQ21, w szczególno¶ci wizualizowania wyników eksperymentó za pomoc± diagramu GLD. Sposób dzia³ania naszego rozwi±zania jest wzorowany na programie/bibliotece zajmuj±cej siê uczeniem maszynowym - Weka. Pocz±tkowa estymacja ryzyka wychwyci³a nastêpuj±ce zagro¿enia:
 \begin{itemize}
-   \item Du¿± ilo¶æ zadañ w stosunku do posiadanych zasobów.
-   \item Brak do¶wiadczenia cz³onków zespo³u w zakresie implementacji webserwisów.
+   \item Du¿± ilo¶æ zadañ w stosunku do posiadanych zasobów czasowych
+   \item Brak do¶wiadczenia cz³onków zespo³u w zakresie implementacji us³ug webowych
    \item Mo¿liwe trudno¶ci w zaimplementowaniu parsera formatu AQ21
 \end{itemize}
-W rzeczywisto¶ci najwiêkszym zagro¿eniem okaza³ siê brak pe³nego wyobra¿enia zespo³u co do tego, jak bardzo z³o¿one jest zaimplementowanie optymalizacji diagramu GLD oraz zarz±dzanie du¿± baz± kodu w JavaScript.
+W trakcie trwania projektu znacznie wiêkszymi problemami okaza³y siê:
+\begin{itemize}
+   \item Z³o¿ono¶æ implementacji algorytmu optymalizacji diagramu GLD
+   \item Zarz±dzanie du¿± baza kodu w JavaScript
+   \item Jednokierunkowa komunikacja pomiêdzy frontendem a backendem
+\end{itemize}
 
 \section{Zakres funkcjonalno¶ci}
 %\section{Functional scope}
@@ -51,11 +56,11 @@ Najwa¿niejsze wymagania funkcjonalne to:
 
 System podzielono na dwie g³ówne czê¶ci. Jedn± z nich jest interfejs przegl±darkowy (Frontend) umo¿liwiaj±cy sterowanie systemem przez u¿ytkownika i dokonuj±cy wizualizacji wiedzy. Drug± czê¶ci± jest serwis webowy (Backend) opakowuj±cy program AQ21 i udostêpniaj±cy mo¿liwo¶æ persystencji danych w bazie danych. 
 
-Po stronie Frontendu przegl±darkowego u¿yto zestawu technologii wspomagaj±cych tworzenie rozbudowanej aplikacji webowej. Nale¿y do nich zaliczyæ: jêzyk CoffeeScript (transpilowany do JavaScript), asychnroniczne oraz modularne definiowanie kodu w JavaScript, wykorzystanie rozwi±zañ wprowadzonych w HTML5 (Canvas), paradygmat publish-subscribe w komunikacji pomiêdzy modu³ami oraz framework webowy Dojo.
+Po stronie Frontendu przegl±darkowego u¿yto zestawu technologii wspomagaj±cych tworzenie rozbudowanej aplikacji webowej. Nale¿y do nich zaliczyæ: jêzyk CoffeeScript (transpilowany do JavaScript), asynchroniczne oraz modularne definiowanie kodu w JavaScript, wykorzystanie rozwi±zañ wprowadzonych w HTML5 (Canvas), paradygmat publish-subscribe w komunikacji pomiêdzy modu³ami oraz framework webowy Dojo.
 
 Po stronie Backendu u¿yto jêzyka Java z powodu subiektywnych preferencji zespo³u. Do persystencji danych u¿yto dokumentowej bazy danych OrientDB, poniewa¿ nie wymaga ona utrzymywania mapowañ obiektowo-relacyjnych w przeciwieñstwie do relacyjnych baz danych. Do wygenerowania parsera formatu AQ21 u¿yto generatora ANTLR poniewa¿ jest najlepszym wyborem dla rodziny technologii Java.
 
-Do komunikacji pomiêdzy Frontendem a Backendem uzyto prostych zapytañ AJAX oraz formatu JSON ze wzglêdu na ³atwo¶æ kodowania/dekodowania po stronie zarówno Frontendu, jak i Backendu.
+Do komunikacji pomiêdzy Frontendem a Backendem u¿yto prostych zapytañ AJAX oraz formatu JSON ze wzglêdu na ³atwo¶æ kodowania/dekodowania po stronie zarówno Frontendu, jak i Backendu.
 
 \section{Organizacja pracy}
 %\section{Work organization}
@@ -93,7 +98,7 @@ Dokumentacja projektu sk³ada siê z trzech czê¶ci:
 \item Dokumentacji U¿ytkownika. Przedstawia sposób u¿ytkowania systemu.
 \end{itemize}
 Aplikacja umo¿liwia wczytanie pliku AQ21, import danych z CSV. Umo¿liwia wykonanie eksperymentu przy u¿yciu programu AQ21. Istnieje mo¿liwo¶æ zapisu i odczytu eksperymentu z bazy danych.
-W zakresie wizualizacji danych, aplikacja umo¿liwia wy¶wietlanie danych wej¶ciowych w formie tabeli oraz relacji pomiêdzy parami atrybutów za pomoc± scatter plot. Aplikacja umo¿liwia tak¿e wypisanie regu³ logicznych w formie wzoru i oczywi¶cie wy¶wietlenie danych wyj¶ciowych w postaci zoptymalizowanego diagramu GLD.
+W zakresie wizualizacji danych, aplikacja umo¿liwia wy¶wietlanie danych wej¶ciowych w formie tabeli oraz relacji pomiêdzy parami atrybutów za pomoc± scatter plot. Aplikacja umo¿liwia tak¿e wypisanie regu³ logicznych w LaTeXu oraz wy¶wietlenie danych wyj¶ciowych w postaci zoptymalizowanego diagramu GLD.
 System mo¿e zostaæ uruchomiony lokalnie b±d¼ na zdalnym serwerze.
 
 
