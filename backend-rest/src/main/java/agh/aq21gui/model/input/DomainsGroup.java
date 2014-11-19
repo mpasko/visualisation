@@ -57,4 +57,15 @@ public class DomainsGroup implements IAQ21Serializable{
 		}
 		return null;
 	}
+
+    public void addDomain(String domainName, String value) {
+        Domain domain = new Domain(domainName,value);
+		domains.add(domain);
+    }
+
+    public void addDomain(String domainName, String value, String params) {
+        Domain domain = new Domain(domainName,value);
+        domain.setparameters(params);
+		domains.add(domain);
+    }
 }

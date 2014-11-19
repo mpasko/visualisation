@@ -6,9 +6,15 @@ package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.model.output.ClassDescriptor;
+import agh.aq21gui.utils.OutputParser;
 import agh.aq21gui.utils.TreeNode;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 
 /**
@@ -31,6 +37,7 @@ public class Parameter implements IAQ21Serializable {
 	static{
 		generator = new Long(0);
 	}
+    private List<ClassDescriptor> descriptors = new LinkedList<ClassDescriptor>();
 	
 	@XmlElement(name="id")
 	public void setId(long id){
@@ -84,6 +91,19 @@ public class Parameter implements IAQ21Serializable {
 		builder.append(name).append(" = ").append(value).append('\n');
 		return builder.toString();
 	}
+    
+    public List<ClassDescriptor> getDescriptors(){
+        if (this.descriptors.isEmpty()){
+            try {
+                final OutputParser outputParser = new OutputParser();
+                CommonTree tree = (CommonTree) outputParser.prepareParser(value).value().getTree();
+                parseValue(tree);
+            } catch (RecognitionException ex) {
+                Logger.getLogger(Parameter.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return this.descriptors;
+    }
 
 	void parseParam(TreeNode paramNode) {
 		name = paramNode.childAt(0, TParser.ID).value();
@@ -92,22 +112,27 @@ public class Parameter implements IAQ21Serializable {
 			return;
 		}
 		CommonTree valueNode = (CommonTree) paramTree.getChild(1);
-		if(valueNode.getType()==TParser.VALUE){
-			value = valueNode.getChild(0).getText();
-		}
-		if(valueNode.getType()==TParser.CLASSES){
-			StringBuilder builder = new StringBuilder();
-			TreeNode classes = new TreeNode(valueNode, TParser.CLASSES);
-			for(TreeNode desc : classes.iterator(TParser.CLASS_DESCRIPTION)){
-				ClassDescriptor descriptor = new ClassDescriptor();
-				descriptor.parseSelector(desc);
-				builder.append(descriptor.toString());
-			}
-			value = builder.toString();
-		}
+        parseValue(valueNode);
 	}
 
 	void traverse() {
 		if(id==-1);
 	}
+
+    private void parseValue(CommonTree valueNode) {
+        if(valueNode.getType()==TParser.VALUE){
+            value = valueNode.getChild(0).getText();
+        }
+        if(valueNode.getType()==TParser.CLASSES){
+            StringBuilder builder = new StringBuilder();
+            TreeNode classes = new TreeNode(valueNode, TParser.CLASSES);
+            for(TreeNode desc : classes.iterator(TParser.CLASS_DESCRIPTION)){
+                ClassDescriptor descriptor = new ClassDescriptor();
+                descriptor.parseSelector(desc);
+                this.descriptors.add(descriptor);
+                builder.append(descriptor.toString());
+            }
+            value = builder.toString();
+        }
+    }
 }

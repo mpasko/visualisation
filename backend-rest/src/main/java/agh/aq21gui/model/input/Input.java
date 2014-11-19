@@ -182,6 +182,10 @@ public class Input implements IAQ21Serializable {
 	public void sEG(EventsGroup group) {
 		this.eventsGroup = group;
 	}
+
+	public EventsGroup gEG() {
+		return this.eventsGroup;
+	}
 	
 	public void sTEG(TestingEventsGroup group) {
 		this.testingEventsGroup = group;
@@ -232,4 +236,15 @@ public class Input implements IAQ21Serializable {
 	public void sAttributesGroup(AttributesGroup attributes) {
 		this.attributesGroup = attributes;
 	}
+
+    public int findAttributeNumber(String className) {
+        int serial = 0;
+        for (Attribute aq21_attr : this.getAttributes()) {
+            if (aq21_attr.name.equalsIgnoreCase(className)) {
+                return serial;
+            }
+            serial++;
+        }
+        return -1;
+    }
 }

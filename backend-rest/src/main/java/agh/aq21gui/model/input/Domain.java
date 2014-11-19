@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.model.input;
 
+import agh.aq21gui.exceptions.ItemNotFoundException;
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.utils.TreeNode;
 import agh.aq21gui.utils.Util;
@@ -26,6 +27,12 @@ public class Domain extends NameValueEntity{
 	private String domain="";
 	private String parameters="";
 	//private boolean brace=false;
+    
+    public Domain(String name, String domain){
+        this();
+        this.name = name;
+        this.domain=domain;
+    }
 	
 	@JsonProperty("name")
 	public String getname(){
@@ -167,6 +174,17 @@ public class Domain extends NameValueEntity{
 	public List<String> getRange() {
 		return this.set_elements;
 	}
+    
+    public List<String> getRangeRecursively(DomainsGroup dg) {
+        if (this.set_elements==null || this.set_elements.isEmpty()) {
+            Domain domObject = getdomainObjectRecursively(dg);
+            if (domObject==null){
+                throw new ItemNotFoundException("Domain not found!");
+            }
+            return domObject.getRange();
+        }
+		return this.set_elements;
+	}
 
 	public boolean emptyParams() {
 		Util.isNull(parameters, "parameters");
@@ -175,15 +193,27 @@ public class Domain extends NameValueEntity{
 	}
 
 	
-	public String getdomainRecursive(DomainsGroup dg){
-		String doma = domain;
-		final boolean notContinuous = !doma.equalsIgnoreCase("continuous");
-		final boolean notNominal = !doma.equalsIgnoreCase("nominal");
-		final boolean notInteger = !doma.equalsIgnoreCase("integer");
-		final boolean notLinear = !doma.equalsIgnoreCase("linear");
+	public String getdomainNameRecursively(DomainsGroup dg){
+		return getdomainObjectRecursively(dg).domain;
+	}
+    
+    public Domain getdomainObjectRecursively(DomainsGroup dg){
+		Domain doma = this;
+		final boolean notContinuous = !doma.domain.equalsIgnoreCase("continuous");
+		final boolean notNominal = !doma.domain.equalsIgnoreCase("nominal");
+		final boolean notInteger = !doma.domain.equalsIgnoreCase("integer");
+		final boolean notLinear = !doma.domain.equalsIgnoreCase("linear");
 		if (notContinuous&&notInteger&&notLinear&&notNominal){
-			Domain domObject = dg.findDomain(doma);
-			doma = domObject.getdomain();
+			Domain domObject = dg.findDomain(doma.domain);
+            if (domObject==null){
+                throw new ItemNotFoundException("Domain not found!");
+            }
+            Domain prev_doma = doma;
+            doma = domObject;
+            if (prev_doma.equals(doma)){
+                return doma;
+            }
+			return domObject.getdomainObjectRecursively(dg);
 		}
 		return doma;
 	}

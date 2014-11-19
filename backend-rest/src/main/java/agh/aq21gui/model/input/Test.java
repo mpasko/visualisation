@@ -5,6 +5,8 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.exceptions.IncorrectInputException;
+import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.List;
@@ -81,5 +83,18 @@ public class Test implements IAQ21Serializable {
 	void traverse() {
 		if(name.isEmpty());
 	}
+
+    public String grepClassName() {
+        for (Parameter param : this.runSpecificParameters.parameters) {
+            if (param.name.equalsIgnoreCase("Consequent")) {
+                List<ClassDescriptor> descriptors = param.getDescriptors();
+                if (descriptors.isEmpty()) {
+                    throw new IncorrectInputException("Consequent should specify at least one class!");
+                }
+                return descriptors.get(0).getName();
+            }
+        }
+        return "";
+    }
 	
 }

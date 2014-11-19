@@ -15,6 +15,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Attribute extends Domain{
 
+    public Attribute(){}
+    
+    public Attribute(String name, String value) {
+        super(name,value);
+    }
+
 	void parseAttribute(TreeNode node) {
 		parseDomain(node);
 	}

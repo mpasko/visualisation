@@ -95,6 +95,22 @@
 			<version>1.17.1</version>
 			<type>jar</type>
 		</dependency>
+        
+        <dependency>
+            <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>J48graft</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <!--dependency>
+            <groupId>att.grappa</groupId>
+            <artifactId>grappa</artifactId>
+            <version>1.2</version>
+        </dependency-->
+        <!--dependency>
+            <groupId>org.gephi</groupId>
+            <artifactId>gephi-toolkit</artifactId>
+            <version>0.9-SNAPSHOT</version>
+        </dependency-->
 	</dependencies>
 	<build>
 		<defaultGoal>install</defaultGoal>
@@ -168,5 +184,20 @@
 			<name>Codehaus Release Repo</name>
 			<url>http://repository.codehaus.org</url>
 		</repository>
-	</repositories>
+        <!--repository>
+            <id>eulergui-maven2</id>
+            <name>eulergui-maven2</name>
+            <url>http://eulergui.sourceforge.net/maven2/</url>
+        </repository-->
+        <!--repository>
+            <id>gephi-snapshots</id>
+            <name>Gephi Snapshots</name>
+            <url>http://nexus.gephi.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>gephi-releases</id>
+            <name>Gephi Releases</name>
+            <url>http://nexus.gephi.org/nexus/content/repositories/releases/</url>
+        </repository-->
+    </repositories>
 </project>

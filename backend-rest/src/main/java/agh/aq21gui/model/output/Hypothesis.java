@@ -54,6 +54,7 @@ public class Hypothesis {
 	
 	public Hypothesis(){
 		LABEL = "Output_hypotheses";
+        name = "hypothesis0";
 	}
 	
 	public void addClass(ClassDescriptor desc){
@@ -101,7 +102,12 @@ public class Hypothesis {
 			return "";
 		}
 		StringBuilder builder = FormatterUtil.begin(LABEL, name);
-		FormatterUtil.appendAll(builder, rules, 1);
+        builder.append(this.classes);
+		for(Rule rule : rules){
+            builder.append("\n   <-- ");
+            builder.append(rule.toString());
+            builder.append("\n");
+        }
 		return FormatterUtil.terminate(builder);
 	}
 

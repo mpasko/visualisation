@@ -84,4 +84,9 @@ public class TreeNode {
 		}
 		return list;
 	}
+
+    public Double doubleValue() {
+        String value = this.value();
+        return Double.parseDouble(value);
+    }
 }

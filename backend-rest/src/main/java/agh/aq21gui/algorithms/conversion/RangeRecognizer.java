@@ -57,7 +57,7 @@ public class RangeRecognizer implements Recognizer{
 		String comparator=selector.comparator;
 		Util.isNull(attr, "attr");
 		String value=selector.getValue();
-		String domain = attr.getdomainRecursive(dg);
+		String domain = attr.getdomainNameRecursively(dg);
 		boolean matches = true;
 		RangeElement from=null;
 		RangeElement to=null;

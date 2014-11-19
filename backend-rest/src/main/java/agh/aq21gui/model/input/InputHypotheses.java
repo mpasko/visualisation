@@ -14,16 +14,6 @@ import agh.aq21gui.utils.TreeNode;
  * @author marcin
  */
 public class InputHypotheses extends OutputHypotheses{
-	
-	@Override
-	public String toString(){
-		if(hypotheses.isEmpty()){
-			return "";
-		}
-		StringBuilder builder = new StringBuilder();
-		FormatterUtil.appendAll(builder, hypotheses, 0);
-		return builder.toString();
-	}
 
 	public void parseInputHypothesis(TreeNode treeNode) {
 		InputHypothesis hypothesis = new InputHypothesis();

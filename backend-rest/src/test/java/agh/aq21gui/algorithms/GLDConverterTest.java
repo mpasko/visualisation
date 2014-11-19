@@ -76,14 +76,14 @@ public class GLDConverterTest {
 			System.out.print(", ");
 		}
 		System.out.println();
-		assertEquals(true,Utils.containsString(arg1.getValues(),"b","c"));
+		assertEquals(true,Utils.valuesContainStrings(arg1.getValues(),"b","c"));
 		System.out.print("Arg2: ");
 		for (Value v: arg2.getValues()) {
 			System.out.print(v.getName());
 			System.out.print(", ");
 		}
 		System.out.println();
-		assertEquals(true,Utils.containsString(arg2.getValues(),"d"));
+		assertEquals(true,Utils.valuesContainStrings(arg2.getValues(),"d"));
 	}
 	
 	/**

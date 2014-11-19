@@ -27,6 +27,12 @@ public class Util {
 			System.out.println(name+" is null!");
 		}
 	}
+    
+    public static <T> List<T> singleElemList(T item){
+		List<T> list = new LinkedList<T>();
+        list.add(item);
+        return list;
+    }
 
 	public static List<String> strings(String... elem) {
 		List<String> elems1 = new LinkedList<String>();

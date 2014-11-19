@@ -4,16 +4,13 @@
  */
 package agh.aq21gui.model.input;
 
-import agh.aq21gui.aq21grammar.TParser;
-import agh.aq21gui.utils.TreeNode;
+import agh.aq21gui.stubs.Utils;
 import agh.aq21gui.utils.Util;
 import java.util.List;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.Tree;
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -179,15 +176,66 @@ public class DomainTest {
 	@Test
 	public void getDomainRecursiveTest() {
 		System.out.println("getRecursive");
-		Attribute attr = new Attribute();
-		attr.setname("x");
-		attr.setdomain("length");
+		Attribute attr = new Attribute("x","length");
 		DomainsGroup dg = new DomainsGroup();
-		Domain domain = new Domain();
-		domain.setdomain("continuous");
-		domain.setname("length");
-		dg.domains.add(domain);
-		String result = attr.getdomainRecursive(dg);
+        dg.addDomain("length","continuous");
+		String result = attr.getdomainNameRecursively(dg);
 		assertEquals("continuous", result);
 	}
+    
+    @Test
+	public void getDomainRecursiveTest3Steps() {
+		System.out.println("getRecursive");
+		Attribute attr = new Attribute("x","dom1");
+		DomainsGroup dg = new DomainsGroup();
+        dg.addDomain("dom1","dom2");
+        dg.addDomain("dom2","dom3");
+        dg.addDomain("dom3","continuous");
+		String result = attr.getdomainNameRecursively(dg);
+		assertEquals("continuous", result);
+	}
+    
+    @Test(timeout=1000)
+	public void getDomainRecursiveStopCondition() {
+		System.out.println("getRecursive");
+		Attribute attr = new Attribute("x","length");
+		DomainsGroup dg = new DomainsGroup();
+        dg.addDomain("length","length");
+		String result = attr.getdomainNameRecursively(dg);
+		assertEquals("length", result);
+	}
+
+    @Test
+    public void testGetRangeRecursively() {
+        System.out.println("getRangeRecursively");
+        Domain instance = new Attribute("x","length");
+		DomainsGroup dg = new DomainsGroup();
+        dg.addDomain("length", "continuous", "{a, b, c}");
+        List expResult = null;
+        List result = instance.getRangeRecursively(dg);
+        assertTrue(Utils.containsAllStrings(result, "a","b","c"));
+    }
+
+    @Test
+    public void testGetRangeRecursively3Steps() {
+        System.out.println("getRangeRecursively");
+		DomainsGroup dg = new DomainsGroup();
+        Domain instance = new Attribute("x","length");
+        dg.addDomain("length", "dom1");
+        dg.addDomain("dom1", "dom2");
+        dg.addDomain("dom2", "continuous","{a, b, c}");
+        List result = instance.getRangeRecursively(dg);
+        assertTrue(Utils.containsAllStrings(result, "a","b","c"));
+    }
+
+    @Test(timeout=1000)
+    public void testGetRangeRecursivelyStopCondition() {
+        System.out.println("getRangeRecursively");
+		DomainsGroup dg = new DomainsGroup();
+        dg.addDomain("length", "length","{a, b, c}");
+        Domain instance = new Attribute("x","length");
+        List result = instance.getRangeRecursively(dg);
+        assertTrue(Utils.containsAllStrings(result, "a","b","c"));
+    }
+
 }

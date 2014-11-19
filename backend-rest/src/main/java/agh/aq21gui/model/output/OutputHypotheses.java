@@ -5,6 +5,7 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,4 +49,14 @@ public class OutputHypotheses implements IAQ21Deserializable{
 			h.traverse();
 		}
 	}
+
+    @Override
+    public String toString() {
+        if (hypotheses.isEmpty()) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        FormatterUtil.appendAll(builder, hypotheses, 0);
+        return builder.toString();
+    }
 }

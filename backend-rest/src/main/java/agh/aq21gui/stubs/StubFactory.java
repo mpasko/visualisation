@@ -22,9 +22,12 @@ import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.utils.OutputParser;
 import agh.aq21gui.utils.Util;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -305,16 +308,23 @@ public class StubFactory {
 
 	public static Output getIrisOutput() {
 		Output outp = null;
-		try {
-			OutputParser parser = new OutputParser();
-			FileInputStream stream = new FileInputStream("iris.aq21");
-			Invoker invoker = new Invoker();
-			String out2 = Util.streamToString(stream);
-			outp = invoker.invoke(parser.parse(out2));
-		} catch (IOException exception) {
-			System.out.println("Unable to load test data from file \"iris.aq21\"");
-		}
+        Input input = getIrisInput();
+        Invoker invoker = new Invoker();
+        outp = invoker.invoke(input);
 		return outp;
 	}
+
+    public static Input getIrisInput() {
+        try {
+            OutputParser parser = new OutputParser();
+            FileInputStream stream = new FileInputStream("iris.aq21");
+            String out2 = Util.streamToString(stream);
+            final Input input = parser.parse(out2);
+            return input;
+        } catch (IOException ex) {
+			System.out.println("Unable to load test data from file \"iris.aq21\"");
+        }
+        return null;
+    }
 	
 }

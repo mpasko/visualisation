@@ -18,11 +18,19 @@ import java.util.List;
  */
 public class Utils {
 
-	public static boolean containsString(List<Value> list, String... strings) {
+	public static boolean valuesContainStrings(List<Value> list, String... strings) {
+		LinkedList<String> newlist = new LinkedList<String>();
+        for (Value item : list) {
+            newlist.add(item.getName());
+        }
+		return containsAllStrings(newlist,strings);
+	}
+    
+    public static boolean containsAllStrings(List<String> list, String... strings) {
 		for (String str : strings) {
 			boolean found = false;
-			for (Value item : list) {
-				if (item.getName().contains(str)) {
+			for (String item : list) {
+				if (item.contains(str)) {
 					found = true;
 				}
 			}

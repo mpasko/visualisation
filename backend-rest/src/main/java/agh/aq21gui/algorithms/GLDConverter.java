@@ -90,7 +90,7 @@ public class GLDConverter {
 		arg.name = attr.getname();
 		
 		List<Value> values = new LinkedList<Value>();
-		String domain = attr.getdomainRecursive(domains);
+		String domain = attr.getdomainNameRecursively(domains);
 		RangeList range = new RangeList(attr,domains);
 		for (Selector selector : selectors) {		
 			if (selector.name.equals(arg.name)) {

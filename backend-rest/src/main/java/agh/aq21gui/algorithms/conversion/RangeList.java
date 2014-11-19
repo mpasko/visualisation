@@ -107,7 +107,7 @@ public class RangeList {
 	}
 
 	public void addAny(String value, String comparator) {
-		if (this.attr!=null && this.attr.getdomainRecursive(dg).equalsIgnoreCase("linear")){
+		if (this.attr!=null && this.attr.getdomainNameRecursively(dg).equalsIgnoreCase("linear")){
 			this.addLinear(value, comparator);
 		} else {
 			this.addContinuous(value, comparator);

@@ -52,4 +52,17 @@ public class Rule {
 			s.traverse();
 		}
 	}
+
+    public void addSelector(Selector selector) {
+        this.selectors.add(selector);
+    }
+    
+    @Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		for (Selector selector: this.selectors){
+    		builder.append(selector.toString());
+        }
+		return builder.toString();
+	}
 }

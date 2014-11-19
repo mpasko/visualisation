@@ -31,4 +31,13 @@ public class ClassesGroup {
 			d.traverse();
 		}
 	}
+    
+    @Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		for (ClassDescriptor descriptor: this.descriptors){
+    		builder.append(descriptor.toString());
+        }
+		return builder.toString();
+	}
 }
