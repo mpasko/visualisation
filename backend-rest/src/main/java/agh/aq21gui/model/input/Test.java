@@ -84,17 +84,29 @@ public class Test implements IAQ21Serializable {
 		if(name.isEmpty());
 	}
 
-    public String grepClassName() {
+    public ClassDescriptor grepClassDescriptor() {
         for (Parameter param : this.runSpecificParameters.parameters) {
             if (param.name.equalsIgnoreCase("Consequent")) {
                 List<ClassDescriptor> descriptors = param.getDescriptors();
                 if (descriptors.isEmpty()) {
                     throw new IncorrectInputException("Consequent should specify at least one class!");
                 }
-                return descriptors.get(0).getName();
+                return descriptors.get(0);
             }
         }
+        return null;
+    }
+    
+    public String grepClassName() {
+        ClassDescriptor desc = grepClassDescriptor();
+        if (desc != null) {
+            return desc.getName();
+        }
         return "";
+    }
+
+    public String grepCondition() {
+        return grepClassDescriptor().toString();
     }
 	
 }

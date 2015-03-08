@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui;
+package agh.aq21gui.services.aq21;
 
+import agh.aq21gui.Aq21Resource;
+import agh.aq21gui.Configuration;
 import agh.aq21gui.model.input.AttributesGroup;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Output;
-import agh.aq21gui.utils.OutputParser;
 import agh.aq21gui.utils.Util;
 import java.io.FileOutputStream;
 import java.io.IOException;

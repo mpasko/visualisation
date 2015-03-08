@@ -6,7 +6,7 @@ package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.model.output.ClassDescriptor;
-import agh.aq21gui.utils.OutputParser;
+import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;

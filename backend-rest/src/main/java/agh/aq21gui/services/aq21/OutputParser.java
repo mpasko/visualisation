@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.utils;
+package agh.aq21gui.services.aq21;
 
 import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.aq21grammar.TLexer;

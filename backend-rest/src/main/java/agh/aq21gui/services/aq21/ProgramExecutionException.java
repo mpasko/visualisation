@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui;
+package agh.aq21gui.services.aq21;
 
 /**
  *
  * @author marcin
  */
-class ProgramExecutionException extends Exception {
+public class ProgramExecutionException extends Exception {
 
 	public ProgramExecutionException(String errorMessage) {
 		super(errorMessage);

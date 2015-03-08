@@ -4,13 +4,13 @@
  */
 package agh.aq21gui.rubbish;
 
-import agh.aq21gui.Invoker;
+import agh.aq21gui.services.aq21.Invoker;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.model.output.Output;
-import agh.aq21gui.utils.OutputParser;
+import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.Util;
 import dataaccess.Repository;
 import java.io.File;

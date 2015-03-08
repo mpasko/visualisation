@@ -43,6 +43,16 @@ public class Input implements IAQ21Serializable {
 		testingEventsGroup = new TestingEventsGroup();
 		inputHypotheses = new InputHypotheses();
 	}
+    
+    public Input(Input in){
+        attributesGroup = in.attributesGroup;
+		domainsGroup = in.domainsGroup;
+		eventsGroup = in.eventsGroup;
+		runsGroup = in.runsGroup;
+		testsGroup = in.testsGroup;
+		testingEventsGroup = in.testingEventsGroup;
+		inputHypotheses = in.inputHypotheses;
+    }
 /* *x/		
 	public long getdbid(){
 		return dbid;

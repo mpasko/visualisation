@@ -4,7 +4,7 @@
  */
 package agh.aq21gui.stubs;
 
-import agh.aq21gui.Invoker;
+import agh.aq21gui.services.aq21.Invoker;
 import agh.aq21gui.algorithms.GLDConverter;
 import agh.aq21gui.algorithms.GLDState;
 import agh.aq21gui.model.gld.Argument;
@@ -19,7 +19,7 @@ import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.Selector;
-import agh.aq21gui.utils.OutputParser;
+import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.Util;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

@@ -4,8 +4,8 @@
  */
 package agh.aq21gui.model.output;
 
-import agh.aq21gui.utils.OutputParser;
-import agh.aq21gui.Invoker;
+import agh.aq21gui.services.aq21.OutputParser;
+import agh.aq21gui.services.aq21.Invoker;
 import agh.aq21gui.utils.Util;
 import java.io.FileInputStream;
 import java.io.IOException;

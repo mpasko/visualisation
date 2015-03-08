@@ -1,5 +1,6 @@
 package agh.aq21gui;
 
+import agh.aq21gui.services.aq21.Invoker;
 import agh.aq21gui.algorithms.GLDOptimizer;
 import agh.aq21gui.algorithms.OptimizationAlgorithm;
 import agh.aq21gui.algorithms.SimulatedAnnealing;
@@ -10,9 +11,9 @@ import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.model.output.Output;
-import agh.aq21gui.utils.CSVConverter;
+import agh.aq21gui.services.csv.CSVConverter;
 import agh.aq21gui.utils.Downloader;
-import agh.aq21gui.utils.OutputParser;
+import agh.aq21gui.services.aq21.OutputParser;
 import dataaccess.Repository;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,7 +55,7 @@ public class Aq21Resource {
 		return inv.invoke(input);
     }
 	 
-	
+	/*
 	@PUT
 	@Path("putIt")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -65,6 +66,7 @@ public class Aq21Resource {
 		Invoker inv = new Invoker();
 		return inv.invoke(input);
     }
+    */
 	
 	@POST
 	@Path("downloadCSV")

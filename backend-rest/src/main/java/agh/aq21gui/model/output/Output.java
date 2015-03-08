@@ -79,7 +79,9 @@ public class Output extends Input{
 	
 	public Output(){}
 	
-	
+	public Output(Input in){
+        super(in);
+    }
 	
 	public Output(CommonTree tree, String raw_data){
 		this.raw_aq21 = new RawAq21Container(raw_data);

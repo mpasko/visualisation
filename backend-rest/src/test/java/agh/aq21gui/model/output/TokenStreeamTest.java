@@ -5,7 +5,7 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.Aq21Resource;
-import agh.aq21gui.Invoker;
+import agh.aq21gui.services.aq21.Invoker;
 import agh.aq21gui.aq21grammar.TLexer;
 import agh.aq21gui.aq21grammar.TParser;
 import java.util.logging.Level;

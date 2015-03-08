@@ -25,10 +25,10 @@ import java.util.TreeMap;
  */
 public class J48TreeToRuleSet {
     
-    public OutputHypotheses treeToRules(J48Tree tree, String clasAttr){
+    public List<Hypothesis> treeToRules(J48Tree tree, String clasAttr){
         PathsAggregate paths = findPaths(tree);
         paths.printPaths();
-        OutputHypotheses hypothesis = makeHypothesesFromPaths(paths, clasAttr);
+        List<Hypothesis> hypothesis = makeHypothesesFromPaths(paths, clasAttr);
         return hypothesis;
     }
 
@@ -80,12 +80,12 @@ public class J48TreeToRuleSet {
         return classDescriptor;
     }
 
-    public OutputHypotheses makeHypothesesFromPaths(PathsAggregate paths, String clasAttr) {
-        OutputHypotheses hypotheses = new OutputHypotheses();
+    public List<Hypothesis> makeHypothesesFromPaths(PathsAggregate paths, String clasAttr) {
+        List<Hypothesis> hypotheses = new LinkedList<Hypothesis>();
         for (String claz : paths.getClasses()){
             List<TreePath> path = paths.getPathList(claz);
             Hypothesis hypothesis = makeHypothesisFromPath(path, clasAttr, claz);
-            hypotheses.hypotheses.add(hypothesis);
+            hypotheses.add(hypothesis);
         }
         return hypotheses;
     }

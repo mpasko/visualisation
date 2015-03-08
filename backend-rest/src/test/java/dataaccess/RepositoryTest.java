@@ -4,7 +4,7 @@
  */
 package dataaccess;
 
-import agh.aq21gui.Invoker;
+import agh.aq21gui.services.aq21.Invoker;
 import agh.aq21gui.MyResource;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
