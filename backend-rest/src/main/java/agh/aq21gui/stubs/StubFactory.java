@@ -4,7 +4,7 @@
  */
 package agh.aq21gui.stubs;
 
-import agh.aq21gui.services.aq21.Invoker;
+import agh.aq21gui.services.aq21.Aq21Invoker;
 import agh.aq21gui.algorithms.GLDConverter;
 import agh.aq21gui.algorithms.GLDState;
 import agh.aq21gui.model.gld.Argument;
@@ -92,7 +92,7 @@ public class StubFactory {
 	}
 	
 	public static Output getOutput() {
-		return new Invoker().invoke(getInput());
+		return new Aq21Invoker().invoke(getInput());
 	}
 
 	public static Directory getDirectory() {
@@ -309,7 +309,7 @@ public class StubFactory {
 	public static Output getIrisOutput() {
 		Output outp = null;
         Input input = getIrisInput();
-        Invoker invoker = new Invoker();
+        Aq21Invoker invoker = new Aq21Invoker();
         outp = invoker.invoke(input);
 		return outp;
 	}

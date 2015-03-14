@@ -1,12 +1,17 @@
 package agh.aq21gui;
 
-import agh.aq21gui.services.aq21.Invoker;
+import agh.aq21gui.services.aq21.Aq21Invoker;
 import agh.aq21gui.algorithms.GLDOptimizer;
 import agh.aq21gui.algorithms.OptimizationAlgorithm;
 import agh.aq21gui.algorithms.SimulatedAnnealing;
 import agh.aq21gui.model.gld.GLDInput;
 import agh.aq21gui.model.gld.GLDOutput;
+import agh.aq21gui.model.input.AttributesGroup;
+import agh.aq21gui.model.input.DomainsGroup;
+import agh.aq21gui.model.input.EventsGroup;
 import agh.aq21gui.model.input.Input;
+import agh.aq21gui.model.input.RunsGroup;
+import agh.aq21gui.model.input.Test;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
@@ -14,7 +19,10 @@ import agh.aq21gui.model.output.Output;
 import agh.aq21gui.services.csv.CSVConverter;
 import agh.aq21gui.utils.Downloader;
 import agh.aq21gui.services.aq21.OutputParser;
+import agh.aq21gui.services.csv.Aq21ArchetypeConfig;
+import agh.aq21gui.services.csv.IArchetypeConfig;
 import dataaccess.Repository;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
@@ -51,48 +59,9 @@ public class Aq21Resource {
 		MediaType.APPLICATION_JSON
 	})
     public Output postIt(Input input) {
-		Invoker inv = new Invoker();
+		Aq21Invoker inv = new Aq21Invoker();
 		return inv.invoke(input);
     }
-	 
-	/*
-	@PUT
-	@Path("putIt")
-	@Consumes({MediaType.APPLICATION_JSON})
-    @Produces({
-		MediaType.APPLICATION_JSON
-	})
-    public Output putIt(Input input) {
-		Invoker inv = new Invoker();
-		return inv.invoke(input);
-    }
-    */
-	
-	@POST
-	@Path("downloadCSV")
-	@Consumes({MediaType.TEXT_PLAIN})
-	@Produces({
-		MediaType.APPLICATION_JSON
-	})
-	public Input downloadCSV(String url){
-		Downloader down = new Downloader();
-		down.download(url);
-		CSVConverter conv = new CSVConverter();
-		Input in = conv.convert(down.getContent());
-		return in;
-	}
-	
-	@POST
-	@Path("fromCSV")
-	@Consumes({MediaType.TEXT_PLAIN})
-	@Produces({
-		MediaType.APPLICATION_JSON
-	})
-	public Input fromCSV(String csv){
-		CSVConverter conv = new CSVConverter();
-		Input in = conv.convert(csv);
-		return in;
-	}
 	
 	@POST
 	@Path("fromAQ21")
@@ -116,6 +85,21 @@ public class Aq21Resource {
 	public String toAQ21(Output aq21){
 		return aq21.toString();
 	}
+    
+    @POST
+    @Path("generateConfig")
+	@Consumes({
+		MediaType.APPLICATION_JSON
+	})
+	@Produces({
+		MediaType.APPLICATION_JSON
+	})
+    public RunsGroup generateConfig(Input in) {
+        List<Test> runs = new Aq21ArchetypeConfig().createConfig(in);
+        RunsGroup group = new RunsGroup();
+        group.setRuns(runs);
+        return group;
+    }
 	
 	@GET
 	@Path("browse")

@@ -4,7 +4,7 @@
  */
 package agh.aq21gui.rubbish;
 
-import agh.aq21gui.services.aq21.Invoker;
+import agh.aq21gui.services.aq21.Aq21Invoker;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;

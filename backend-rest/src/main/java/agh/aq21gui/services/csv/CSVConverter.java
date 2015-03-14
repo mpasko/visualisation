@@ -12,13 +12,11 @@ import agh.aq21gui.model.input.DomainsGroup;
 import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.EventsGroup;
 import agh.aq21gui.model.input.Input;
-import agh.aq21gui.model.input.Run;
 import agh.aq21gui.model.input.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  *
@@ -175,9 +173,6 @@ public class CSVConverter {
         input.sEG(eventsGroup);
         input.sDomainsGroup(domains);
         input.sAttributesGroup(attributes);
-        IArchetypeConfig configurator = new Aq21ArchetypeConfig();
-        List<Test> runs = configurator.createConfig(attributes, columns.getLast());
-        input.runsGroup.setRuns(runs);
         return input;
     }
 }

@@ -4,7 +4,7 @@
  */
 package dataaccess;
 
-import agh.aq21gui.services.aq21.Invoker;
+import agh.aq21gui.services.aq21.Aq21Invoker;
 import agh.aq21gui.MyResource;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.management.Directory;
@@ -94,7 +94,7 @@ public class RepositoryTest {
 	public void testSaveResult() {
 		System.out.println("saveResult");
 		Input input = StubFactory.getInput();
-		Output output = new Invoker().invoke(input);
+		Output output = new Aq21Invoker().invoke(input);
 		final String name = "component_test_case_02";
 		OutputPair result = new OutputPair(name, output);
 		instance.saveResult(result);

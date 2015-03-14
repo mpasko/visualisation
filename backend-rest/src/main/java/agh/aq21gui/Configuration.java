@@ -10,4 +10,5 @@ package agh.aq21gui;
  */
 public class Configuration {
 	public static String AQ21PATH="bin/aq21.exe";
+    public static String C45PATH="bin/c4.5.exe";
 }

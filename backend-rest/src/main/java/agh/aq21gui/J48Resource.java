@@ -5,9 +5,14 @@
 package agh.aq21gui;
 
 import agh.aq21gui.model.input.Input;
+import agh.aq21gui.model.input.RunsGroup;
+import agh.aq21gui.model.input.Test;
 import agh.aq21gui.model.output.Output;
-import agh.aq21gui.services.aq21.Invoker;
+import agh.aq21gui.services.aq21.Aq21Invoker;
+import agh.aq21gui.services.csv.Aq21ArchetypeConfig;
+import agh.aq21gui.services.csv.J48ArchetypeConfig;
 import agh.aq21gui.services.j48.J48Service;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -30,5 +35,20 @@ public class J48Resource {
     public Output postIt(Input input) {
 		J48Service srv = new J48Service();
         return srv.convertAndRun(input);
+    }
+    
+    @POST
+    @Path("generateConfig")
+	@Consumes({
+		MediaType.APPLICATION_JSON
+	})
+	@Produces({
+		MediaType.APPLICATION_JSON
+	})
+    public RunsGroup generateConfig(Input in) {
+        List<Test> runs = new J48ArchetypeConfig().createConfig(in);
+        RunsGroup group = new RunsGroup();
+        group.setRuns(runs);
+        return group;
     }
 }

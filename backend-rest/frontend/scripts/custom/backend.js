@@ -2,6 +2,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
   var internal, module;
   internal = {
     hostname: window.location.origin + "/jersey/aq21/",
+    csvhostname: window.location.origin + "/jersey/csv/",
     sendMessage: function(configuration, onEnd) {
       var message;
       message = {
@@ -154,7 +155,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
         });
       },
       CSV: function(file_content) {
-        return request.post(internal.hostname + "fromCSV", {
+        return request.post(internal.csvhostname + "fromCSV", {
           data: file_content,
           handleAs: "json",
           headers: {

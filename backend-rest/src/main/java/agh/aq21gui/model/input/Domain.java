@@ -4,8 +4,8 @@
  */
 package agh.aq21gui.model.input;
 
-import agh.aq21gui.exceptions.ItemNotFoundException;
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.exceptions.ItemNotFoundException;
 import agh.aq21gui.utils.TreeNode;
 import agh.aq21gui.utils.Util;
 import java.util.LinkedList;
@@ -78,8 +78,8 @@ public class Domain extends NameValueEntity{
 	private boolean estimate_brace(){
 		boolean nobrace=false;
 		if (!domain.isEmpty()) {
-			nobrace	= domain.equalsIgnoreCase("continuous");
-			nobrace |= domain.equalsIgnoreCase("integer");
+			nobrace	= isContinuous();
+			nobrace |= isInteger();
 		}
 		nobrace |= emptyParams();
 		return !(nobrace);
@@ -144,22 +144,12 @@ public class Domain extends NameValueEntity{
 	}
 
 	public void setRange(Double min, Double max) {
-/*		StringBuilder build = new StringBuilder("{");
-		build.append(min);
-		build.append(", ");
-		build.append(max);
-		build.append("}");
-		this.parameters = build.toString();
-		*/
-        if (this.domain.equalsIgnoreCase("integer")) {
-            
+        if (isInteger()) {
             Integer a = min.intValue();
             Integer b = max.intValue();
             setRange(Util.strings(a.toString(),b.toString()));
-            
         }
         else {
-            
             setRange(Util.strings(min.toString(),max.toString()));
         }
 		
@@ -199,10 +189,10 @@ public class Domain extends NameValueEntity{
     
     public Domain getdomainObjectRecursively(DomainsGroup dg){
 		Domain doma = this;
-		final boolean notContinuous = !doma.domain.equalsIgnoreCase("continuous");
-		final boolean notNominal = !doma.domain.equalsIgnoreCase("nominal");
-		final boolean notInteger = !doma.domain.equalsIgnoreCase("integer");
-		final boolean notLinear = !doma.domain.equalsIgnoreCase("linear");
+		final boolean notContinuous = !doma.isContinuous();
+		final boolean notNominal = !doma.isNominal();
+		final boolean notInteger = !doma.isInteger();
+		final boolean notLinear = !doma.isLinear();
 		if (notContinuous&&notInteger&&notLinear&&notNominal){
 			Domain domObject = dg.findDomain(doma.domain);
             if (domObject==null){
@@ -217,4 +207,20 @@ public class Domain extends NameValueEntity{
 		}
 		return doma;
 	}
+
+    public boolean isContinuous() {
+        return domain.equalsIgnoreCase("continuous");
+    }
+
+    public boolean isInteger() {
+        return domain.equalsIgnoreCase("integer");
+    }
+
+    public boolean isNominal() {
+        return domain.equalsIgnoreCase("nominal");
+    }
+
+    public boolean isLinear() {
+        return domain.equalsIgnoreCase("linear");
+    }
 }

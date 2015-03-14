@@ -18,7 +18,22 @@ import java.util.List;
 public class J48ManualTests {
 
     public static void main(String[] args) {
+        runIrisExample();
+        runXExample();
+    }
+
+    public static void runIrisExample() {
         final Input irisInput = StubFactory.getIrisInput();
+        final List<Test> runs = irisInput.getTestsGroup().getRuns();
+        new J48ArchetypeConfig().addAllJ48SpecificParameters(runs);
+        
+        //new J48Resource().convertAndRun(StubFactory.getInput());
+        //new J48Resource().convertAndRun(StubFactory.getBaloonsOutput());
+        new J48Service().convertAndRun(irisInput);
+    }
+
+    private static void runXExample() {
+        final Input irisInput = StubFactory.getInput();
         final List<Test> runs = irisInput.getTestsGroup().getRuns();
         new J48ArchetypeConfig().addAllJ48SpecificParameters(runs);
         
