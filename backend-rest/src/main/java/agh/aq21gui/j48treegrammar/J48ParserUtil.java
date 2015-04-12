@@ -34,8 +34,8 @@ public class J48ParserUtil {
 //			System.out.println("parse:");
             Tj48TreeParser.output_return out_ret = parser.output();
             tree = (CommonTree)out_ret.getTree();
-            System.out.println("tree:");
-            System.out.println(tree.toStringTree());
+            //System.out.println("tree:");
+            //System.out.println(tree.toStringTree());
         }catch(RecognitionException ex){
             Logger.getLogger(J48ParserUtil.class.getName()).log(Level.SEVERE, null, ex);
         }

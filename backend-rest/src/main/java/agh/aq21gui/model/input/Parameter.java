@@ -135,4 +135,13 @@ public class Parameter implements IAQ21Serializable {
             value = builder.toString();
         }
     }
+
+    void setDescriptors(List<ClassDescriptor> descriptors) {
+        StringBuilder builder = new StringBuilder();
+        for (ClassDescriptor descriptor : descriptors) {
+            builder.append(descriptor.toString());
+        }
+        this.value = builder.toString();
+        this.descriptors = descriptors;
+    }
 }

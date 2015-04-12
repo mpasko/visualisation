@@ -53,10 +53,24 @@ public class Aq21ArchetypeConfig extends IArchetypeConfig{
     public void generateAq21SpecificParameters(Run r, String condition) {
         r.addParameter("consequent", condition);
         r.addParameter("mode", "tf");
-        r.addParameter("ambiguity", "includeinpos");
+        r.addParameter("ambiguity", "IncludeInPos");
         r.addParameter("trim", "optimal");
         r.addParameter("compute_alternative_covers", "true");
         r.addParameter("maxstar", "1");
         r.addParameter("maxrule", "10");
+        
+        r.addParameter("learn_rules_mode", "standard");
+        r.addParameter("exceptions", "false");
+        r.addParameter("minimum_u", "1");
+        r.addParameter("optimize_ruleset", "true");
+        r.addParameter("continuous_optimization_probe", "5");
+        r.addParameter("truncate", "true");
+        r.addParameter("display_selectors_coverage", "true");
+        r.addParameter("display_values_coverage", "false");
+        r.addParameter("display_events_covered", "false");
+        r.addParameter("display_alternative_covers", "true");
+        r.addParameter("max_alternatives", "10");
+        r.addParameter("attribute_selection_method", "none");
+        r.addParameter("handling_unknown_values", "program_selected_method");
     }
 }

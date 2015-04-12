@@ -74,4 +74,8 @@ public class Event implements IAQ21Serializable {
 	void traverse() {
 		this.values.contains("ala 123");
 	}
+
+    public void replaceValueAt(int index, String newValue) {
+        values.set(index, newValue);
+    }
 }

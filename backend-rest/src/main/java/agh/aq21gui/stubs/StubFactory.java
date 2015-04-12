@@ -20,6 +20,7 @@ import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.services.aq21.OutputParser;
+import agh.aq21gui.services.csv.CSVConverter;
 import agh.aq21gui.utils.Util;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -315,16 +316,37 @@ public class StubFactory {
 	}
 
     public static Input getIrisInput() {
+        final String filename = "experiment_inputs/iris.aq21";
         try {
             OutputParser parser = new OutputParser();
-            FileInputStream stream = new FileInputStream("iris.aq21");
+            FileInputStream stream = new FileInputStream(filename);
             String out2 = Util.streamToString(stream);
             final Input input = parser.parse(out2);
             return input;
         } catch (IOException ex) {
-			System.out.println("Unable to load test data from file \"iris.aq21\"");
+			System.out.println(String.format("Unable to load test data from file \"%s\"", filename));
         }
         return null;
+    }
+
+    public static Input loadAdiData() {
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream("experiment_inputs/adi.csv");
+            final String data = Util.streamToString(stream);
+            CSVConverter converter = new CSVConverter();
+            return converter.convert(data);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 	
 }

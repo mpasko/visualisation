@@ -10,7 +10,10 @@ import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.EventsGroup;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Test;
+import agh.aq21gui.utils.NumericUtil;
+import agh.aq21gui.utils.Util;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,14 +38,16 @@ public abstract class IArchetypeConfig {
         double max = Double.MIN_VALUE;
         for (Event e : events.events) {
             final String cell = e.getValues().get(collumn);
-            double value = Double.parseDouble(cell);
-            if (value > max) {
-                max = value;
-            }
-            if (value < min) {
-                min = value;
+            double value = NumericUtil.tryParse(cell);
+            if (value != Double.NaN) {
+                if (value > max) {
+                    max = value;
+                }
+                if (value < min) {
+                    min = value;
+                }
             }
         }
-        return Double.valueOf((min + max) / 2).toString();
+        return NumericUtil.stringValueOf((min + max) / 2);
     }
 }

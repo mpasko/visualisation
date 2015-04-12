@@ -5,12 +5,14 @@
 package agh.aq21gui.services.j48;
 
 import agh.aq21gui.converters.Aq21InputToWeka;
+import agh.aq21gui.converters.ContinuousClassFilter;
 import agh.aq21gui.converters.J48TreeToRuleSet;
 import agh.aq21gui.j48treegrammar.J48ParserUtil;
 import agh.aq21gui.j48treegrammar.J48Tree;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Parameter;
 import agh.aq21gui.model.input.Test;
+import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.OutputHypotheses;
@@ -29,36 +31,35 @@ import weka.core.Instances;
 public class J48Service {
 
     public Output convertAndRun(Input input) {
-        System.out.println(input.toString());
-        Instances instances = new Aq21InputToWeka().aq21ToWeka(input);
-        System.out.println(instances.toString());
+        //System.out.println(input.toString());
+        //Instances instances = new Aq21InputToWeka().aq21ToWeka(input);
+        //System.out.println(instances.toString());
         Output out = new Output(input);
-        List<Hypothesis> hypos = runAll(input, instances);
+        List<Hypothesis> hypos = runAll(input);
         out.setOutputHypotheses(hypos);
         return out;
     }
 
-    List<Hypothesis> runAll(Input input, Instances instances) {
+    List<Hypothesis> runAll(Input input) {
         List<Hypothesis> hypotheses_all = new LinkedList<Hypothesis>();
         try {
             for (Test run : input.runsGroup.runs) {
-                String className = run.grepClassName();
-                setClassificationClass(input, className, instances);
-                List<Hypothesis> hypotheses = runSingle(run, instances);
+                Integer number = 0;
+                List<Hypothesis> hypotheses = prepareAndRunSingle(run, input);
                 for (Hypothesis h: hypotheses) {
-                    h.name = run.name + "_" + h.name;
+                    h.name = run.name + "_" + formatNumber(number++);
                 }
-                System.out.println(hypotheses.toString());
+                //System.out.println(hypotheses.toString());
                 hypotheses_all.addAll(hypotheses);
             }
         } catch (Exception ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+ //           Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
         }
-        instances.setClassIndex(-1);
         return hypotheses_all;
     }
 
-    public List<Hypothesis> runSingle(Test run, Instances instances) throws Exception {
+    public List<Hypothesis> runJ48(Test run, Instances instances) throws Exception {
         J48 j48 = new J48();
         //final String[] cmdline = new String[]{"-U", "-O", "-M", "2"};
         final String[] cmdline = paramsetToCmdline(run);
@@ -67,7 +68,7 @@ public class J48Service {
         System.out.println(j48.graph());
         J48ParserUtil parser = new J48ParserUtil();
         J48Tree tree = parser.parse(j48.graph());
-        System.out.println(tree.toString());
+//        System.out.println(tree.toString());
         List<Hypothesis> hypothesis = new J48TreeToRuleSet().treeToRules(tree, run.grepClassName());
         return hypothesis;
     }
@@ -97,7 +98,7 @@ public class J48Service {
         return cmdline.toArray(new String[]{});
     }
 
-    private void setClassificationClass(Input input, String className, Instances instances) {
+    private static void setClassificationClass(Input input, String className, Instances instances) {
         int classIndex = input.findAttributeNumber(className);
         instances.setClassIndex(classIndex);
     }
@@ -114,6 +115,30 @@ public class J48Service {
         } catch (NumberFormatException _) {
             return defaultValue;
         }
+    }
+
+    private String formatNumber(Integer number) {
+        final String text = number.toString();
+        String prefix = "";
+        for (int i=0; i<3-text.length(); ++i) {
+            prefix = prefix.concat("0");
+        }
+        return prefix.concat(text);
+    }
+
+    private List<Hypothesis> prepareAndRunSingle(Test run, Input input) throws Exception {
+        Instances instances = prepareDataForRun(run, input);
+        List<Hypothesis> hypotheses = runJ48(run, instances);
+        return hypotheses;
+    }
+
+    public static Instances prepareDataForRun(Test run, Input input) {
+        String className = run.grepClassName();
+        ClassDescriptor descriptor = run.grepClassDescriptor();
+        Input filteredData = new ContinuousClassFilter().filter(input, descriptor);
+        Instances instances = new Aq21InputToWeka().aq21ToWeka(filteredData);
+        setClassificationClass(filteredData, className, instances);
+        return instances;
     }
     
 }

@@ -27,7 +27,7 @@ public class J48TreeToRuleSet {
     
     public List<Hypothesis> treeToRules(J48Tree tree, String clasAttr){
         PathsAggregate paths = findPaths(tree);
-        paths.printPaths();
+        //paths.printPaths();
         List<Hypothesis> hypothesis = makeHypothesesFromPaths(paths, clasAttr);
         return hypothesis;
     }

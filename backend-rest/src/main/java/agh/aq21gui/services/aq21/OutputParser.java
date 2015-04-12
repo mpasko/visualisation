@@ -39,17 +39,18 @@ public class OutputParser {
 //			System.out.println("parse:");
             output_return out_ret = parser.output();
             tree = (CommonTree)out_ret.getTree();
-            System.out.println("tree:");
-            System.out.println(tree.toStringTree());
+//            System.out.println("tree:");
+//            System.out.println(tree.toStringTree());
         }catch(RecognitionException ex){
-            Logger.getLogger(Aq21Resource.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Aq21Resource.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
         }
         return tree;
     }
 
     public TParser prepareParser(String out) {
         String processed = out.toLowerCase().replace("..", "@");
-        System.out.println(processed);
+//        System.out.println(processed);
         lexer.setCharStream(new ANTLRStringStream(processed));
         lexer.reset();
         CommonTokenStream tokens = new CommonTokenStream(lexer);

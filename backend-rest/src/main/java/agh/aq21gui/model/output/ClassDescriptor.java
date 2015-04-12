@@ -7,6 +7,7 @@ package agh.aq21gui.model.output;
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.model.gld.Value;
 import agh.aq21gui.model.input.NameValueEntity;
+import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
@@ -173,4 +174,56 @@ public class ClassDescriptor extends NameValueEntity{
 		builder.append(range_end);
 		value = builder.toString();
 	}
+
+    public boolean matchesValue(String actualValue) {
+        if (value.isEmpty()) {
+            if (!range_begin.isEmpty()) {
+                double begin = parseDouble(range_begin);
+                double end = parseDouble(range_end);
+                double actual = parseDouble(actualValue);
+                final boolean isBetween = ((begin<actual)&&(actual<end)) || ((end<actual)&&(actual<begin));
+                if (comparator.equals("=")) {
+                    return isBetween;
+                } else if (comparator.equals("!=") || comparator.equals("<>")) {
+                    return !isBetween;
+                }
+            } else if (this.set_elements.size()>=1) {
+                boolean matches_any = false;
+                for (String elem : set_elements) {
+                    boolean matches = elem.equalsIgnoreCase(actualValue);
+                    matches_any |= matches;
+                }
+                if (comparator.equals("=")) {
+                    return matches_any;
+                } else if (comparator.equals("!=") || comparator.equals("<>")) {
+                    return !matches_any;
+                }
+            }
+        } else {
+            double right = parseDouble(this.getValue());
+            double left = parseDouble(actualValue);
+            if (comparator.equals("<")) {
+                return right<left;
+            } else if (comparator.equals(">")) {
+                return right>left;
+            } else if (comparator.equals(">=")) {
+                return right>=left;
+            } else if (comparator.equals("<=")) {
+                return right<=left;
+            } else if (comparator.equals("!=") || comparator.equals("<>")) {
+                return right!=left;
+            } else if (comparator.equals("=")) {
+                return right==left;
+            }
+        }
+        return false;
+    }
+
+    private double parseDouble(String value) throws RuntimeException {
+        double right = NumericUtil.tryParse(value);
+        if (Double.isNaN(right)) {
+            throw new RuntimeException("Comparison is only supported for numeric values, found:"+value);
+        }
+        return right;
+    }
 }

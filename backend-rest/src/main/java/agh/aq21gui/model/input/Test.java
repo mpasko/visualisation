@@ -9,6 +9,7 @@ import agh.aq21gui.exceptions.IncorrectInputException;
 import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
+import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -85,13 +86,21 @@ public class Test implements IAQ21Serializable {
 	}
 
     public ClassDescriptor grepClassDescriptor() {
+        Parameter param = findConsequentParam();
+        if (param != null) {
+            List<ClassDescriptor> descriptors = param.getDescriptors();
+            if (descriptors.isEmpty()) {
+                throw new IncorrectInputException("Consequent should specify at least one class!");
+            }
+            return descriptors.get(0);
+        }
+        return null;
+    }
+    
+    public Parameter findConsequentParam() {
         for (Parameter param : this.runSpecificParameters.parameters) {
             if (param.name.equalsIgnoreCase("Consequent")) {
-                List<ClassDescriptor> descriptors = param.getDescriptors();
-                if (descriptors.isEmpty()) {
-                    throw new IncorrectInputException("Consequent should specify at least one class!");
-                }
-                return descriptors.get(0);
+                return param;
             }
         }
         return null;
@@ -107,6 +116,22 @@ public class Test implements IAQ21Serializable {
 
     public String grepCondition() {
         return grepClassDescriptor().toString();
+    }
+
+    public void enforceClass(String name) {
+        Parameter param = findConsequentParam();
+        if (param == null) {
+            param = new Parameter();
+            param.name = "consequent";
+            this.runSpecificParameters.parameters.add(param);
+        }
+        List<ClassDescriptor> descs = new LinkedList<ClassDescriptor>();
+        ClassDescriptor cd = new ClassDescriptor();
+        cd.setName(name);
+        cd.setComparator("=");
+        cd.setValue("*");
+        descs.add(cd);
+        param.setDescriptors(descs);
     }
 	
 }

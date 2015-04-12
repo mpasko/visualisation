@@ -140,4 +140,14 @@ public class Output extends Input{
 		}
 		return null;
 	}
+    
+    @Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append(super.toString());
+		builder.append(outHypo.toString());
+		
+		return builder.toString();
+	}
 }

@@ -5,6 +5,7 @@
 package agh.aq21gui.services.csv;
 
 import agh.aq21gui.model.input.Domain;
+import agh.aq21gui.utils.NumericUtil;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,21 +46,21 @@ class PredictedDomain {
     public void VerifyNew(String value) {
         switch (type) {
             case INTEGER:
-                if (!CSVConverter.isInteger(value)) {
+                if (!NumericUtil.isInteger(value)) {
                     type = DomainType.CONTINUOUS;
-                } else if (!CSVConverter.isNumber(value)) {
+                } else if (!NumericUtil.isNumber(value)) {
                     type = DomainType.NOMINAL;
                 }
             case CONTINUOUS:
-                if (!CSVConverter.isNumber(value)) {
+                if (!NumericUtil.isNumber(value)) {
                     type = DomainType.NOMINAL;
                 }
                 break;
             case NOMINAL:
                 break;
         }
-        if (!CSVConverter.isWildcard(value)) {
-            if (CSVConverter.isNumber(value)) {
+        if (!NumericUtil.isWildcard(value)) {
+            if (NumericUtil.isNumber(value)) {
                 Double val = Double.parseDouble(value);
                 if (val > max) {
                     max = val;

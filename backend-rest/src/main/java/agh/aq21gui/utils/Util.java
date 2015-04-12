@@ -66,4 +66,20 @@ public class Util {
 		}
 		bw.close();
 	}
+
+    public static String negatedComparator(final String comparator) {
+        if (comparator.equals("<")) {
+            return ">=";
+        } else if (comparator.equals(">")) {
+            return "<=";
+        } else if (comparator.equals(">=")) {
+            return "<";
+        } else if (comparator.equals("<=")) {
+            return ">";
+        } else if (comparator.equals("!=") || comparator.equals("<>")) {
+            return "=";
+        } else {
+            return "!=";
+        }
+    }
 }

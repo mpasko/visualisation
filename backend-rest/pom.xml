@@ -101,16 +101,6 @@
             <artifactId>J48graft</artifactId>
             <version>1.0.3</version>
         </dependency>
-        <!--dependency>
-            <groupId>att.grappa</groupId>
-            <artifactId>grappa</artifactId>
-            <version>1.2</version>
-        </dependency-->
-        <!--dependency>
-            <groupId>org.gephi</groupId>
-            <artifactId>gephi-toolkit</artifactId>
-            <version>0.9-SNAPSHOT</version>
-        </dependency-->
 	</dependencies>
 	<build>
 		<defaultGoal>install</defaultGoal>

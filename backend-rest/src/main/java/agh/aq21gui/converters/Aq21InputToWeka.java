@@ -7,6 +7,7 @@ package agh.aq21gui.converters;
 import agh.aq21gui.model.input.Attribute;
 import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.Input;
+import agh.aq21gui.utils.NumericUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,17 +40,7 @@ public class Aq21InputToWeka {
             String name = aq21Attr.name;
             String value = eventValues.get(index);
             weka.core.Attribute wekaAttr = wekaAttrs.get(index);
-            try {
-                try {
-                    double doubleValue = Double.parseDouble(value);
-                    denseInstance.setValue(wekaAttr, doubleValue);
-                } catch (NumberFormatException _ex) {
-                    denseInstance.setValue(wekaAttr, value);
-                }
-            } catch (Exception ex) {
-                System.out.println("name=" + name + ", value=" + value + " wekaattr=" + wekaAttr.type());
-                ex.printStackTrace();
-            }
+            trySetValue(value, denseInstance, wekaAttr, name);
         }
         instances.add(denseInstance);
     }
@@ -70,6 +61,22 @@ public class Aq21InputToWeka {
             serial++;
         }
         return wekaAttrs;
+    }
+
+    private void trySetValue(String value, final DenseInstance denseInstance, weka.core.Attribute wekaAttr, String name) {
+        if (!NumericUtil.isWildcard(value)){
+            try {
+                double doubleValue = NumericUtil.tryParse(value);
+                if (!Double.isNaN(doubleValue)) {
+                    denseInstance.setValue(wekaAttr, doubleValue);
+                } else {
+                    denseInstance.setValue(wekaAttr, value);
+                }
+            } catch (Exception ex) {
+                System.out.println("name=" + name + ", value=" + value + " wekaattr=" + wekaAttr.type());
+                ex.printStackTrace();
+            }
+        }
     }
     
 }

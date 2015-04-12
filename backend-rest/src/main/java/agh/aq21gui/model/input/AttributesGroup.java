@@ -50,4 +50,24 @@ public class AttributesGroup implements IAQ21Serializable{
 			a.traverse();
 		}
 	}
+
+    public int getIndexOfAttribute(String name) {
+        int i=0;
+        for (Attribute attr: this.attributes) {
+            if (attr.name.equalsIgnoreCase(name)) {
+                return i;
+            }
+            ++i;
+        }
+        return -1;
+    }
+    
+    public Attribute getAttributeByName(String name) {
+        int index = getIndexOfAttribute(name);
+        return this.attributes.get(index);
+    }
+
+    public void replaceAttributeDomain(String name, Domain triggered) {
+        this.getAttributeByName(name).setdomain(triggered.getName());
+    }
 }

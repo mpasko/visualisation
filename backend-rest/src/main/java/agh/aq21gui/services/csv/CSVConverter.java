@@ -13,6 +13,7 @@ import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.EventsGroup;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Test;
+import agh.aq21gui.utils.NumericUtil;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,48 +25,11 @@ import java.util.List;
  */
 public class CSVConverter {
 
-    public static boolean isWildcard(String value) {
-        if (value.equalsIgnoreCase("?")) {
-            return true;
-        } else if (value.equalsIgnoreCase("*")) {
-            return true;
-        } else if (value.equalsIgnoreCase("NA")) {
-            return true;
-        } else if (value.equalsIgnoreCase("N/A")) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isInteger(String value) {
-        if (isWildcard(value)){
-            return true;
-        }
-        try {
-            Integer.parseInt(value);
-            return true;
-        } catch (NumberFormatException ex) {
-            return false;
-        }
-    }
-
-    public static boolean isNumber(String value) {
-        if (isWildcard(value)){
-            return true;
-        }
-        try {
-            Double.parseDouble(value);
-            return true;
-        } catch (NumberFormatException ex) {
-            return false;
-        }
-    }
-
     private boolean allItemsStrings(String[] events) {
         boolean allStrings=true;
         int i = 0;
         while ((i<events.length) && allStrings){
-            allStrings &= !isNumber(events[i]);
+            allStrings &= !NumericUtil.isNumber(events[i]);
             ++i;
         }
         return allStrings;
@@ -94,12 +58,12 @@ public class CSVConverter {
     
 
     public static String dewebify(String in) {
-        System.out.println(in);
+//        System.out.println(in);
         String nls = in.replace("\\n", "\n");
         nls = nls.replace("\\r", "\r");
         nls = nls.replace("\"", "");
-        System.out.println("After dewebify:");
-        System.out.println(nls);
+//        System.out.println("After dewebify:");
+//        System.out.println(nls);
         return nls;
     }
 
@@ -151,7 +115,7 @@ public class CSVConverter {
             String[] events = line.split(",");
             if (!events[0].isEmpty()) {
                 for (int i = 0; i < events.length; i++) {
-                    if (CSVConverter.isNumber(events[i]) && events[i].startsWith(".")) {
+                    if (NumericUtil.isNumber(events[i]) && events[i].startsWith(".")) {
                         events[i] = "0" + events[i];
                     }
                 }
