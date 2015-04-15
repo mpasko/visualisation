@@ -25,7 +25,7 @@ public class ContinuousClassFilter {
     }
     
     public Input filter(Input in, ClassDescriptor cd) {
-        Input result = performDeepCopy(in);
+        Input result = Util.deepCopyInput(in);
         String name = cd.getName();
         final String stringValue = cd.getValue();
         double doubleValue = NumericUtil.tryParse(stringValue);
@@ -93,11 +93,6 @@ public class ContinuousClassFilter {
             }
         }
         return result;
-    }
-
-    private Input performDeepCopy(Input in) {
-        OutputParser parser = new OutputParser();
-        return parser.parse(in.toString());
     }
 
     private String varbalizeValue(String value) {

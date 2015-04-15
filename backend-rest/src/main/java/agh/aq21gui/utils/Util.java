@@ -5,6 +5,9 @@
 package agh.aq21gui.utils;
 
 import agh.aq21gui.model.gld.processing.CellValue;
+import agh.aq21gui.model.input.Input;
+import agh.aq21gui.model.output.Output;
+import agh.aq21gui.services.aq21.OutputParser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -81,5 +84,15 @@ public class Util {
         } else {
             return "!=";
         }
+    }
+
+    public static Output deepCopyOutput(Output in) {
+        OutputParser parser = new OutputParser();
+        return parser.parse(in.toString());
+    }
+
+    public static Input deepCopyInput(Input in) {
+        OutputParser parser = new OutputParser();
+        return parser.parse(in.toString());
     }
 }

@@ -4,6 +4,7 @@
  */
 package agh.aq21gui;
 
+import agh.aq21gui.converters.RuleSorter;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.input.Test;
@@ -23,37 +24,22 @@ import java.util.logging.Logger;
 public class ADIExperiment {
     public static void main(String[] args) {
         final ADIExperiment adiExperiment = new ADIExperiment();
-		adiExperiment.runJ48Experiment();
-        adiExperiment.runAq21Experiment();
+		adiExperiment.runExperiment(new J48Resource());
+        adiExperiment.runExperiment(new Aq21Resource());
     }
     
-    public void runJ48Experiment() {
-        System.out.println("J48 Experiment:");
+    public void runExperiment(IResource resource) {
+        System.out.println(String.format("%s Experiment:", resource.getName()));
         Input input = StubFactory.loadAdiData();
-        final J48Resource resource = new J48Resource();
         RunsGroup runsGroup = resource.generateConfig(input);
         for (Test run : runsGroup.runs) {
             run.enforceClass("stop");
         }
         System.out.println("After setting correct class:");
-        System.out.println(runsGroup.toString());
         input.setRunsGroup(runsGroup);
-        Output result = resource.postIt(input);
-        System.out.println(result.toString());
-    }
-    
-    public void runAq21Experiment() {
-        System.out.println("AQ21 Experiment:");
-        Input input = StubFactory.loadAdiData();
-        final Aq21Resource resource = new Aq21Resource();
-        RunsGroup runsGroup = resource.generateConfig(input);
-        for (Test run : runsGroup.runs) {
-            run.enforceClass("stop");
-        }
-        System.out.println("After setting correct class:");
-        System.out.println(runsGroup.toString());
-        input.setRunsGroup(runsGroup);
-        Output result = resource.postIt(input);
-        System.out.println(result.toString());
+        System.out.println(input.toString());
+        Output result = resource.performExperiment(input);
+        Output sortedResult = new RuleSorter().sort(result);
+        System.out.println(sortedResult.toString());
     }
 }

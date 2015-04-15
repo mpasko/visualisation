@@ -36,7 +36,8 @@ public class OutputParser {
         TParser parser = prepareParser(out);
         CommonTree tree = null;
         try{
-//			System.out.println("parse:");
+//            System.out.println("Parsing:");
+//            System.out.println(out);
             output_return out_ret = parser.output();
             tree = (CommonTree)out_ret.getTree();
 //            System.out.println("tree:");

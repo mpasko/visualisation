@@ -41,7 +41,7 @@ import javax.ws.rs.core.SecurityContext;
  * @author marcin
  */
 @Path("aq21")
-public class Aq21Resource {
+public class Aq21Resource implements IResource{
 	
 	@Context
     private SecurityContext security;
@@ -58,9 +58,15 @@ public class Aq21Resource {
     @Produces({
 		MediaType.APPLICATION_JSON
 	})
-    public Output postIt(Input input) {
+    @Override
+    public Output performExperiment(Input input) {
 		Aq21Invoker inv = new Aq21Invoker();
 		return inv.invoke(input);
+    }
+    
+    @Override
+    public String getName() {
+        return "AQ21";
     }
 	
 	@POST

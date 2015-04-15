@@ -31,7 +31,7 @@ RESULT_NAME : 'lef_star' | 'lef_partial_star' | 'lef_sort' ;
 
 OPEN    :   '\{' ;
 CLOSE   :   '\}' ;
-EQUAL   :   '=' | '<=' | '>=' | '<>';
+EQUAL   :   '=' | '<=' | '>=' | '<>' | '<' | '>' ;
 RANGE_OP : '\@' ;
 DOT     :   '\.' ;
 COLON   :   '\:' ;

@@ -102,7 +102,7 @@ public class Hypothesis {
 			return "";
 		}
 		StringBuilder builder = FormatterUtil.begin(LABEL, name);
-        builder.append(this.classes);
+        builder.append(printClasses());
 		for(Rule rule : rules){
             builder.append("\n   <-- ");
             builder.append(rule.toString());
@@ -117,5 +117,9 @@ public class Hypothesis {
 			r.traverse();
 		}
 	}
+
+    public String printClasses() {
+        return classes.toString();
+    }
 	
 }

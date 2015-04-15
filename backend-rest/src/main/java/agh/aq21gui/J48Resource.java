@@ -24,7 +24,7 @@ import javax.ws.rs.core.MediaType;
  * @author marcin
  */
 @Path("j48")
-public class J48Resource {
+public class J48Resource implements IResource{
     
     @POST
 	@Path("postIt")
@@ -32,7 +32,8 @@ public class J48Resource {
     @Produces({
 		MediaType.APPLICATION_JSON
 	})
-    public Output postIt(Input input) {
+    @Override
+    public Output performExperiment(Input input) {
 		J48Service srv = new J48Service();
         return srv.convertAndRun(input);
     }
@@ -45,10 +46,16 @@ public class J48Resource {
 	@Produces({
 		MediaType.APPLICATION_JSON
 	})
+    @Override
     public RunsGroup generateConfig(Input in) {
         List<Test> runs = new J48ArchetypeConfig().createConfig(in);
         RunsGroup group = new RunsGroup();
         group.setRuns(runs);
         return group;
+    }
+    
+    @Override
+    public String getName() {
+        return "J48";
     }
 }
