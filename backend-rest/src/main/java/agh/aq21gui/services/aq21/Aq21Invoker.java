@@ -33,7 +33,7 @@ public class Aq21Invoker extends AbstractInvoker{
 		OutputParser parser = new OutputParser();
 		//AttributesGroup ag = (AttributesGroup) input.gAG();
 
-		Logger.getLogger(Aq21Resource.class.getName()).info("Request accepted");
+		//Logger.getLogger(Aq21Resource.class.getName()).info("Request accepted");
 		String result="";
 		try {
 			result = run(AQ21INPUT, input.toString());

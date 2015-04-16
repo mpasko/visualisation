@@ -102,7 +102,7 @@ public class ClassDescriptor extends NameValueEntity{
 			range_end = range.childAt(1, TreeNode.ANY_TYPE).value();
 			rangeToString();
 		}else if(desc.tree().getChild(2).getType()==TParser.VALUE_SET){
-			Logger.getLogger("Parser").info("Parsing value set");
+			//Logger.getLogger("Parser").info("Parsing value set");
 			TreeNode set = desc.childAt(2, TParser.VALUE_SET);
 			set_elements = new LinkedList<String>();
 			for(TreeNode itemNode : set.iterator(TreeNode.ANY_TYPE)){

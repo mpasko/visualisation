@@ -32,9 +32,9 @@ public class ADIExperiment {
         System.out.println(String.format("%s Experiment:", resource.getName()));
         Input input = StubFactory.loadAdiData();
         RunsGroup runsGroup = resource.generateConfig(input);
-        for (Test run : runsGroup.runs) {
-            run.enforceClass("stop");
-        }
+//        for (Test run : runsGroup.runs) {
+//            run.enforceClass("stop");
+//        }
         System.out.println("After setting correct class:");
         input.setRunsGroup(runsGroup);
         System.out.println(input.toString());
