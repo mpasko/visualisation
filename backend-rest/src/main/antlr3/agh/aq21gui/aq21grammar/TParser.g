@@ -117,52 +117,55 @@ domain
  -> ^(DOMAIN $name $type ^(DOMAIN_ARGS_EMPTY))
    ;
 
-runs : RUNS NL? OPEN NL? parameter* run* CLOSE NL?
- -> ^(RUNS_PARAMS parameter*) ^(RUNS_LIST run* );
+runs : RUNS NL? OPEN NL? (simple_parameter NL?)* run* CLOSE NL?
+ -> ^(RUNS_PARAMS simple_parameter*) ^(RUNS_LIST run* );
 
-run : name=ID NL? OPEN NL? parameter* run_result* CLOSE NL?
- -> ^(RUN $name ^(RUNS_PARAMS parameter*) ^(RESULT run_result*) ) ;
+run : name=ID NL? OPEN NL? (enhanced_parameter NL?)* run_result* CLOSE NL?
+ -> ^(RUN $name ^(RUNS_PARAMS enhanced_parameter*) ^(RESULT run_result*) ) ;
 
-run_result : name=RESULT_NAME NL? OPEN NL? result_parameter* CLOSE NL?
- -> ^(RESULTS $name result_parameter*) ;
+run_result : name=RESULT_NAME NL? OPEN NL? (coma_parameter NL?)* CLOSE NL?
+ -> ^(RESULTS $name coma_parameter*) ;
 
-tests : TESTS NL? OPEN NL? parameter* test* CLOSE NL?
- -> ^(TESTS_PARAMS parameter*) ^(TESTS_LIST test*);
+tests : TESTS NL? OPEN NL? (simple_parameter NL?)* test* CLOSE NL?
+ -> ^(TESTS_PARAMS simple_parameter*) ^(TESTS_LIST test*);
 
-test : name=ID NL? OPEN NL? parameter* CLOSE NL?
- -> ^(TEST $name ^(TESTS_PARAMS parameter*) );
+test : name=ID NL? OPEN NL? (simple_parameter NL?)* CLOSE NL?
+ -> ^(TEST $name ^(TESTS_PARAMS simple_parameter*) );
 
-output_hypotheses : OUTPUT_HYPOTHESES name=ID NL? OPEN NL? parameter* hypothesis CLOSE NL?
- -> $name hypothesis parameter* ;
+output_hypotheses : OUTPUT_HYPOTHESES name=ID NL? OPEN NL? (simple_parameter NL?)* hypothesis CLOSE NL?
+ -> $name hypothesis simple_parameter* ;
 
-input_hypotheses : INPUT_HYPOTHESES name=ID NL? OPEN NL? parameter* hypothesis CLOSE NL?
- -> $name hypothesis parameter* ;
+input_hypotheses : INPUT_HYPOTHESES name=ID NL? OPEN NL? (simple_parameter NL?)* hypothesis CLOSE NL?
+ -> $name hypothesis simple_parameter* ;
 
 hypothesis : class_descriptions NL? rule*
  -> ^(HYPOTHESIS_BODY class_descriptions rule*) ;
 
 rule : 
-	RULE_ARROW selectors
+	RULE_ARROW selectors NL?
 	-> ^(RULE selectors ) 
-     | RULE_ARROW selectors rule_additional_params+ NL?
+     | RULE_ARROW selectors NL? rule_additional_params+ NL?
 	-> ^(RULE selectors rule_additional_params+) ;
 
-selectors : selector+
- -> ^(SELECTORS selector+) ;
+selectors : (selector (NL? selector)*)?
+ -> ^(SELECTORS selector*) ;
 
-selector : OPEN_SQR name=ID kind=EQUAL atom selector_additional_params? CLOSE_SQR NL? 
+selector : OPEN_SQR name=ID kind=EQUAL atom selector_additional_params? CLOSE_SQR
 	-> ^(SELECTOR $name $kind atom);
 
 selector_additional_params : COLON simple_value (COMA simple_value)*  
 	-> ^(SELECTOR_PARAMS simple_value+) ;
 
-rule_additional_params : COLON parameter (COMA parameter)* 
-	-> ^(RULE_PARAMS parameter+) ;
+rule_additional_params : COLON simple_parameter (NL? COMA simple_parameter)* 
+	-> ^(RULE_PARAMS simple_parameter+) ;
 
-result_parameter : name=ID COMA fl_value=simple_value NL?
+coma_parameter : name=ID COMA fl_value=simple_value
  -> ^(PARAMETER $name $fl_value) ;
 
-parameter : name=ID EQUAL value? NL?
+simple_parameter : name=ID EQUAL fl_value=simple_value
+ -> ^(PARAMETER $name $fl_value) ;
+
+enhanced_parameter : name=ID EQUAL value?
  -> ^(PARAMETER $name value?) ;
 
 value : simple_value
