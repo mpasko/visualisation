@@ -144,4 +144,8 @@ public class Parameter implements IAQ21Serializable {
         this.value = builder.toString();
         this.descriptors = descriptors;
     }
+
+    public boolean isTrue() {
+        return this.value.equalsIgnoreCase("true");
+    }
 }

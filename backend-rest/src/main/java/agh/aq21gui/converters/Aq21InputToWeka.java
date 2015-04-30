@@ -25,7 +25,7 @@ public class Aq21InputToWeka {
         ArrayList<weka.core.Attribute> wekaAttrs = convertAttributes(aq21Attrs, input);
         final List<Map<String, Object>> aq21Events = input.getEvents();
         Instances instances = new Instances("test", wekaAttrs, aq21Events.size());
-        for (Event aq21Event : input.gEG().events) {
+        for (Event aq21Event : input.obtainEventsGroup().events) {
             convertEvent(aq21Event, aq21Attrs, wekaAttrs, instances);
         }
         return instances;
@@ -50,9 +50,9 @@ public class Aq21InputToWeka {
         int serial = 0;
         for (Attribute aq21Attr : aq21Attrs) {
             weka.core.Attribute wekaAttr;
-            final String domain = aq21Attr.getdomainNameRecursively(input.gDG());
+            final String domain = aq21Attr.getdomainNameRecursively(input.obtainDomainsGroup());
             if (domain.equalsIgnoreCase("nominal") || domain.equalsIgnoreCase("linear")) {
-                List<String> elems = aq21Attr.getRangeRecursively(input.gDG());
+                List<String> elems = aq21Attr.getRangeRecursively(input.obtainDomainsGroup());
                 wekaAttr = new weka.core.Attribute(aq21Attr.getName(), elems, serial);
             } else {
                 wekaAttr = new weka.core.Attribute(aq21Attr.getName());

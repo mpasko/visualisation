@@ -8,9 +8,9 @@ import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -65,4 +65,15 @@ public class Rule {
         }
 		return builder.toString();
 	}
+
+    public boolean matchesEvent(Map<String, Object> map) {
+        boolean matches = true;
+        for (Selector sel : this.getSelectors()) {
+            Object eventValue = map.get(sel.getName());
+            //Util.isNull(eventValue, "eventValue");
+            //Util.isNull(sel, "sel");
+            matches &= sel.matchesValue(eventValue.toString());
+        }
+        return matches;
+    }
 }

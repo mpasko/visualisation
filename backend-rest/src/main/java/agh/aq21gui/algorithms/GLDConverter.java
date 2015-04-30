@@ -41,7 +41,7 @@ public class GLDConverter {
 		cols = new LinkedList<Argument>();
 		rows = new LinkedList<Argument>();
 		attrs = input.getData().getAttributes();
-		domains = input.getData().gDG();
+		domains = input.getData().obtainDomainsGroup();
 		data = input.getData();
 		out = new GLDOutput(data);
 		args = new LinkedList<Argument>();

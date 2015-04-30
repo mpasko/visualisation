@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.converters;
+package agh.aq21gui.filters;
 
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;

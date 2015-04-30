@@ -5,15 +5,17 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
-import agh.aq21gui.model.gld.Value;
+import agh.aq21gui.aq21grammar.TParser.class_description_return;
 import agh.aq21gui.model.input.NameValueEntity;
+import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTree;
 
 /**
  *
@@ -113,6 +115,15 @@ public class ClassDescriptor extends NameValueEntity{
 			value = desc.childAt(2, TreeNode.ANY_TYPE).value();
 		}
 	}
+    
+    public static ClassDescriptor parse(String string) throws RecognitionException {
+        TParser tokens = new OutputParser().prepareParser(string);
+        CommonTree cd_tree = (CommonTree) tokens.class_description().getTree();
+        TreeNode node = new TreeNode(cd_tree, TParser.CLASS_DESCRIPTION);
+        ClassDescriptor cd = new ClassDescriptor();
+        cd.parseSelector(node);
+        return cd;
+    }
 
 	public boolean contains(ClassDescriptor other) {
 		if (equals(other)){
@@ -178,42 +189,21 @@ public class ClassDescriptor extends NameValueEntity{
     public boolean matchesValue(String actualValue) {
         if (value.isEmpty()) {
             if (!range_begin.isEmpty()) {
-                double begin = parseDouble(range_begin);
-                double end = parseDouble(range_end);
-                double actual = parseDouble(actualValue);
-                final boolean isBetween = ((begin<actual)&&(actual<end)) || ((end<actual)&&(actual<begin));
-                if (comparator.equals("=")) {
-                    return isBetween;
-                } else if (comparator.equals("!=") || comparator.equals("<>")) {
-                    return !isBetween;
-                }
+                return matchesRange(actualValue);
             } else if (this.set_elements.size()>=1) {
-                boolean matches_any = false;
-                for (String elem : set_elements) {
-                    boolean matches = elem.equalsIgnoreCase(actualValue);
-                    matches_any |= matches;
-                }
-                if (comparator.equals("=")) {
-                    return matches_any;
-                } else if (comparator.equals("!=") || comparator.equals("<>")) {
-                    return !matches_any;
-                }
+                return matchesSet(actualValue);
             }
         } else {
-            double right = parseDouble(this.getValue());
-            double left = parseDouble(actualValue);
-            if (comparator.equals("<")) {
-                return right<left;
-            } else if (comparator.equals(">")) {
-                return right>left;
-            } else if (comparator.equals(">=")) {
-                return right>=left;
-            } else if (comparator.equals("<=")) {
-                return right<=left;
-            } else if (comparator.equals("!=") || comparator.equals("<>")) {
-                return right!=left;
-            } else if (comparator.equals("=")) {
-                return right==left;
+            //Descriptor has often format i.e. colour>0.5
+            //so right is always a value contained in ClassDescriptor
+            double right = NumericUtil.tryParse(this.getValue());
+            double left = NumericUtil.tryParse(actualValue);
+            final boolean textFields = Double.isNaN(right)||Double.isNaN(left);
+            final boolean comaratorIsNonequality = comparator.equals("!=") || comparator.equals("<>");
+            if (textFields) {
+                return matchesTextValue(actualValue, comaratorIsNonequality);
+            } else {
+                return matchesDoubleValue(left, right, comaratorIsNonequality);
             }
         }
         return false;
@@ -225,5 +215,70 @@ public class ClassDescriptor extends NameValueEntity{
             throw new RuntimeException("Comparison is only supported for numeric values, found:"+value);
         }
         return right;
+    }
+
+    private boolean matchesRange(String actualValue) throws RuntimeException {
+        double begin = parseDouble(range_begin);
+        double end = parseDouble(range_end);
+        double actual = parseDouble(actualValue);
+        final boolean isBetween = ((begin<actual)&&(actual<end)) || ((end<actual)&&(actual<begin));
+        boolean result = false;
+        if (comparator.equals("=")) {
+            result = isBetween;
+        } else if (comparator.equals("!=") || comparator.equals("<>")) {
+            result = !isBetween;
+        }
+        return result;
+    }
+
+    private boolean matchesSet(String actualValue) {
+        boolean matches_any = false;
+        for (String elem : set_elements) {
+            boolean matches = elem.equalsIgnoreCase(actualValue);
+            matches_any |= matches;
+        }
+        boolean result = false;
+        if (comparator.equals("=")) {
+            result = matches_any;
+        } else if (comparator.equals("!=") || comparator.equals("<>")) {
+            result = !matches_any;
+        }
+        return result;
+    }
+
+    private boolean matchesTextValue(String actualValue, final boolean comaratorIsNonequality) throws RuntimeException {
+        boolean result;
+        result = false;
+        if (NumericUtil.isWildcard(actualValue)) {
+            result = true;
+        } else if (comparator.equals("=")) {
+            result = this.getValue().equalsIgnoreCase(actualValue);
+        } else if (comaratorIsNonequality) {
+            result = !this.getValue().equalsIgnoreCase(actualValue);
+        } else  {
+            final String messageFormat = "Comparison using %s is only supported for numeric values. Found:%s and:%s";
+            final String message = String.format(messageFormat, comparator, this.getValue(), actualValue);
+            throw new RuntimeException(message);
+        }
+        return result;
+    }
+
+    private boolean matchesDoubleValue(double left, double right, final boolean comaratorIsNonequality) {
+        boolean result;
+        result = false;
+        if (comparator.equals("<")) {
+            result = left<right;
+        } else if (comparator.equals(">")) {
+            result = left>right;
+        } else if (comparator.equals(">=")) {
+            result = left>=right;
+        } else if (comparator.equals("<=")) {
+            result = left<=right;
+        } else if (comaratorIsNonequality) {
+            result = Math.abs(right-left)>NumericUtil.EPSILON;
+        } else if (comparator.equals("=")) {
+            result = Math.abs(right-left)<NumericUtil.EPSILON;
+        }
+        return result;
     }
 }

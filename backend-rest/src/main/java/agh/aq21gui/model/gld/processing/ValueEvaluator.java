@@ -79,6 +79,6 @@ public class ValueEvaluator implements Evaluator {
 	private boolean selectorMatches(Selector sel, Coordinate coord) {
 		Value v = coord.get(sel.name);
 		Attribute attr = out.findAttribute(sel.name);
-		return v.recognizer.accept(sel,attr,out.gDG());
+		return v.recognizer.accept(sel,attr,out.obtainDomainsGroup());
 	}
 }

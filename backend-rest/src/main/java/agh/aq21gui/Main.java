@@ -2,13 +2,11 @@ package agh.aq21gui;
 
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.stubs.StubFactory;
-import java.io.IOException;
+import agh.aq21gui.utils.Util;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.Parser;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.xml.XmlConfiguration;
@@ -50,9 +48,8 @@ public class Main {
 		}
 	}
 
-    private static void printAsJsonString(Output sample) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        String out = mapper.writeValueAsString(sample);
+    private static void printAsJsonString(Output sample) {
+        String out = Util.objectToJson(sample);
         System.out.println(out);
     }
 }

@@ -28,4 +28,18 @@ public class RunsGroup extends TestsGroup{
 			this.runs.add(run);
 		}
 	}	
+
+    public void enforceModeForAll(String mode) {
+        if (!mode.isEmpty()) {
+            for (Test run : this.runs) {
+                run.switchParam("mode", mode);
+            }
+        }
+    }
+
+    public void enforceClassForAll(final String newClass, String threshold) {
+        for (Test run : this.runs) {
+            run.enforceClass(newClass, threshold);
+        }
+    }
 }

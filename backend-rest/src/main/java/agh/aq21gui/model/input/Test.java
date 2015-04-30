@@ -98,8 +98,12 @@ public class Test implements IAQ21Serializable {
     }
     
     public Parameter findConsequentParam() {
+        return findParam("Consequent");
+    }
+    
+    public Parameter findParam(String name) {
         for (Parameter param : this.runSpecificParameters.parameters) {
-            if (param.name.equalsIgnoreCase("Consequent")) {
+            if (param.name.equalsIgnoreCase(name)) {
                 return param;
             }
         }
@@ -118,20 +122,36 @@ public class Test implements IAQ21Serializable {
         return grepClassDescriptor().toString();
     }
 
-    public void enforceClass(String name) {
-        Parameter param = findConsequentParam();
-        if (param == null) {
-            param = new Parameter();
-            param.name = "consequent";
-            this.runSpecificParameters.parameters.add(param);
-        }
+    public void enforceClass(String newClass, String threshold) {
+        Parameter param = findOrCreateParam("Consequent");
         List<ClassDescriptor> descs = new LinkedList<ClassDescriptor>();
         ClassDescriptor cd = new ClassDescriptor();
-        cd.setName(name);
-        cd.setComparator("=");
-        cd.setValue("*");
+        cd.setName(newClass);
+        if (threshold==null) {
+            cd.setComparator("=");
+            cd.setValue("*");
+        } else {
+            cd.setComparator("<=");
+            cd.setValue(threshold);
+        }
         descs.add(cd);
         param.setDescriptors(descs);
+    }
+
+    public void switchParam(String name, String value) {
+        Parameter param = findOrCreateParam(name);
+        param.setValue(value);
+    }
+
+    public Parameter findOrCreateParam(String name) {
+        Parameter param = findParam(name);
+        if (param==null) {
+            String parent = runSpecificParameters.getparent();
+            param = new Parameter(parent);
+            param.setName(name);
+            this.runSpecificParameters.parameters.add(param);
+        }
+        return param;
     }
 	
 }

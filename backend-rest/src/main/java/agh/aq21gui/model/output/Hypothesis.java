@@ -9,6 +9,7 @@ import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -120,6 +121,14 @@ public class Hypothesis {
 
     public String printClasses() {
         return classes.toString();
+    }
+
+    public boolean matchesEvent(Map<String, Object> map) {
+        boolean matches = false;
+        for (Rule rule : this.rules) {
+            matches |= rule.matchesEvent(map);
+        }
+        return matches;
     }
 	
 }

@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 
 /**
  *
@@ -94,5 +96,29 @@ public class Util {
     public static Input deepCopyInput(Input in) {
         OutputParser parser = new OutputParser();
         return parser.parse(in.toString());
+    }
+    
+    public static String objectToJson(Object item) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationConfig.Feature.INDENT_OUTPUT);
+            return mapper.writeValueAsString(item);
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+            //Logger.getLogger(StatsAgregator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //return "";
+    }
+    
+    public static String attachLines(String in) {
+        StringBuilder b = new StringBuilder();
+        int i=0;
+        for (String line : in.split("\n")) {
+            b.append(++i);
+            b.append("\t");
+            b.append(line);
+            b.append("\n");
+        }
+        return b.toString();
     }
 }

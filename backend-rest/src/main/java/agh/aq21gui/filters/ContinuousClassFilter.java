@@ -2,17 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.converters;
+package agh.aq21gui.filters;
 
 import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.ClassDescriptor;
-import agh.aq21gui.model.output.Hypothesis;
-import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.Util;
-import java.util.LinkedList;
 
 /**
  *
@@ -37,14 +34,14 @@ public class ContinuousClassFilter {
         final String negatedComparator = Util.negatedComparator(comparator);
         String match = verbalize(comparator)+varbalizeValue(stringValue);
         String not_match = verbalize(negatedComparator)+varbalizeValue(stringValue);
-        System.out.println(match);
-        System.out.println(not_match);
-        System.out.println(comparator);
-        System.out.println(negatedComparator);
+        //System.out.println(match);
+        //System.out.println(not_match);
+        //System.out.println(comparator);
+        //System.out.println(negatedComparator);
         Domain triggered = prepareDomain(match, not_match);
-        result.gDG().domains.add(triggered);
+        result.obtainDomainsGroup().domains.add(triggered);
         result.gAG().replaceAttributeDomain(name, triggered);
-        result = processEvents(result, index, comparator, doubleValue, cd, match, not_match);
+        result = processEvents(result, index, cd, match, not_match);
         return result;
     }
 
@@ -76,13 +73,13 @@ public class ContinuousClassFilter {
         } else if (comparator.equals("!")) {
             return "not";
         } else {
-            System.out.println("unrecognized: "+comparator);
+            //System.out.println("unrecognized: "+comparator);
             return "unrelated_with";
         }
     }
 
-    private Input processEvents(Input result, int index, String comparator, double trigger, ClassDescriptor cd, String match, String not_match) {
-        for (Event event : result.gEG().events) {
+    private Input processEvents(Input result, int index, ClassDescriptor cd, String match, String not_match) {
+        for (Event event : result.obtainEventsGroup().events) {
             String currentValue = event.getValues().get(index);
             if (!NumericUtil.isWildcard(currentValue)){
                 if (cd.matchesValue(currentValue)) {
@@ -96,7 +93,7 @@ public class ContinuousClassFilter {
     }
 
     private String varbalizeValue(String value) {
-        String val = value.toString();
+        String val = value;
         val = val.replaceAll("\\.", "dot");
         val = val.replaceAll(",", "coma");
         val = val.replaceAll("-", "minus");

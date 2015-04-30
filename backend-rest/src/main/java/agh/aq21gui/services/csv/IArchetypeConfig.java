@@ -28,8 +28,8 @@ public abstract class IArchetypeConfig {
 
     public List<Test> createConfig(Input in) {
         AttributesGroup attributes = in.gAG();
-        DomainsGroup domains = in.gDG();
-        EventsGroup eventsGroup = in.gEG();
+        DomainsGroup domains = in.obtainDomainsGroup();
+        EventsGroup eventsGroup = in.obtainEventsGroup();
         return createConfig(attributes, domains, eventsGroup);
     }
 

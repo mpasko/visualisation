@@ -94,29 +94,29 @@ public class Output extends Input{
 			if(childTree.getType()==TParser.HYPOTHESES){
 				outHypo.parseHypothesis(new TreeNode(childTree,TParser.HYPOTHESES));
 			}else if(childTree.getType()==TParser.INPUT_HYPOTHESES){
-				InputHypotheses inHypho = gInputHypho();
+				InputHypotheses inHypho = obtainInputHypho();
 				inHypho.parseInputHypothesis(new TreeNode(childTree,TParser.INPUT_HYPOTHESES));
-				sOutputHypho(inHypho);
+				replaceOutputHypho(inHypho);
 			}else if(childTree.getType()==TParser.DOMAINS){
 				DomainsGroup domains = new DomainsGroup();
 				domains.parseDomains(new TreeNode(childTree,TParser.DOMAINS));
-				this.sDomainsGroup(domains);
+				this.replaceDomainsGroup(domains);
 			}else if(childTree.getType()==TParser.ATTRIBUTES){
 				AttributesGroup domains = new AttributesGroup();
 				domains.parseAttributes(new TreeNode(childTree,TParser.ATTRIBUTES));
-				this.sAttributesGroup(domains);
+				this.replaceAttributesGroup(domains);
 			}else if(childTree.getType()==TParser.RUNS){
 				runsGroup.parseRuns(new TreeNode(childTree,TParser.RUNS));
 			}else if(childTree.getType()==TParser.EVENTS){
 				EventsGroup group = new EventsGroup();
 				group.parseEvents(new TreeNode(childTree,TParser.EVENTS));
-				this.sEG(group);
+				this.replaceEventsGroup(group);
 			}else if(childTree.getType()==TParser.TESTS){
 				testsGroup.parseTests(new TreeNode(childTree,TParser.TESTS));
 			}else if(childTree.getType()==TParser.TESTING_EVENTS){
 				TestingEventsGroup group = new TestingEventsGroup();
 				group.parseEvents(new TreeNode(childTree,TParser.TESTING_EVENTS));
-				this.sTEG(group);
+				this.replaceTestingEventsGroup(group);
 			}
 			else{
 //				Logger.getLogger("Interpreter").info("Received:");
@@ -150,4 +150,8 @@ public class Output extends Input{
 		
 		return builder.toString();
 	}
+    
+    public OutputHypotheses obtainOutputHypotheses() {
+        return outHypo;
+    }
 }

@@ -4,13 +4,11 @@
  */
 package agh.aq21gui.services.aq21;
 
-import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.aq21grammar.TLexer;
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.aq21grammar.TParser.output_return;
 import agh.aq21gui.model.output.Output;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import agh.aq21gui.utils.Util;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -37,7 +35,7 @@ public class OutputParser {
         CommonTree tree = null;
         try{
 //            System.out.println("Parsing:");
-//            System.out.println(out);
+//            System.out.println(Util.attachLines(out));
             output_return out_ret = parser.output();
             tree = (CommonTree)out_ret.getTree();
 //            System.out.println("tree:");

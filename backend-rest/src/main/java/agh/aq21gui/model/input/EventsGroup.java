@@ -5,7 +5,6 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
-import agh.aq21gui.model.input.events.EnumeratedNamesEvent;
 import agh.aq21gui.model.input.events.EventAdapter;
 import agh.aq21gui.model.input.events.NameValueEvent;
 import agh.aq21gui.utils.FormatterUtil;
@@ -14,7 +13,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -25,10 +23,11 @@ import javax.xml.bind.annotation.XmlTransient;
 public class EventsGroup implements IAQ21Serializable {
 	public List<Event> events;
 	String LABEL = "Events";
-	private EventAdapter adapter;
+	private transient EventAdapter adapter;
 	
 	public EventsGroup(){
-		adapter = new EnumeratedNamesEvent();
+		//adapter = new EnumeratedNamesEvent();
+        adapter = new NameValueEvent();
 		events = new LinkedList<Event>();
 	}
 	
@@ -79,4 +78,10 @@ public class EventsGroup implements IAQ21Serializable {
 			e.traverse();
 		}
 	}
+
+    Map<String, Object> formatEvent(Event event, AttributesGroup attributesGroup) {
+        List<Event> singleEvent = new LinkedList<Event>();
+        singleEvent.add(event);
+        return adapter.formatEvents(attributesGroup, singleEvent).get(0);
+    }
 }

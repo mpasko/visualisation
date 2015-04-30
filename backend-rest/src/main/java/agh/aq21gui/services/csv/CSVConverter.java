@@ -134,9 +134,9 @@ public class CSVConverter {
         DomainsGroup domains = generateDomains(columns);
         AttributesGroup attributes = predictAttributes(domains,offeredNames);
         Input input = new Input();
-        input.sEG(eventsGroup);
-        input.sDomainsGroup(domains);
-        input.sAttributesGroup(attributes);
+        input.replaceEventsGroup(eventsGroup);
+        input.replaceDomainsGroup(domains);
+        input.replaceAttributesGroup(attributes);
         return input;
     }
 }

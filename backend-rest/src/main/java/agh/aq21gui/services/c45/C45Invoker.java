@@ -46,7 +46,7 @@ public class C45Invoker extends AbstractInvoker{
                 //classAttr = attr;
             } else {
                 builder.append(attr.name).append(": ");
-                final Domain domain = attr.getdomainObjectRecursively(in.gDG());
+                final Domain domain = attr.getdomainObjectRecursively(in.obtainDomainsGroup());
                 formatAttribute(builder, attr.name, domain.name, domain.getRange());
             }
         }
@@ -58,7 +58,7 @@ public class C45Invoker extends AbstractInvoker{
         String data = "";
         String params = "";
         String result = "";
-        data = in.gEG().toString();
+        data = in.obtainEventsGroup().toString();
         try {
             result = run(params, attributes, data);
         } catch (Exception ex) {
