@@ -99,7 +99,7 @@ public class J48Service {
         return instances;
     }
 
-    private static void setClassificationClass(Input input, String className, Instances instances) {
+    public static void setClassificationClass(Input input, String className, Instances instances) {
         int classIndex = input.findAttributeNumber(className);
         instances.setClassIndex(classIndex);
     }
