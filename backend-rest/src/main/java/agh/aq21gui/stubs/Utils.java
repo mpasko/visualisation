@@ -40,32 +40,4 @@ public class Utils {
 		}
 		return true;
 	}
-
-	public static Hypothesis hypothesis(Selector... sel) {
-		Hypothesis hypo = new Hypothesis();
-		List<Rule> rules = new LinkedList<Rule>();
-		Rule rule1 = new Rule();
-		List<Selector> selectors = new LinkedList<Selector>(Arrays.asList(sel));
-		rule1.setSelectors(selectors);
-		rules.add(rule1);
-		hypo.setRules(rules);
-		return hypo;
-	}
-
-	public static Selector valueSelector(String name, String comparator, String value) {
-		Selector selector2 = new Selector();
-		selector2.name = name;
-		selector2.comparator = comparator;
-		selector2.setValue(value);
-		return selector2;
-	}
-
-	public static Selector listSelector(String name, List<String> elems) {
-		Selector selector1 = new Selector();
-		selector1.name = name;
-		selector1.comparator = "=";
-		selector1.set_elements = elems;
-		return selector1;
-	}
-	
 }

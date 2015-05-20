@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.adidata;
 
+import agh.aq21gui.stubs.StubFactory;
 import java.util.LinkedList;
 
 /**

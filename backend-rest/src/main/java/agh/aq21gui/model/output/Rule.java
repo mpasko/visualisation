@@ -6,6 +6,7 @@ package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.utils.TreeNode;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,14 @@ public class Rule {
 	
 //	@XmlTransient
 	private transient List<Selector> selectors = new LinkedList<Selector>();
+
+    public Rule() {
+        
+    }
+    
+    public Rule(Selector...sel) {
+		selectors = new LinkedList<Selector>(Arrays.asList(sel));
+    }
 	
 	@XmlElement(name="selectors")
 	public void setSelectors(List<Selector> selectors){
@@ -29,10 +38,6 @@ public class Rule {
 	
 	public List<Selector> getSelectors(){
 		return selectors;
-	}
-	
-	public Rule(){
-		
 	}
 	
 /* now */
@@ -45,7 +50,20 @@ public class Rule {
 			selectors.add(selector);
 		}
 	}
-/* */	
+/* */
+    
+    //Rule is impossible to parse this way :(
+    /*
+    public static Rule parse(String string) throws RecognitionException {
+        String ruleString = String.format("<-- %s", string);
+        TParser tokens = new OutputParser().prepareParser(ruleString);
+        CommonTree cd_tree = (CommonTree) tokens.rule().getTree();
+        TreeNode node = new TreeNode(cd_tree, TParser.RULE);
+        Rule rule = new Rule();
+        rule.parseRule(node);
+        return rule;
+    }
+    */
 
 	public void traverse() {
 		for(Selector s : selectors){

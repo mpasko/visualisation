@@ -31,6 +31,9 @@ public class AttributeRemover {
 
     public void dropAttributeOpt(Input copy, String attribute) {
         int index = copy.findAttributeNumber(attribute);
+        if (index==-1) {
+            throw new RuntimeException("Attribute name: \""+attribute+"\" not found!");
+        }
         copy.gAG().attributes.remove(index);
         for (Event event : copy.obtainEventsGroup().events) {
             List<String> list = event.getValues();

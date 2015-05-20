@@ -142,17 +142,17 @@ public class Input implements IAQ21Serializable {
 
     public void addDomain(String name, String subdomain, String parameters) {
         Domain d = new Domain();
-        d.setname(name);
-        d.setdomain(subdomain);
-        d.setparameters(parameters);
+        d.setname(name.toLowerCase());
+        d.setdomain(subdomain.toLowerCase());
+        d.setparameters(parameters.toLowerCase());
         this.domainsGroup.domains.add(d);
     }
 
     public void addAttribute(String name, String domain, String parameters) {
         Attribute a = new Attribute();
-        a.setname(name);
-        a.setdomain(domain);
-        a.setparameters(parameters);
+        a.setname(name.toLowerCase());
+        a.setdomain(domain.toLowerCase());
+        a.setparameters(parameters.toLowerCase());
         this.attributesGroup.attributes.add(a);
     }
 

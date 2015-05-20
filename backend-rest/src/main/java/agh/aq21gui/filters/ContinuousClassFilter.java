@@ -10,45 +10,41 @@ import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.Util;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author marcin
  */
 public class ContinuousClassFilter {
-    private final static String DOMAIN_NAME = "triggered";
-    
-    public ContinuousClassFilter() {
-    }
-    
-    public Input filter(Input in, ClassDescriptor cd) {
-        Input result = Util.deepCopyInput(in);
-        String name = cd.getName();
-        final String stringValue = cd.getValue();
-        double doubleValue = NumericUtil.tryParse(stringValue);
-        if (Double.isNaN(doubleValue)) {
-            return in;
+
+    private final static String DOMAIN_NAME = "_triggered";
+    public static final String STRING_UNSUPPORTED = "ClassDescriptor with list only supported for continuous valuses";
+
+    private static void assertNotStringValue(double parsedValue) throws RuntimeException {
+        if (Double.isNaN(parsedValue)) {
+            throw new RuntimeException(STRING_UNSUPPORTED);
         }
-        String comparator = cd.getComparator();
-        int index = in.gAG().getIndexOfAttribute(name);
-        final String negatedComparator = Util.negatedComparator(comparator);
-        String match = verbalize(comparator)+varbalizeValue(stringValue);
-        String not_match = verbalize(negatedComparator)+varbalizeValue(stringValue);
-        //System.out.println(match);
-        //System.out.println(not_match);
-        //System.out.println(comparator);
-        //System.out.println(negatedComparator);
-        Domain triggered = prepareDomain(match, not_match);
-        result.obtainDomainsGroup().domains.add(triggered);
-        result.gAG().replaceAttributeDomain(name, triggered);
-        result = processEvents(result, index, cd, match, not_match);
-        return result;
     }
 
-    private Domain prepareDomain(String match, String not_match) {
-        final Domain triggered = new Domain(DOMAIN_NAME,"nominal");
-        triggered.set_elements = Util.strings(match,not_match);
-        return triggered;
+    public ContinuousClassFilter() {
+    }
+
+    public Input filter(Input in, ClassDescriptor cd) {
+        Input result = Util.deepCopyInput(in);
+        int index = in.gAG().getIndexOfAttribute(cd.getName());
+        if (cd.getSet_elements().size() > 0) {
+            LinkedList<String> labels = prepareLabels(cd.getSet_elements(), "<");
+            setupNewDomain(labels, result, cd.getName());
+            result = processEventsMultiple(result, index, cd, labels);
+        } else {
+            LinkedList<String> labels = prepareLabels(Util.strings(cd.getValue()), cd.getComparator());
+            setupNewDomain(labels, result, cd.getName());
+            result = processEventsSingle(result, index, cd, labels.get(0), labels.get(1));
+        }
+        return result;
     }
 
     private String verbalize(String comparator) {
@@ -78,15 +74,28 @@ public class ContinuousClassFilter {
         }
     }
 
-    private Input processEvents(Input result, int index, ClassDescriptor cd, String match, String not_match) {
+    private Input processEventsSingle(Input result, int index, ClassDescriptor cd, String match, String not_match) {
         for (Event event : result.obtainEventsGroup().events) {
             String currentValue = event.getValues().get(index);
-            if (!NumericUtil.isWildcard(currentValue)){
+            if (!NumericUtil.isWildcard(currentValue)) {
                 if (cd.matchesValue(currentValue)) {
                     event.replaceValueAt(index, match);
                 } else {
                     event.replaceValueAt(index, not_match);
                 }
+            }
+        }
+        return result;
+    }
+
+    private Input processEventsMultiple(Input result, int index, ClassDescriptor cd, LinkedList<String> labels) {
+        for (Event event : result.obtainEventsGroup().events) {
+            String currentValue = event.getValues().get(index);
+            if (!NumericUtil.isWildcard(currentValue)) {
+                double doubleValue = NumericUtil.tryParse(currentValue);
+                assertNotStringValue(doubleValue);
+                int number = determineWhichRangeMatches(doubleValue, cd.set_elements);
+                event.replaceValueAt(index, labels.get(number));
             }
         }
         return result;
@@ -99,5 +108,53 @@ public class ContinuousClassFilter {
         val = val.replaceAll("-", "minus");
         val = val.replaceAll("\\{|\\}", "");
         return val;
+    }
+
+    private void appendToLastItem(LinkedList<String> labels, String match) {
+        if (labels.isEmpty()){
+            labels.offerLast(match);
+        } else {
+            StringBuilder new_last = new StringBuilder();
+            new_last.append(labels.pollLast());
+            new_last.append("_and_");
+            new_last.append(match);
+            labels.offerLast(new_last.toString());
+        }
+    }
+
+    public static int determineWhichRangeMatches(double doubleValue, List<String> set_elements) {
+        int cnt = 0;
+        Iterator<String> iterator = set_elements.iterator();
+        while(iterator.hasNext() && __helper_function_with_weird_name(doubleValue, iterator)){
+            cnt++;
+        }
+        return cnt;
+    }
+
+    private static boolean __helper_function_with_weird_name(double doubleValue, Iterator<String> iterator) {
+        double parsedValue = NumericUtil.tryParse(iterator.next());
+        assertNotStringValue(parsedValue);
+        return doubleValue>=parsedValue;
+    }
+
+    private LinkedList<String> prepareLabels(List<String> stringValues, String comparator) throws RuntimeException {
+        LinkedList<String> labels = new LinkedList<String>();
+        for (String stringValue : stringValues) {
+            double doubleValue = NumericUtil.tryParse(stringValue);
+            assertNotStringValue(doubleValue);
+            final String negatedComparator = Util.negatedComparator(comparator);
+            String match = verbalize(comparator) + varbalizeValue(stringValue);
+            String not_match = verbalize(negatedComparator) + varbalizeValue(stringValue);
+            appendToLastItem(labels, match);
+            labels.offerLast(not_match);
+        }
+        return labels;
+    }
+
+    private void setupNewDomain(LinkedList<String> labels, Input result, String name) {
+        final Domain triggered = new Domain(name+DOMAIN_NAME, "nominal");
+        triggered.set_elements = labels;
+        result.obtainDomainsGroup().domains.add(triggered);
+        result.gAG().replaceAttributeDomain(name, triggered);
     }
 }

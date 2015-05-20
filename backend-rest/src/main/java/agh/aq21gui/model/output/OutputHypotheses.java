@@ -52,11 +52,12 @@ public class OutputHypotheses implements IAQ21Deserializable{
 
     @Override
     public String toString() {
-        if (hypotheses.isEmpty()) {
-            return "";
+        String out = "";
+        if (!hypotheses.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            FormatterUtil.appendAll(builder, hypotheses, 0);
+            out = builder.toString();
         }
-        StringBuilder builder = new StringBuilder();
-        FormatterUtil.appendAll(builder, hypotheses, 0);
-        return builder.toString();
+        return out;
     }
 }

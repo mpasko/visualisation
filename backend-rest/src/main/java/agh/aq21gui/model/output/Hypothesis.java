@@ -7,6 +7,7 @@ package agh.aq21gui.model.output;
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,12 +20,22 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class Hypothesis {
-	
-	private long id=0;
+    
 	public String name;
 	private ClassesGroup classes=new ClassesGroup();
 	protected String LABEL;
-	public List<Rule> rules = new LinkedList<Rule>();
+	public List<Rule> rules = new LinkedList<Rule>(); 
+	
+	public Hypothesis(){
+		LABEL = "Output_hypotheses";
+        name = "hypothesis0";
+	}
+    
+    public Hypothesis(Rule...sel) {
+        this();
+		List<Rule> rules = Arrays.asList(sel);
+		this.rules = rules;
+    }
 	
 	@XmlElement(name="classes")
 	public void setClasses(List<ClassDescriptor> classesDescriptors){
@@ -51,11 +62,6 @@ public class Hypothesis {
 	
 	public List<Rule> getRules(){
 		return rules;
-	}
-	
-	public Hypothesis(){
-		LABEL = "Output_hypotheses";
-        name = "hypothesis0";
 	}
 	
 	public void addClass(ClassDescriptor desc){
@@ -99,17 +105,18 @@ public class Hypothesis {
 
 	@Override
 	public String toString() {
-		if (rules.isEmpty()) {
-			return "";
-		}
-		StringBuilder builder = FormatterUtil.begin(LABEL, name);
-        builder.append(printClasses());
-		for(Rule rule : rules){
-            builder.append("\n   <-- ");
-            builder.append(rule.toString());
-            builder.append("\n");
+        String string = "";
+		if (!rules.isEmpty()) {
+            StringBuilder builder = FormatterUtil.begin(LABEL, name);
+            builder.append(printClasses());
+            for(Rule rule : rules){
+                builder.append("\n   <-- ");
+                builder.append(rule.toString());
+                builder.append("\n");
+            }
+            string = FormatterUtil.terminate(builder);
         }
-		return FormatterUtil.terminate(builder);
+		return string;
 	}
 
 	void traverse() {

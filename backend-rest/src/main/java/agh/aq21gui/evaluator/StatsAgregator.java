@@ -20,15 +20,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class StatsAgregator {
     private Map<String, Statistics> particular = new HashMap<String, Statistics>();
-    
-    @XmlElement(name="totall")
-    public Statistics getTotall(){
-        Statistics totall = new Statistics();
-        for(Statistics stats : getParticular().values()) {
-            totall.increment(stats);
-        }
-        return totall;
-    }
 
     /**
      * @return the particular

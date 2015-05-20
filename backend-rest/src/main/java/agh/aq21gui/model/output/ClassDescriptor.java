@@ -5,7 +5,6 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
-import agh.aq21gui.aq21grammar.TParser.class_description_return;
 import agh.aq21gui.model.input.NameValueEntity;
 import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.NumericUtil;
@@ -23,11 +22,29 @@ import org.antlr.runtime.tree.CommonTree;
  */
 @XmlRootElement
 public class ClassDescriptor extends NameValueEntity{
-
 	public String comparator="";
 	private String value="";
 	public String range_begin="";
 	public String range_end="";
+    
+    public ClassDescriptor(String name, String comparator, String value) {
+		this.name = name.toLowerCase();
+		this.comparator = comparator;
+		this.value = value.toLowerCase();
+    }
+
+    public ClassDescriptor() {
+        
+    }
+    
+    public ClassDescriptor(String name, List<String> elems){
+		this.name = name.toLowerCase();
+		this.comparator = "=";
+		this.set_elements = new LinkedList<String>();
+        for (String elem : elems) {
+            this.set_elements.add(elem.toLowerCase());
+        }
+    }
 	
 	@XmlElement(name="comparator")
 	public void setComparator(String comp){
@@ -117,7 +134,8 @@ public class ClassDescriptor extends NameValueEntity{
 	}
     
     public static ClassDescriptor parse(String string) throws RecognitionException {
-        TParser tokens = new OutputParser().prepareParser(string);
+        String cdString = bracketify(string);
+        TParser tokens = new OutputParser().prepareParser(cdString);
         CommonTree cd_tree = (CommonTree) tokens.class_description().getTree();
         TreeNode node = new TreeNode(cd_tree, TParser.CLASS_DESCRIPTION);
         ClassDescriptor cd = new ClassDescriptor();
@@ -126,36 +144,35 @@ public class ClassDescriptor extends NameValueEntity{
     }
 
 	public boolean contains(ClassDescriptor other) {
+        boolean outcome = false;
 		if (equals(other)){
-			return true;
-		}
-		if (this.comparator.equals("=")){
-			return false;
+			outcome = true;
+		} else if (this.comparator.equals("=")){
+			outcome = false;
 		}
 		//TODO
-		return false;
+		return outcome;
 	}
 	
 	@Override
 	public boolean equals(Object next){
+        boolean outcome = false;
 		if (next==null){
-			return false;
-		}
-		if (next instanceof ClassDescriptor) {
+			outcome = false;
+		} else if (next instanceof ClassDescriptor) {
 			ClassDescriptor other = (ClassDescriptor)next;
+            outcome = true;
 			if (!this.name.equalsIgnoreCase(other.name)){
-				return false;
+				outcome = false;
+			} else if (!this.comparator.equalsIgnoreCase(other.comparator)){
+				outcome = false;
+			} else if (!this.getValue().equalsIgnoreCase(other.getValue())){
+				outcome = false;
 			}
-			if (!this.comparator.equalsIgnoreCase(other.comparator)){
-				return false;
-			}
-			if (!this.getValue().equalsIgnoreCase(other.getValue())){
-				return false;
-			}
-			return true;
 		} else {
-			return false;
+			outcome = false;
 		}
+        return outcome;
 	}
 
 	@Override
@@ -187,11 +204,12 @@ public class ClassDescriptor extends NameValueEntity{
 	}
 
     public boolean matchesValue(String actualValue) {
+        boolean outcome = false;
         if (value.isEmpty()) {
             if (!range_begin.isEmpty()) {
-                return matchesRange(actualValue);
+                outcome = matchesRange(actualValue);
             } else if (this.set_elements.size()>=1) {
-                return matchesSet(actualValue);
+                outcome = matchesSet(actualValue);
             }
         } else {
             //Descriptor has often format i.e. colour>0.5
@@ -201,12 +219,12 @@ public class ClassDescriptor extends NameValueEntity{
             final boolean textFields = Double.isNaN(right)||Double.isNaN(left);
             final boolean comaratorIsNonequality = comparator.equals("!=") || comparator.equals("<>");
             if (textFields) {
-                return matchesTextValue(actualValue, comaratorIsNonequality);
+                outcome = matchesTextValue(actualValue, comaratorIsNonequality);
             } else {
-                return matchesDoubleValue(left, right, comaratorIsNonequality);
+                outcome = matchesDoubleValue(left, right, comaratorIsNonequality);
             }
         }
-        return false;
+        return outcome;
     }
 
     private double parseDouble(String value) throws RuntimeException {

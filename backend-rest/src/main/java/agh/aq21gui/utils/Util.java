@@ -10,6 +10,7 @@ import agh.aq21gui.model.output.Output;
 import agh.aq21gui.services.aq21.OutputParser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -120,5 +121,23 @@ public class Util {
             b.append("\n");
         }
         return b.toString();
+    }
+
+    public static String loadFile(String filename) {
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream(filename);
+            return Util.streamToString(stream);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 }

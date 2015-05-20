@@ -38,6 +38,9 @@ public class JrippService {
         //jripp.setOptions(cmdline);
         jripp.buildClassifier(instances);
         System.out.println(jripp.getRuleset());
+        for (weka.classifiers.rules.Rule item : jripp.getRuleset()) {
+            System.out.println(item.toString());
+        }
         //TODO
         throw new UnsupportedOperationException("Not yet implemented");
     }

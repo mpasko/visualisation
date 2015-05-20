@@ -13,6 +13,15 @@ import javax.xml.bind.annotation.XmlElement;
  * @author marcin
  */
 public abstract class NameValueEntity implements IAQ21Serializable {
+
+    protected static String bracketify(String string) {
+        boolean bracketed = string.startsWith("[") && string.endsWith("]");
+        String selectorString = string;
+        if (!bracketed) {
+            selectorString = "[" + string + "]";
+        }
+        return selectorString;
+    }
 	public long id;
 	public String name;
 	public List<String> set_elements = new LinkedList<String>();

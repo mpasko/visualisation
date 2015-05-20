@@ -6,6 +6,7 @@ package agh.aq21gui.model.gld.presentation;
 
 import agh.aq21gui.model.gld.processing.CellValue;
 import agh.aq21gui.model.output.ClassDescriptor;
+import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.stubs.Utils;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,12 +30,12 @@ public class MapPresenterTest {
 	public void testGetValues() {
 		System.out.println("getValues");
 		
-		ClassDescriptor a = Utils.valueSelector("a", "=", "1");
-		ClassDescriptor b = Utils.valueSelector("b", "=", "2");
-		ClassDescriptor b2 = Utils.valueSelector("b", "=", "2");
-		ClassDescriptor c = Utils.valueSelector("c", "=", "3");
-		ClassDescriptor c2 = Utils.valueSelector("c", "=", "3");
-		ClassDescriptor d = Utils.valueSelector("d", "=", "4");
+		ClassDescriptor a = new Selector("a", "=", "1");
+		ClassDescriptor b = new Selector("b", "=", "2");
+		ClassDescriptor b2 = new Selector("b", "=", "2");
+		ClassDescriptor c = new Selector("c", "=", "3");
+		ClassDescriptor c2 = new Selector("c", "=", "3");
+		ClassDescriptor d = new Selector("d", "=", "4");
 		List<CellValue> mesh_cells = new LinkedList<CellValue>();
 		mesh_cells.add(new CellValue(a));
 		mesh_cells.add(new CellValue(b));

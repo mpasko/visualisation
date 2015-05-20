@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
  * @author marcin
  */
 public class StopIteratorTest {
+    public static final String LIST = "list";
 	private Value a;
 	private Value b;
 	private LinkedList<Value> list;
@@ -108,7 +109,7 @@ public class StopIteratorTest {
 	@Test
 	public void testRollback() {
 		System.out.println("rollback");
-		StopIterator instance = new StopIterator("list",list);
+		StopIterator instance = new StopIterator(LIST,list);
 		instance.shift();
 		instance.rollback();
 		

@@ -67,11 +67,9 @@ public class NumericUtil {
 
     public static String formatNumber(Integer number) {
         final String text = number.toString();
-        String prefix = "";
-        for (int i = 0; i < 3 - text.length(); ++i) {
-            prefix = prefix.concat("0");
-        }
-        return prefix.concat(text);
+        int desiredLength = 3;
+        String textToFill = "0";
+        return FormatterUtil.alignString(desiredLength, textToFill, text);
     }
 
     public static int parseIntegerDefault(String param, int defaultValue) {

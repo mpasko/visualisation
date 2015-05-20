@@ -65,7 +65,6 @@ public class GLDStateTest {
 	@Test
 	public void testSetRatioImportance() {
 		System.out.println("setRatioImportance");
-		int newp = 0;
 		GLDState instance = StubFactory.getGLDState();
 		instance.setRatioImportance(1.0);
 		double expResult = instance.getClusters()/instance.getMaxClusters()+instance.getGoldenRatioCloseness();
@@ -167,7 +166,6 @@ public class GLDStateTest {
 		List<Argument> rows=new LinkedList<Argument>();
 		data.setRows(rows);
 		GLDState instance = GLDState.build(data);
-		State expResult = null;
 		GLDState result = (GLDState) instance.cloneItself();
 		assertNotSame(data, result.getData());
 		assertNotSame(cols, result.getData().getColumns());
