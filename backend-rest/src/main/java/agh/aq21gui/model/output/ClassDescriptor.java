@@ -299,4 +299,8 @@ public class ClassDescriptor extends NameValueEntity{
         }
         return result;
     }
+
+    public boolean isCustomValue() {
+        return getValue().equalsIgnoreCase("*");
+    }
 }

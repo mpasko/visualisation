@@ -49,8 +49,8 @@ public class IntegrationTest {
 		gld_in.setData(baloons);
 		GLDOptimizer optimizer = new GLDOptimizer(gld_in, new SimulatedAnnealing());
 		GLDOutput gld_output = optimizer.getInitialData();
-		gld_output.print();
-		GLDOutput.printCellValues(gld_output);
+		//gld_output.print();
+		//GLDOutput.printCellValues(gld_output);
 		assertEquals(2, gld_output.getWidth());
 		assertEquals(2, gld_output.getHeight());
 		assertEquals(3, countMatches(gld_output, "attribute5","t"));
@@ -63,8 +63,8 @@ public class IntegrationTest {
 		gld_in.setData(baloons);
 		GLDOptimizer optimizer = new GLDOptimizer(gld_in, new SimulatedAnnealing());
 		GLDOutput gld_output = optimizer.optimize();
-		gld_output.print();
-		GLDOutput.printCellValues(gld_output);
+		//gld_output.print();
+		//GLDOutput.printCellValues(gld_output);
 		assertEquals(2, gld_output.getWidth());
 		assertEquals(2, gld_output.getHeight());
 		assertEquals(3, countMatches(gld_output, "attribute5","t"));
@@ -78,8 +78,8 @@ public class IntegrationTest {
 		gld_in.setData(iris);
 		GLDOptimizer optimizer = new GLDOptimizer(gld_in, new SimulatedAnnealing());
 		GLDOutput gld_output = optimizer.getInitialData();
-		gld_output.print();
-		GLDOutput.printCellValues(gld_output);
+		//gld_output.print();
+		//GLDOutput.printCellValues(gld_output);
 		int num_cells = gld_output.getWidth()*gld_output.getHeight();
 		if(5384!=num_cells){
 			skip_iris_all = true;
@@ -98,8 +98,8 @@ public class IntegrationTest {
 		gld_in.setData(iris);
 		GLDOptimizer optimizer = new GLDOptimizer(gld_in, new SimulatedAnnealing());
 		GLDOutput gld_output = optimizer.optimize();
-		gld_output.print();
-		GLDOutput.printCellValues(gld_output);
+		//gld_output.print();
+		//GLDOutput.printCellValues(gld_output);
 		assertEquals(5184, gld_output.getWidth()*gld_output.getHeight());
 	}
 	
@@ -110,10 +110,9 @@ public class IntegrationTest {
 		gld_in.setData(aq21example);
 		GLDOptimizer optimizer = new GLDOptimizer(gld_in, new SimulatedAnnealing());
 		GLDOutput gld_output = optimizer.getInitialData();
-		gld_output.print();
-		GLDOutput.printCellValues(gld_output);
+		//gld_output.print();
+		//GLDOutput.printCellValues(gld_output);
 		assertEquals(1, gld_output.getColumns().size()+gld_output.getRows().size());
-	//	assertEquals(2, gld_output.getHeight()*gld_output.getWidth());
 	}
 	
 	@Test
@@ -123,10 +122,9 @@ public class IntegrationTest {
 		gld_in.setData(aq21example);
 		GLDOptimizer optimizer = new GLDOptimizer(gld_in, new SimulatedAnnealing());
 		GLDOutput gld_output = optimizer.optimize();
-		gld_output.print();
-		GLDOutput.printCellValues(gld_output);
+		//gld_output.print();
+		//GLDOutput.printCellValues(gld_output);
 		assertEquals(1, gld_output.getColumns().size()+gld_output.getRows().size());
-	//	assertEquals(2, gld_output.getHeight()*gld_output.getWidth());
 	}
 	
 	@Test
@@ -136,8 +134,8 @@ public class IntegrationTest {
 		gld_in.setData(alternateCovers);
 		GLDOptimizer optimizer = new GLDOptimizer(gld_in, new SimulatedAnnealing());
 		GLDOutput gld_output = optimizer.getInitialData();
-		gld_output.print();
-		GLDOutput.printCellValues(gld_output);
+		//gld_output.print();
+		//GLDOutput.printCellValues(gld_output);
 		assertEquals(3, gld_output.getColumns().size()+gld_output.getRows().size());
 		assertEquals(5, countMatches(gld_output, "c", "1"));
 	}
@@ -149,8 +147,8 @@ public class IntegrationTest {
 		gld_in.setData(alternateCovers);
 		GLDOptimizer optimizer = new GLDOptimizer(gld_in, new SimulatedAnnealing());
 		GLDOutput gld_output = optimizer.optimize();
-		gld_output.print();
-		GLDOutput.printCellValues(gld_output);
+		//gld_output.print();
+		//GLDOutput.printCellValues(gld_output);
 		assertEquals(3, gld_output.getColumns().size()+gld_output.getRows().size());
 		assertEquals(5, countMatches(gld_output, "c", "1"));
 	}

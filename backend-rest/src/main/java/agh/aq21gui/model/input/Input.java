@@ -6,6 +6,7 @@ package agh.aq21gui.model.input;
 
 import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Hypothesis;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -21,7 +22,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Input implements IAQ21Serializable {
 
-    private long dbid = 0;
     public RunsGroup runsGroup;
     private AttributesGroup attributesGroup;
     private DomainsGroup domainsGroup;
@@ -219,13 +219,14 @@ public class Input implements IAQ21Serializable {
 
     public int findAttributeNumber(String className) {
         int serial = 0;
+        int found = -1;
         for (Attribute aq21_attr : this.getAttributes()) {
             if (aq21_attr.name.equalsIgnoreCase(className)) {
-                return serial;
+                found = serial;
             }
             serial++;
         }
-        return -1;
+        return found;
     }
 
     public Map<String, Object> generateKeyValue(Event event) {
@@ -236,9 +237,39 @@ public class Input implements IAQ21Serializable {
         return this.eventsGroup.events.size();
     }
 
+    @Deprecated
     public ClassDescriptor getAggregatedClassDescriptor() {
         //TODO do it for all class descriptors obtained
         Test run = this.runsGroup.getRuns().get(0);
         return run.grepClassDescriptor();
+    }
+
+    public Domain findDomainObjectRrecursively(String name) {
+        String currentName = name;
+        Attribute attr = this.findAttribute(currentName);
+        Domain found = null;
+        if (attr!=null) {
+            if (attr.isTerminal()) {
+                found = attr;
+            }
+            currentName = attr.getdomain();
+        }
+        if (found==null){
+            found = this.obtainDomainsGroup().findDomainObjectRecursively(currentName);
+        }
+        return found;
+    }
+
+    public Attribute findAttribute(String name) {
+        return this.attributesGroup.getAttributeByName(name);
+    }
+
+    public LinkedList<String> getCollumnOfData(String claz) {
+        LinkedList<String> items = new LinkedList<String>();
+        for (int i = 0; i < getEvents().size(); ++i) {
+            String stringValue = (String) getEvents().get(i).get(claz);
+            items.add(stringValue);
+        }
+        return items;
     }
 }

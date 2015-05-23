@@ -14,21 +14,16 @@ import agh.aq21gui.evaluator.StatsAgregator;
 import agh.aq21gui.filters.AttributeRemover;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
-import agh.aq21gui.model.input.Test;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.stubs.StubFactory;
 import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.Util;
-import com.orientechnologies.common.collection.OMVRBTree;
 import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  *
@@ -87,9 +82,8 @@ public class ADIExperiment {
         //System.out.println(input.toString());
         Output result = resource.performExperiment(input);
         Output sortedResult = new RuleSorter().sort(result);
-        if (sortedResult.countEvents()==0){
-            sortedResult.replaceEventsGroup(input.obtainEventsGroup());
-        }
+        
+        //System.out.println(sortedResult);
         System.out.println(sortedResult.obtainOutputHypotheses().toString());
         StatsAgregator metrics = new MetricsResource().analyze(sortedResult);
         System.out.println(metrics.toString());
@@ -100,11 +94,14 @@ public class ADIExperiment {
     }
 
     private String formatTextResults() {
+        int max = computeFirstRowSize();
         StringBuilder build = new StringBuilder();
-        build.append("     name ||  TP |  TN |  FP |  FN |\n");
+        build.append(FormatterUtil.alignStringForward(max, " ", "name"));
+        build.append("||  TP |  TN |  FP |  FN |\n");
         for (Entry<String, Statistics> entry : statTable.entrySet()) {
-            build.append("==========++=====+=====+=====+=====+\n");
-            build.append(FormatterUtil.alignStringForward(10, " ", entry.getKey()));
+            build.append(FormatterUtil.alignStringForward(max, "=", ""));
+            build.append("++=====+=====+=====+=====+\n");
+            build.append(FormatterUtil.alignStringForward(max, " ", entry.getKey()));
             build.append("||");
             Statistics stat = entry.getValue();
             build.append(alignNumber(stat.getTruePositive()));
@@ -124,5 +121,16 @@ public class ADIExperiment {
         String truePositive = new Integer(truePositive1).toString();
         String alignString = FormatterUtil.alignString(5, " ", truePositive);
         return alignString;
+    }
+
+    private int computeFirstRowSize() {
+        int max = 7;
+        for (String key : statTable.keySet()) {
+            if (key.length() > max) {
+                max = key.length();
+            }
+        }
+        max += 3;
+        return max;
     }
 }

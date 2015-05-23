@@ -38,10 +38,12 @@ public class PropertyRecognitionChemical {
         //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
         adiExperiment.setAlgList(algSet);
-		adiExperiment.runAllPossibilities(RM_MPA, "1257", allWithout(RM_MPA));
-        adiExperiment.runAllPossibilities(RE_MPA, "1097", allWithout(RE_MPA));
-        adiExperiment.runAllPossibilities(WYTRZYM_ZMECZ_MPA, "282", allWithout(WYTRZYM_ZMECZ_MPA));
-        //TODO Dyskretyzacja
+		adiExperiment.runAllPossibilities(RM_MPA, null, allWithout(RM_MPA));
+        adiExperiment.runAllPossibilities(RE_MPA, null, allWithout(RE_MPA));
+        adiExperiment.runAllPossibilities(WYTRZYM_ZMECZ_MPA, null, allWithout(WYTRZYM_ZMECZ_MPA));
+        adiExperiment.runAllPossibilities(K1C_M_PA_VM, null, allWithout(K1C_M_PA_VM));
+        adiExperiment.runAllPossibilities(A5_PERCENT, null, allWithout(A5_PERCENT));
+        adiExperiment.runAllPossibilities(HC_R, null, allWithout(HC_R));
     }
 
     private static List<String> allWithout(String item) {

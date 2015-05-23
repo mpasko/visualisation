@@ -21,16 +21,27 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlRootElement
 public class Test implements IAQ21Serializable {
-	public String name = "";
+	private String name;
 	protected int ID = TParser.TESTS_PARAMS;
+    private static int generator=0;
 	
 	@XmlTransient
 	public UniversalParametersContainer runSpecificParameters;
 
 	public Test(){
-	//	this.name = name;
+		this.name = "test";
+        if (generator++>0) {
+            this.name+=generator;
+        }
 		runSpecificParameters = new UniversalParametersContainer(name);
 	}	
+
+    public Test(Test run) {
+        runSpecificParameters = new UniversalParametersContainer(run.name);
+        for (Parameter param : run.getRunSpecificParameters()) {
+            addParameter(param);
+        }
+    }
 	
 	@XmlElement(name = "name")
 	public void setName(String nm){
@@ -41,11 +52,21 @@ public class Test implements IAQ21Serializable {
 		return name;
 	}
 	
+    
 	public void addParameter(String name, String value) {
-		Parameter p = new Parameter(this.name);
-		p.name = name;
-		p.value = value;
+        addParameter(name, value, new LinkedList<ClassDescriptor>());
+    }
+    
+	public void addParameter(String name, String value, List<ClassDescriptor> descriptors) {
+		Parameter p = new Parameter(this.getName());
+		p.name = name.toLowerCase();
+        p.setDescriptors(descriptors);
+		p.value = value.toLowerCase();
 		runSpecificParameters.parameters.add(p);
+	}
+    
+    public final void addParameter(Parameter param) {
+		addParameter(param.getName(), param.getValue(), param.getDescriptors());
 	}
 
 	@XmlElement(name = "runSpecificParameters")
@@ -72,29 +93,32 @@ public class Test implements IAQ21Serializable {
 	
 	@Override
 	public String toString() {
+        String text = "";
 		if (isNotEmpty()) {
 			StringBuilder builder = FormatterUtil.begin(name);
 			builder.append(runSpecificParameters.toString());
-			return FormatterUtil.terminate(builder);
-		}else{
-			return  "";
+			text = FormatterUtil.terminate(builder);
 		}
+        return text;
 	}
 
 	void traverse() {
-		if(name.isEmpty());
+		if(name.isEmpty()){
+            name = "";
+        }
 	}
 
     public ClassDescriptor grepClassDescriptor() {
+        ClassDescriptor cd = null;
         Parameter param = findConsequentParam();
         if (param != null) {
             List<ClassDescriptor> descriptors = param.getDescriptors();
             if (descriptors.isEmpty()) {
                 throw new IncorrectInputException("Consequent should specify at least one class!");
             }
-            return descriptors.get(0);
+            cd = descriptors.get(0);
         }
-        return null;
+        return cd;
     }
     
     public Parameter findConsequentParam() {
@@ -102,20 +126,22 @@ public class Test implements IAQ21Serializable {
     }
     
     public Parameter findParam(String name) {
+        Parameter found = null;
         for (Parameter param : this.runSpecificParameters.parameters) {
             if (param.name.equalsIgnoreCase(name)) {
-                return param;
+                found = param;
             }
         }
-        return null;
+        return found;
     }
     
     public String grepClassName() {
+        String cname = "";
         ClassDescriptor desc = grepClassDescriptor();
         if (desc != null) {
-            return desc.getName();
+            cname = desc.getName();
         }
-        return "";
+        return cname;
     }
 
     public String grepCondition() {
@@ -123,8 +149,6 @@ public class Test implements IAQ21Serializable {
     }
 
     public void enforceClass(String newClass, String threshold) {
-        Parameter param = findOrCreateParam("Consequent");
-        List<ClassDescriptor> descs = new LinkedList<ClassDescriptor>();
         ClassDescriptor cd = new ClassDescriptor();
         cd.setName(newClass);
         if (threshold==null) {
@@ -134,7 +158,13 @@ public class Test implements IAQ21Serializable {
             cd.setComparator("<=");
             cd.setValue(threshold);
         }
-        descs.add(cd);
+        enforceClass(cd);
+    }
+
+    public void enforceClass(ClassDescriptor classDescriptor) {
+        Parameter param = findOrCreateParam("Consequent");
+        List<ClassDescriptor> descs = new LinkedList<ClassDescriptor>();
+        descs.add(classDescriptor);
         param.setDescriptors(descs);
     }
 

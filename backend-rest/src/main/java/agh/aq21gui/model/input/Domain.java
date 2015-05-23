@@ -5,7 +5,6 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
-import agh.aq21gui.exceptions.ItemNotFoundException;
 import agh.aq21gui.utils.TreeNode;
 import agh.aq21gui.utils.Util;
 import java.util.LinkedList;
@@ -165,15 +164,9 @@ public class Domain extends NameValueEntity{
 		return this.set_elements;
 	}
     
+    @Deprecated
     public List<String> getRangeRecursively(DomainsGroup dg) {
-        if (this.set_elements==null || this.set_elements.isEmpty()) {
-            Domain domObject = getdomainObjectRecursively(dg);
-            if (domObject==null){
-                throw new ItemNotFoundException("Domain not found!");
-            }
-            return domObject.getRange();
-        }
-		return this.set_elements;
+		return dg.getRangeRecursively(this);
 	}
 
 	public boolean emptyParams() {
@@ -183,29 +176,15 @@ public class Domain extends NameValueEntity{
 	}
 
 	
+    @Deprecated
 	public String getdomainNameRecursively(DomainsGroup dg){
-		return getdomainObjectRecursively(dg).domain;
+        Domain domainObject = dg.getdomainObjectRecursively(this);
+		return domainObject.getdomain();
 	}
     
+    @Deprecated
     public Domain getdomainObjectRecursively(DomainsGroup dg){
-		Domain doma = this;
-		final boolean notContinuous = !doma.isContinuous();
-		final boolean notNominal = !doma.isNominal();
-		final boolean notInteger = !doma.isInteger();
-		final boolean notLinear = !doma.isLinear();
-		if (notContinuous&&notInteger&&notLinear&&notNominal){
-			Domain domObject = dg.findDomain(doma.domain);
-            if (domObject==null){
-                throw new ItemNotFoundException("Domain not found!");
-            }
-            Domain prev_doma = doma;
-            doma = domObject;
-            if (prev_doma.equals(doma)){
-                return doma;
-            }
-			return domObject.getdomainObjectRecursively(dg);
-		}
-		return doma;
+		return dg.getdomainObjectRecursively(this);
 	}
 
     public boolean isContinuous() {
@@ -222,5 +201,9 @@ public class Domain extends NameValueEntity{
 
     public boolean isLinear() {
         return domain.equalsIgnoreCase("linear");
+    }
+
+    public boolean isTerminal() {
+        return isContinuous()||isInteger()||isLinear()||isNominal();
     }
 }

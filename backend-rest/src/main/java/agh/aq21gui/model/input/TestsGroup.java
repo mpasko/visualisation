@@ -31,7 +31,7 @@ public class TestsGroup implements IAQ21Serializable {
 	public List<String> getRunsNames(){
 		LinkedList<String> working = new LinkedList<String>();
 		for(Test run : runs){
-			working.add(run.name);
+			working.add(run.getName());
 		}
 		return working;
 	}
@@ -84,6 +84,7 @@ public class TestsGroup implements IAQ21Serializable {
 
 	@Override
 	public String toString() {
+        String out;
 		boolean emptyGlobParams=true;
 		if(globalLearningParameters!=null){
 			emptyGlobParams=globalLearningParameters.parameters.isEmpty();
@@ -97,15 +98,17 @@ public class TestsGroup implements IAQ21Serializable {
 			}
 		}
 		if(emptyGlobParams&&emptyRuns){
-			return "";
-		}
-		StringBuilder builder = FormatterUtil.begin(LABEL);
-		if (!emptyGlobParams) {
-			builder.append(globalLearningParameters.toString());
-		}
-		builder.append('\n');
-		FormatterUtil.appendAll(builder, runs, 1);
-		return FormatterUtil.terminate(builder);
+			out = "";
+		} else {
+            StringBuilder builder = FormatterUtil.begin(LABEL);
+            if (!emptyGlobParams) {
+                builder.append(globalLearningParameters.toString());
+            }
+            builder.append('\n');
+            FormatterUtil.appendAll(builder, runs, 1);
+            out = FormatterUtil.terminate(builder);
+        }
+        return out;
 	}
 
 	void traverse() {

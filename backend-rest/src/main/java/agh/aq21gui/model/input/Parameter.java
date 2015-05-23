@@ -10,8 +10,6 @@ import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.antlr.runtime.RecognitionException;
@@ -99,7 +97,6 @@ public class Parameter implements IAQ21Serializable {
                 CommonTree tree = (CommonTree) outputParser.prepareParser(value).value().getTree();
                 parseValue(tree);
             } catch (RecognitionException ex) {
-                Logger.getLogger(Parameter.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return this.descriptors;
@@ -116,7 +113,9 @@ public class Parameter implements IAQ21Serializable {
 	}
 
 	void traverse() {
-		if(id==-1);
+		if(id==-1) {
+            id-=1;
+        }
 	}
 
     private void parseValue(CommonTree valueNode) {
@@ -137,12 +136,14 @@ public class Parameter implements IAQ21Serializable {
     }
 
     void setDescriptors(List<ClassDescriptor> descriptors) {
-        StringBuilder builder = new StringBuilder();
-        for (ClassDescriptor descriptor : descriptors) {
-            builder.append(descriptor.toString());
+        if (descriptors.size()>0) {
+            StringBuilder builder = new StringBuilder();
+            for (ClassDescriptor descriptor : descriptors) {
+                builder.append(descriptor.toString());
+            }
+            this.value = builder.toString();
+            this.descriptors = descriptors;
         }
-        this.value = builder.toString();
-        this.descriptors = descriptors;
     }
 
     public boolean isTrue() {

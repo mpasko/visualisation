@@ -1,14 +1,10 @@
 package agh.aq21gui;
 
-import agh.aq21gui.services.aq21.Aq21Invoker;
 import agh.aq21gui.algorithms.GLDOptimizer;
 import agh.aq21gui.algorithms.OptimizationAlgorithm;
 import agh.aq21gui.algorithms.SimulatedAnnealing;
 import agh.aq21gui.model.gld.GLDInput;
 import agh.aq21gui.model.gld.GLDOutput;
-import agh.aq21gui.model.input.AttributesGroup;
-import agh.aq21gui.model.input.DomainsGroup;
-import agh.aq21gui.model.input.EventsGroup;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.input.Test;
@@ -16,11 +12,10 @@ import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.model.output.Output;
+import agh.aq21gui.services.aq21.Aq21FunctionalityWrapper;
 import agh.aq21gui.services.csv.CSVConverter;
-import agh.aq21gui.utils.Downloader;
 import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.services.csv.Aq21ArchetypeConfig;
-import agh.aq21gui.services.csv.IArchetypeConfig;
 import dataaccess.Repository;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,7 +23,6 @@ import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -42,6 +36,7 @@ import javax.ws.rs.core.SecurityContext;
  */
 @Path("aq21")
 public class Aq21Resource implements IResource{
+    public static final String DATABASE = "database";
 	
 	@Context
     private SecurityContext security;
@@ -60,8 +55,7 @@ public class Aq21Resource implements IResource{
 	})
     @Override
     public Output performExperiment(Input input) {
-		Aq21Invoker inv = new Aq21Invoker();
-		return inv.invoke(input);
+		return new Aq21FunctionalityWrapper().enhancedInvoke(input);
     }
     
     @Override
@@ -111,18 +105,18 @@ public class Aq21Resource implements IResource{
 	@Path("browse")
     @Produces({MediaType.APPLICATION_JSON})
 	public Directory browseIt() throws Exception{
-		Logger.getLogger("database").info("browse start");
+		Logger.getLogger(DATABASE).info("browse start");
 		try{
 			Repository repo = Repository.getRepository();
-			Logger.getLogger("database").info("get repo");
+			Logger.getLogger(DATABASE).info("get repo");
 			Directory dir = repo.getDirectory();
-			Logger.getLogger("database").info("get dir");
+			Logger.getLogger(DATABASE).info("get dir");
 			if(dir==null){
-				Logger.getLogger("database").severe("Error: dir is null!");
+				Logger.getLogger(DATABASE).severe("Error: dir is null!");
 			}
 			return dir;
 		}catch (Exception e) {
-			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
+			Logger.getLogger(DATABASE).log(Level.SEVERE, e.getMessage());
             //System.exit(100);
 			throw e;
 		}
@@ -136,8 +130,8 @@ public class Aq21Resource implements IResource{
 		try {
 			Repository repo = Repository.getRepository();
 			final Input experiment = repo.getExperiment(name);
-			System.out.println("Experiment -reloaded:");
-			System.out.println(experiment.toString());
+			//System.out.println("Experiment -reloaded:");
+			//System.out.println(experiment.toString());
 			return experiment;
 		} catch (Exception ex) {
 			Logger.getLogger(Aq21Resource.class.getName()).log(Level.SEVERE, null, ex);
@@ -163,12 +157,12 @@ public class Aq21Resource implements IResource{
 	@Consumes({MediaType.APPLICATION_JSON})
 	public void saveExp(InputPair input) throws Exception{
 		try{
-			System.out.println("Experiment -before save:");
-			System.out.println(input.toString());
+			//System.out.println("Experiment -before save:");
+			//System.out.println(input.toString());
 			Repository repo = Repository.getRepository();
 			repo.saveExperiment(input);
 		}catch (Exception e) {
-			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
+			Logger.getLogger(DATABASE).log(Level.SEVERE, e.getMessage());
 			throw e;
 		}
 	}
@@ -181,7 +175,7 @@ public class Aq21Resource implements IResource{
 			Repository repo = Repository.getRepository();
 			repo.saveResult(output);
 		}catch (Exception e) {
-			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
+			Logger.getLogger(DATABASE).log(Level.SEVERE, e.getMessage());
 			throw e;
 		}
 	}
@@ -193,10 +187,10 @@ public class Aq21Resource implements IResource{
 			Repository repo = Repository.getRepository();
 			repo.dropDataBase();
 		}catch (Exception e) {
-			Logger.getLogger("database").log(Level.SEVERE, "Error: {0}", e.getMessage());
+			Logger.getLogger(DATABASE).log(Level.SEVERE, e.getMessage());
 			throw e;
 		}
-		return new String();
+		return "";
 	}
 	
 	@POST

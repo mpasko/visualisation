@@ -5,11 +5,14 @@
 package agh.aq21gui.services.j48;
 
 import agh.aq21gui.converters.Aq21InputToWeka;
-import agh.aq21gui.filters.ContinuousClassFilter;
 import agh.aq21gui.converters.J48TreeToRuleSet;
+import agh.aq21gui.filters.ContinuousClassFilter;
+import agh.aq21gui.filters.Discretizer;
+import agh.aq21gui.filters.Discretizer.Mode;
 import agh.aq21gui.filters.RuleAgregator;
 import agh.aq21gui.j48treegrammar.J48ParserUtil;
 import agh.aq21gui.j48treegrammar.J48Tree;
+import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Parameter;
 import agh.aq21gui.model.input.Test;
@@ -30,11 +33,19 @@ import weka.core.Instances;
 public class J48Service {
 
     public Output convertAndRun(Input input) {
-        //System.out.println(input.toString());
-        //Instances instances = new Aq21InputToWeka().aq21ToWeka(input);
-        //System.out.println(instances.toString());
+        //System.out.println(Util.attachLines(input.toString()));
+        //System.out.println("----------------------------------------------------------------------------");
         ClassDescriptor descriptor = input.getAggregatedClassDescriptor();
-        Input filteredData = new ContinuousClassFilter().filter(input, descriptor);
+        Input filteredData;
+        if (descriptor.isCustomValue()) {
+            Discretizer discretizer = new Discretizer();
+            Mode mode = Discretizer.Mode.SIMILAR_SIZE;
+            filteredData = discretizer.discretize(input, descriptor.name, "square root", mode);
+            expandRunsForStar(filteredData, descriptor);
+            //System.out.println(Util.attachLines(filteredData.toString()));
+        } else {
+            filteredData = new ContinuousClassFilter().filter(input, descriptor);
+        }
         Output out = new Output(filteredData);
         List<Hypothesis> hypos = runAll(filteredData);
         out.setOutputHypotheses(hypos);
@@ -42,14 +53,14 @@ public class J48Service {
         return agragated;
     }
 
-    List<Hypothesis> runAll(Input input) {
+    public List<Hypothesis> runAll(Input input) {
         List<Hypothesis> hypotheses_all = new LinkedList<Hypothesis>();
         try {
             for (Test run : input.runsGroup.runs) {
                 Integer number = 0;
                 List<Hypothesis> hypotheses = prepareAndRunSingle(run, input);
                 for (Hypothesis h: hypotheses) {
-                    h.name = run.name + "_" + NumericUtil.formatNumber(number++);
+                    h.name = run.getName() + "_" + NumericUtil.formatNumber(number++);
                 }
                 //System.out.println(hypotheses.toString());
                 hypotheses_all.addAll(hypotheses);
@@ -114,5 +125,26 @@ public class J48Service {
         J48Tree tree = parser.parse(j48.graph());
         List<Hypothesis> hypothesis = new J48TreeToRuleSet().treeToRules(tree, run.grepClassName());
         return hypothesis;
+    }
+
+    public static void expandRunsForStar(Input filteredData, ClassDescriptor descriptor) {
+        List<Test> new_runs = new LinkedList<Test>();
+        for (Test run : filteredData.runsGroup.runs) {
+            if (run.grepClassDescriptor().isCustomValue()) {
+                Domain domain = filteredData.findDomainObjectRrecursively(descriptor.name);
+                if (domain.getRange()==null){
+                    throw new RuntimeException("If star (*) used for classifying continuous data, it should be discretized first");
+                }
+                for (String value : domain.getRange()) {
+                    Test new_run = new Test(run);
+                    new_run.setName(run.getName()+value);
+                    new_run.enforceClass(new ClassDescriptor(descriptor.name, "=", value));
+                    new_runs.add(new_run);
+                }
+            } else {
+                new_runs.add(run);
+            }
+        }
+        filteredData.getRunsGroup().setRuns(new_runs);
     }
 }

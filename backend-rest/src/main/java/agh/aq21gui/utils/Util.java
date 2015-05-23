@@ -74,19 +74,21 @@ public class Util {
 	}
 
     public static String negatedComparator(final String comparator) {
+        String neg;
         if (comparator.equals("<")) {
-            return ">=";
+            neg = ">=";
         } else if (comparator.equals(">")) {
-            return "<=";
+            neg = "<=";
         } else if (comparator.equals(">=")) {
-            return "<";
+            neg = "<";
         } else if (comparator.equals("<=")) {
-            return ">";
+            neg = ">";
         } else if (comparator.equals("!=") || comparator.equals("<>")) {
-            return "=";
+            neg = "=";
         } else {
-            return "!=";
+            neg = "!=";
         }
+        return neg;
     }
 
     public static Output deepCopyOutput(Output in) {
@@ -96,6 +98,7 @@ public class Util {
 
     public static Input deepCopyInput(Input in) {
         OutputParser parser = new OutputParser();
+        //System.out.print(attachLines(in.toString()));
         return parser.parse(in.toString());
     }
     

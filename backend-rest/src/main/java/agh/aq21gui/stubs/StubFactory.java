@@ -4,7 +4,6 @@
  */
 package agh.aq21gui.stubs;
 
-import agh.aq21gui.services.aq21.Aq21Invoker;
 import agh.aq21gui.algorithms.GLDConverter;
 import agh.aq21gui.algorithms.GLDState;
 import agh.aq21gui.model.gld.Argument;
@@ -20,16 +19,12 @@ import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.Rule;
 import agh.aq21gui.model.output.Selector;
+import agh.aq21gui.services.aq21.Aq21Invoker;
 import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.services.csv.CSVConverter;
 import agh.aq21gui.utils.Util;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -50,7 +45,7 @@ public class StubFactory {
 		input.addEvent("blue", "0", "33.5", "c2");
 		RunsGroup runs = new RunsGroup();
 		Run run_c1 = new Run();
-		run_c1.name = "Run_c1";
+		run_c1.setName("Run_c1");
 		run_c1.addParameter("Mode", "TF");
 		run_c1.addParameter("Consequent", "[class=c1]");
 		run_c1.addParameter("Ambiguity", "IncludeInPos");
@@ -60,7 +55,7 @@ public class StubFactory {
 		run_c1.addParameter("Maxrule", "10");
 		runs.runs.add(run_c1);
 		Run run_c2 = new Run();
-		run_c2.name = "Run_c2";
+		run_c2.setName("Run_c2");
 		run_c2.addParameter("Mode", "TF");
 		run_c2.addParameter("Consequent", "[class=c2]");
 		run_c2.addParameter("Ambiguity", "IncludeInPos");
@@ -70,7 +65,7 @@ public class StubFactory {
 		run_c2.addParameter("Maxrule", "1");
 		runs.runs.add(run_c2);
 		Run run_all_in_pd = new Run();
-		run_all_in_pd.name = "Run_All_in_PD";
+		run_all_in_pd.setName("Run_All_in_PD");
 		run_all_in_pd.addParameter("Mode", "PD");
 		run_all_in_pd.addParameter("Consequent", "[class=*]");
 		run_all_in_pd.addParameter("Ambiguity", "IncludeInPos");
@@ -80,7 +75,7 @@ public class StubFactory {
 		run_all_in_pd.addParameter("Maxrule", "1");
 		runs.runs.add(run_all_in_pd);
 		Run run_multi_head = new Run();
-		run_multi_head.name = "Run_Multi-head";
+		run_multi_head.setName("Run_Multi-head");
 		run_multi_head.addParameter("Mode", "PD");
 		run_multi_head.addParameter("Consequent", "[class=c1][length<=40]");
 		run_multi_head.addParameter("Ambiguity", "IncludeInPos");
@@ -93,8 +88,13 @@ public class StubFactory {
 		return input;
 	}
 	
+    private static Output cached_output = null;
+    
 	public static Output getOutput() {
-		return new Aq21Invoker().invoke(getInput());
+        if (cached_output == null) {
+            cached_output = new Aq21Invoker().invoke(getInput());
+        }
+		return cached_output;
 	}
 
 	public static Directory getDirectory() {
@@ -308,12 +308,14 @@ public class StubFactory {
 		return outp;
 	}
 
+    private static Output cached_iris_output = null;
 	public static Output getIrisOutput() {
-		Output outp = null;
-        Input input = getIrisInput();
-        Aq21Invoker invoker = new Aq21Invoker();
-        outp = invoker.invoke(input);
-		return outp;
+		if (cached_iris_output==null) {
+            Input input = getIrisInput();
+            Aq21Invoker invoker = new Aq21Invoker();
+            cached_iris_output = invoker.invoke(input);
+        }
+		return cached_iris_output;
 	}
 
     public static Input getIrisInput() {
@@ -334,6 +336,16 @@ public class StubFactory {
         final String data = Util.loadFile("experiment_inputs/adi_chemical.csv");
         CSVConverter converter = new CSVConverter();
         return converter.convert(data);
+    }
+
+    public static Input generatePolynomialInput(int size, String className) {
+        Input in = new Input();
+        in.addAttribute("marker", "integer", "");
+        in.addAttribute(className, "continuous", "");
+        for (int i = 0; i < size; ++i) {
+            in.addEvent(Integer.valueOf(i).toString(), Integer.valueOf(i * i).toString());
+        }
+        return in;
     }
 	
 }

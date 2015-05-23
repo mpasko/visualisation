@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class ContinuousClassFilter {
 
-    private final static String DOMAIN_NAME = "_triggered";
+    private final static String DOMAIN_POSTFIX = "_triggered";
     public static final String STRING_UNSUPPORTED = "ClassDescriptor with list only supported for continuous valuses";
 
     private static void assertNotStringValue(double parsedValue) throws RuntimeException {
@@ -60,18 +60,20 @@ public class ContinuousClassFilter {
     }
 
     private String verbalizeSingle(String comparator) {
+        String to_return = "";
         if (comparator.equals("<")) {
-            return "less";
+            to_return = "less";
         } else if (comparator.equals(">")) {
-            return "above";
+            to_return = "above";
         } else if (comparator.equals("=")) {
-            return "equal";
+            to_return = "equal";
         } else if (comparator.equals("!")) {
-            return "not";
+            to_return = "not";
         } else {
             //System.out.println("unrecognized: "+comparator);
-            return "unrelated_with";
+            to_return = "unrelated_with";
         }
+        return to_return;
     }
 
     private Input processEventsSingle(Input result, int index, ClassDescriptor cd, String match, String not_match) {
@@ -152,7 +154,7 @@ public class ContinuousClassFilter {
     }
 
     private void setupNewDomain(LinkedList<String> labels, Input result, String name) {
-        final Domain triggered = new Domain(name+DOMAIN_NAME, "nominal");
+        final Domain triggered = new Domain(name+DOMAIN_POSTFIX, "linear");
         triggered.set_elements = labels;
         result.obtainDomainsGroup().domains.add(triggered);
         result.gAG().replaceAttributeDomain(name, triggered);
