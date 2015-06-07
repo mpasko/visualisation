@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.utils;
 
+import agh.aq21gui.evaluator.StatsAgregator;
 import agh.aq21gui.model.gld.processing.CellValue;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Output;
@@ -20,6 +21,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
@@ -104,12 +107,13 @@ public class Util {
     
     public static String objectToJson(Object item) {
         try {
+            //System.out.println(item.toString());
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationConfig.Feature.INDENT_OUTPUT);
             return mapper.writeValueAsString(item);
         } catch (Throwable ex) {
+            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
-            //Logger.getLogger(StatsAgregator.class.getName()).log(Level.SEVERE, null, ex);
         }
         //return "";
     }

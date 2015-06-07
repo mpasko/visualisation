@@ -12,6 +12,7 @@ import agh.aq21gui.evaluator.Statistics;
 import agh.aq21gui.filters.RuleSorter;
 import agh.aq21gui.evaluator.StatsAgregator;
 import agh.aq21gui.filters.AttributeRemover;
+import agh.aq21gui.filters.RuleVerticalAgregator;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.output.Hypothesis;
@@ -82,12 +83,13 @@ public class ADIExperiment {
         //System.out.println(input.toString());
         Output result = resource.performExperiment(input);
         Output sortedResult = new RuleSorter().sort(result);
+        Output processed = new RuleVerticalAgregator().agregate(sortedResult);
         
         //System.out.println(sortedResult);
-        System.out.println(sortedResult.obtainOutputHypotheses().toString());
-        StatsAgregator metrics = new MetricsResource().analyze(sortedResult);
+        System.out.println(processed.obtainOutputHypotheses().toString());
+        StatsAgregator metrics = new MetricsResource().analyze(processed);
         System.out.println(metrics.toString());
-        for (Hypothesis hypo : sortedResult.getOutputHypotheses()) {
+        for (Hypothesis hypo : processed.getOutputHypotheses()) {
             String hypoName = hypo.getName();
             statTable.put(name+hypoName, metrics.getParticular().get(hypoName));
         }

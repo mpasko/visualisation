@@ -36,15 +36,20 @@ public class J48Service {
         //System.out.println(Util.attachLines(input.toString()));
         //System.out.println("----------------------------------------------------------------------------");
         ClassDescriptor descriptor = input.getAggregatedClassDescriptor();
+        Domain classDom = input.findDomainObjectRrecursively(descriptor.getName());
         Input filteredData;
-        if (descriptor.isCustomValue()) {
-            Discretizer discretizer = new Discretizer();
-            Mode mode = Discretizer.Mode.SIMILAR_SIZE;
-            filteredData = discretizer.discretize(input, descriptor.name, "square root", mode);
-            expandRunsForStar(filteredData, descriptor);
-            //System.out.println(Util.attachLines(filteredData.toString()));
+        if (classDom.isContinuous() || classDom.isInteger()) {
+            if (descriptor.isCustomValue()) {
+                Discretizer discretizer = new Discretizer();
+                Mode mode = Discretizer.Mode.SIMILAR_SIZE;
+                filteredData = discretizer.discretize(input, descriptor.name, "square root", mode);
+                expandRunsForStar(filteredData, descriptor);
+                //System.out.println(Util.attachLines(filteredData.toString()));
+            } else {
+                filteredData = new ContinuousClassFilter().filter(input, descriptor);
+            }
         } else {
-            filteredData = new ContinuousClassFilter().filter(input, descriptor);
+            filteredData = input;
         }
         Output out = new Output(filteredData);
         List<Hypothesis> hypos = runAll(filteredData);
@@ -59,26 +64,26 @@ public class J48Service {
             for (Test run : input.runsGroup.runs) {
                 Integer number = 0;
                 List<Hypothesis> hypotheses = prepareAndRunSingle(run, input);
-                for (Hypothesis h: hypotheses) {
+                for (Hypothesis h : hypotheses) {
                     h.name = run.getName() + "_" + NumericUtil.formatNumber(number++);
                 }
                 //System.out.println(hypotheses.toString());
                 hypotheses_all.addAll(hypotheses);
             }
         } catch (Exception ex) {
- //           Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            //           Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
         return hypotheses_all;
     }
-    
-    public static String[] paramsetToCmdline(Test run){
+
+    public static String[] paramsetToCmdline(Test run) {
         ArrayList<String> cmdline = new ArrayList<String>();
         boolean prune = false;
         boolean collapse = false;
         int minimum_instances = 2;
-        for (Parameter param : run.getRunSpecificParameters()){
-            if (param.name.equalsIgnoreCase("prune")){
+        for (Parameter param : run.getRunSpecificParameters()) {
+            if (param.name.equalsIgnoreCase("prune")) {
                 prune = param.isTrue();
             } else if (param.name.equalsIgnoreCase("collapse")) {
                 collapse = param.isTrue();
@@ -132,12 +137,12 @@ public class J48Service {
         for (Test run : filteredData.runsGroup.runs) {
             if (run.grepClassDescriptor().isCustomValue()) {
                 Domain domain = filteredData.findDomainObjectRrecursively(descriptor.name);
-                if (domain.getRange()==null){
+                if (domain.getRange() == null) {
                     throw new RuntimeException("If star (*) used for classifying continuous data, it should be discretized first");
                 }
                 for (String value : domain.getRange()) {
                     Test new_run = new Test(run);
-                    new_run.setName(run.getName()+value);
+                    new_run.setName(run.getName() + value);
                     new_run.enforceClass(new ClassDescriptor(descriptor.name, "=", value));
                     new_runs.add(new_run);
                 }

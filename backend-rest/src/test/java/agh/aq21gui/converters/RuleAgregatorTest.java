@@ -5,6 +5,7 @@
 package agh.aq21gui.converters;
 
 import agh.aq21gui.filters.RuleAgregator;
+import agh.aq21gui.filters.SelectorAgregator;
 import agh.aq21gui.model.output.Selector;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,7 +78,7 @@ public class RuleAgregatorTest {
         Selector next = Selector.parse("[a>1]");
         Selector actual = Selector.parse("[a<17]");
         RuleAgregator instance = new RuleAgregator();
-        Selector result = instance.agregateTwoSels(next, actual);
+        Selector result = SelectorAgregator.agregateTwoSels(next, actual);
         assertEquals("1.0", result.getRange_begin());
         assertEquals("17.0", result.getRange_end());
     }

@@ -117,8 +117,8 @@ domain
  -> ^(DOMAIN $name $type ^(DOMAIN_ARGS_EMPTY))
    ;
 
-runs : RUNS NL? OPEN NL? (simple_parameter NL?)* run* CLOSE NL?
- -> ^(RUNS_PARAMS simple_parameter*) ^(RUNS_LIST run* );
+runs : RUNS NL? OPEN NL? (enhanced_parameter NL?)* run* CLOSE NL?
+ -> ^(RUNS_PARAMS enhanced_parameter*) ^(RUNS_LIST run* );
 
 run : name=ID NL? OPEN NL? (enhanced_parameter NL?)* run_result* CLOSE NL?
  -> ^(RUN $name ^(RUNS_PARAMS enhanced_parameter*) ^(RESULT run_result*) ) ;
