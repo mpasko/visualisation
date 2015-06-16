@@ -146,9 +146,11 @@ public class JrippService {
         
         for (weka.classifiers.rules.Rule item : jripp.getRuleset()) {
             RipperRule ripperRule = (RipperRule) item;
-            String claz = attr.value((int)ripperRule.getConsequent());
+            String consequent = ripperRule.toString(attr).split("=>")[1];
+            String claz = consequent.split("=")[1].trim(); // get class value
+            
             Hypothesis hypo = getHypotheses(hyps, attr, claz);
-           
+            System.out.println(ripperRule.toString(attr));
             Rule rule = new Rule();
             
             for (Antd a : ripperRule.getAntds()) {
