@@ -81,5 +81,13 @@ public class NumericUtil {
             return defaultValue;
         }
     }
-    
+    public static double parseDoubleDefault(String param, double defaultValue) {
+        String val = param;
+        val = val.replaceAll("\"", "");
+        try {
+            return Double.parseDouble(val);
+        } catch (NumberFormatException _) {
+            return defaultValue;
+        }
+    }
 }

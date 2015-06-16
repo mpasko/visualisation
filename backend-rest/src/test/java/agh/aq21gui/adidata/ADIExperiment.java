@@ -7,6 +7,7 @@ package agh.aq21gui.adidata;
 import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;
+import agh.aq21gui.JRipResource;
 import agh.aq21gui.MetricsResource;
 import agh.aq21gui.evaluator.Statistics;
 import agh.aq21gui.filters.RuleSorter;
@@ -55,9 +56,10 @@ public class ADIExperiment {
         setInput(StubFactory.loadAdiData());
         algSet = new LinkedList<Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), ""));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), ""));
+       // algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
     }
     
     public void runAllPossibilities(String className, String threshold, List<String> ignore) {
