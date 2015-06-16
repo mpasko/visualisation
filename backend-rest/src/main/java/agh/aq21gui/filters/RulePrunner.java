@@ -31,7 +31,7 @@ public class RulePrunner {
             Statistics old_stats = classifier.performStatistics(hypothesis);
             double best_accuracy = old_stats.getAccuracy();
             Hypothesis best_modification = hypothesis;
-            for (Rule rule : hypothesis.rules) {
+            for (Rule rule : best_modification.rules) {
                 for (Selector sel : rule.getSelectors()) {
                     Hypothesis new_hypo = makeHypothesisWithoutSelector(hypothesis, rule, sel);
                     Statistics new_stats = classifier.performStatistics(new_hypo);

@@ -106,11 +106,11 @@ public class Statistics {
         return Util.objectToJson(this);
     }
     
-    public double getTrue() {
+    private double getTrue() {
         return trueNegative+truePositive;
     }
     
-    public double getFalse() {
+    private double getFalse() {
         return falseNegative+falsePositive;
     }
     
@@ -123,35 +123,35 @@ public class Statistics {
     }
     
     public double getSensitivity() {
-        return truePositive/getP();
+        return safeDivide(truePositive, getP());
     }
     
     public double getSpecificity() {
-        return trueNegative/getN();
+        return safeDivide(trueNegative, getN());
     }
     
     public double getPrecision() {
-        return truePositive/(truePositive+falsePositive);
+        return safeDivide(truePositive, truePositive+falsePositive);
     }
     
     public double getNegativePredictiveValue() {
-        return trueNegative/(trueNegative+falsePositive);
+        return safeDivide(trueNegative, trueNegative+falsePositive);
     }
     
     public double getFallOut() {
-        return falsePositive/getN();
+        return safeDivide(falsePositive, getN());
     }
     
     public double getFalseNegativeRate() {
-        return falseNegative/getP();
+        return safeDivide(falseNegative, getP());
     }
     
     public double getFalseDiscoveryRate() {
-        return falsePositive/(truePositive+falsePositive);
+        return safeDivide(falsePositive, truePositive+falsePositive);
     }
     
     public double getAccuracy() {
-        return getTrue()/(getAll());
+        return safeDivide(getTrue(), getAll());
     }
 
     public double getAll() {
@@ -160,6 +160,14 @@ public class Statistics {
     
     public double getF1Score() {
         int _2tp = 2*truePositive;
-        return _2tp/(_2tp+falsePositive+falseNegative);
+        return safeDivide(_2tp, _2tp+falsePositive+falseNegative);
+    }
+
+    public static double safeDivide(double a, double b) {
+        if (b==0.0 || Double.isNaN(b)) {
+            return Double.NaN;
+        } else {
+            return a/b;
+        }
     }
 }
