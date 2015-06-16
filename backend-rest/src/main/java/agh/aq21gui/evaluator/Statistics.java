@@ -105,4 +105,61 @@ public class Statistics {
     public String toString() {
         return Util.objectToJson(this);
     }
+    
+    public double getTrue() {
+        return trueNegative+truePositive;
+    }
+    
+    public double getFalse() {
+        return falseNegative+falsePositive;
+    }
+    
+    private double getP() {
+        return falseNegative+truePositive;
+    }
+    
+    private double getN() {
+        return trueNegative+falsePositive; 
+    }
+    
+    public double getSensitivity() {
+        return truePositive/getP();
+    }
+    
+    public double getSpecificity() {
+        return trueNegative/getN();
+    }
+    
+    public double getPrecision() {
+        return truePositive/(truePositive+falsePositive);
+    }
+    
+    public double getNegativePredictiveValue() {
+        return trueNegative/(trueNegative+falsePositive);
+    }
+    
+    public double getFallOut() {
+        return falsePositive/getN();
+    }
+    
+    public double getFalseNegativeRate() {
+        return falseNegative/getP();
+    }
+    
+    public double getFalseDiscoveryRate() {
+        return falsePositive/(truePositive+falsePositive);
+    }
+    
+    public double getAccuracy() {
+        return getTrue()/(getAll());
+    }
+
+    public double getAll() {
+        return getP()+getN();
+    }
+    
+    public double getF1Score() {
+        int _2tp = 2*truePositive;
+        return _2tp/(_2tp+falsePositive+falseNegative);
+    }
 }

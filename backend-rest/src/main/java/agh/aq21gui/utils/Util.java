@@ -7,7 +7,11 @@ package agh.aq21gui.utils;
 import agh.aq21gui.evaluator.StatsAgregator;
 import agh.aq21gui.model.gld.processing.CellValue;
 import agh.aq21gui.model.input.Input;
+import agh.aq21gui.model.output.ClassDescriptor;
+import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
+import agh.aq21gui.model.output.Rule;
+import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.services.aq21.OutputParser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -23,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.antlr.runtime.RecognitionException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
@@ -103,6 +108,21 @@ public class Util {
         OutputParser parser = new OutputParser();
         //System.out.print(attachLines(in.toString()));
         return parser.parse(in.toString());
+    }
+    
+    //public static Rule deepCopySelector(Rule rule) {
+
+    public static Rule shallowCopyRule(Rule rule) {
+        List<Selector> selectors = rule.getSelectors();
+        return new Rule(selectors.toArray(new Selector[selectors.size()]));
+    }
+
+    public static Hypothesis shallowCopyHypothesis(Hypothesis hypothesis) {
+        List<Rule> rules = hypothesis.rules;
+        Hypothesis new_hypo = new Hypothesis(rules.toArray(new Rule[rules.size()]));
+        new_hypo.name = hypothesis.name;
+        new_hypo.setClasses(new LinkedList<ClassDescriptor>(hypothesis.getClasses()));
+        return new_hypo;
     }
     
     public static String objectToJson(Object item) {

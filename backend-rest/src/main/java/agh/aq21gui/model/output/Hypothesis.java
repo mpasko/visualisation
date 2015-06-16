@@ -33,8 +33,7 @@ public class Hypothesis {
     
     public Hypothesis(Rule...sel) {
         this();
-		List<Rule> rules = Arrays.asList(sel);
-		this.rules = rules;
+		this.rules = new LinkedList<Rule>(Arrays.asList(sel));
     }
 	
 	@XmlElement(name="classes")

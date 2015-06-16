@@ -1,0 +1,10 @@
+*.class
+.goutput*
+przewodnik.log
+
+/backend-rest/release
+
+/backend-rest/target
+/backend-rest/logs
+/*.txt~
+/backend-rest/src/main/resources/agh/aq21gui/model/input/jaxb.properties
