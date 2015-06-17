@@ -49,8 +49,13 @@ branch : from=ID PRODUCTION_ARROW to=ID branch_desc?
 node_desc : LABEL EQUAL QUOTE claz=ID garbage*
  -> $claz;
 
-branch_desc : WS? OPEN_SQR LABEL EQUAL QUOTE condition=EQUAL WS? value=FLOAT QUOTE CLOSE_SQR
- -> $condition $value;
+branch_desc : WS? OPEN_SQR LABEL EQUAL QUOTE condition=EQUAL WS? value QUOTE CLOSE_SQR
+ -> $condition value;
+
+value : fl=FLOAT
+ -> $fl
+| id=ID
+ -> $id;
 
 garbage : WS | FLOAT | OPEN_PAR | CLOSE_PAR
  | SLASH | QUOTE | ID | EQUAL | SHAPE | STYLE;

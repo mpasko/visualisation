@@ -64,7 +64,8 @@ public class TreeNode {
 	}
 	
 	private static void report(String error, Object...args){
-		String message = String.format(error,args);
+		String formated = String.format(error,args);
+        String message = String.format("Parsing exception: %s", formated);
 		/* *x/
 		Logger.getLogger("Interpreter").info(message);
 		/* */

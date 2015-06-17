@@ -5,13 +5,18 @@
 package agh.aq21gui.services.j48;
 
 import agh.aq21gui.converters.Aq21InputToWeka;
+import agh.aq21gui.filters.RulePrunnerTest;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Run;
+import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.output.ClassDescriptor;
+import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.services.aq21.Aq21FunctionalityWrapperTest;
+import agh.aq21gui.services.csv.J48ArchetypeConfig;
 import agh.aq21gui.stubs.StubFactory;
 import agh.aq21gui.utils.NumericUtil;
+import java.util.LinkedList;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -151,4 +156,43 @@ public class J48ServiceTest {
         assertEquals("customvalue", run1.findParam("customparameter").value);
         assertEquals("customvalue", run2.findParam("customparameter").value);
     }
+
+    @Test
+    public void testConvertAndRun() {
+        System.out.println("convertAndRun");
+        J48Service instance = new J48Service();
+        Output experiment = RulePrunnerTest.generatePrunnableOutput();
+        List<agh.aq21gui.model.input.Test> runs = new J48ArchetypeConfig().createConfig(experiment);
+        RunsGroup runsGroup = new RunsGroup();
+        runsGroup.setRuns(runs);
+        experiment.setRunsGroup(runsGroup);
+        Output result = instance.convertAndRun(experiment);
+        List<Hypothesis> to_verify = filterTrueClass(result.getOutputHypotheses());
+        RulePrunnerTest.verifyPrunnableResult(to_verify);
+    }
+
+    @Test
+    public void testRunAll() {
+        System.out.println("runAll");
+        J48Service instance = new J48Service();
+        Output experiment = RulePrunnerTest.generateTwicePrunnableOutput();
+        List<agh.aq21gui.model.input.Test> runs = new J48ArchetypeConfig().createConfig(experiment);
+        RunsGroup runsGroup = new RunsGroup();
+        runsGroup.setRuns(runs);
+        experiment.setRunsGroup(runsGroup);
+        List<Hypothesis> result = instance.runAll(experiment);
+        List<Hypothesis> to_verify = filterTrueClass(result);
+        RulePrunnerTest.verifyTwicePrunnableResult(to_verify);
+    }
+
+    public static List<Hypothesis> filterTrueClass(List<Hypothesis> result) {
+        List<Hypothesis> to_verify = new LinkedList<Hypothesis>();
+        for (Hypothesis hypo : result) {
+            if (hypo.getClasses().get(0).getValue().equalsIgnoreCase("t")){
+                to_verify.add(hypo);
+            }
+        }
+        return to_verify;
+    }
+
 }

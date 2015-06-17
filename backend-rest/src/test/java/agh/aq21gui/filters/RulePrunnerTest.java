@@ -63,21 +63,34 @@ public class RulePrunnerTest {
         Output result = instance.prune(out);
 
         List<Hypothesis> hypotheses = result.getOutputHypotheses();
-        assertEquals(1, hypotheses.size());
-        List<Rule> rules = hypotheses.get(0).rules;
-        assertEquals(1, rules.size());
-        List<Selector> selectors = rules.get(0).getSelectors();
-        assertEquals(2, selectors.size());
-        for (Selector selector : selectors) {
-            boolean case1 = selector.toString().equalsIgnoreCase("[x=a]");
-            boolean case2 = selector.toString().equalsIgnoreCase("[z=e]");
-            assertTrue(case1 || case2);
-        }
+        verifyPrunnableResult(hypotheses);
+    }
+
+    @Test
+    public void when_simple_prunnable_last_output_then_cut_last_selector() {
+        System.out.println("when_simple_prunnable_last_output_then_cut_last_selector");
+        Output out = generatePrunnableLastOutput();
+        RulePrunner instance = new RulePrunner();
+        Output result = instance.prune(out);
+
+        List<Hypothesis> hypotheses = result.getOutputHypotheses();
+        verifyPrunnableLastResult(hypotheses);
+    }
+
+    @Test
+    public void when_simple_prunnabletwice_output_then_cut_2selectors() {
+        System.out.println("when_simple_prunnabletwice_output_then_cut_2selectors");
+        Output out = generateTwicePrunnableOutput();
+        RulePrunner instance = new RulePrunner();
+        Output result = instance.prune(out);
+
+        List<Hypothesis> hypotheses = result.getOutputHypotheses();
+        verifyTwicePrunnableResult(hypotheses);
     }
 
     @Test
     public void when_simple_nonprunnable_output_then_do_nothing() {
-        System.out.println("when_simple_prunnable_output_then_cut_1selector");
+        System.out.println("when_simple_nonprunnable_output_then_do_nothing");
         Output out = generateNonPrunnableOutput();
         RulePrunner instance = new RulePrunner();
         Output result = instance.prune(out);
@@ -90,7 +103,7 @@ public class RulePrunnerTest {
         }
     }
 
-    private static Output generatePrunnableOutput() {
+    public static Output generatePrunnableOutput() {
             Output out = generateOutputWithDefaultAttributes();
             out.addEvent("a", "c", "e", "t");
             out.addEvent("a", "c", "f", "f");
@@ -108,7 +121,43 @@ public class RulePrunnerTest {
             return out;
     }
 
-    private static Output generateNonPrunnableOutput() {
+    public static Output generatePrunnableLastOutput() {
+            Output out = generateOutputWithDefaultAttributes();
+            out.addEvent("a", "c", "e", "t");
+            out.addEvent("a", "c", "f", "t");
+            out.addEvent("b", "c", "e", "f");
+            out.addEvent("b", "c", "f", "f");
+            out.addEvent("a", "d", "e", "f");
+            out.addEvent("a", "d", "f", "f");
+            out.addEvent("b", "d", "e", "f");
+            out.addEvent("b", "d", "f", "f");
+            List<Hypothesis> hypotheses = new LinkedList<Hypothesis>();
+            Hypothesis hypothesis = new Hypothesis(new Rule(xa, yc, ze));
+            hypothesis.addClass(classT);
+            hypotheses.add(hypothesis);
+            out.setOutputHypotheses(hypotheses);
+            return out;
+    }
+    
+    public static Output generateTwicePrunnableOutput() {
+            Output out = generateOutputWithDefaultAttributes();
+            out.addEvent("a", "c", "e", "t");
+            out.addEvent("a", "c", "f", "t");
+            out.addEvent("b", "c", "e", "f");
+            out.addEvent("b", "c", "f", "f");
+            out.addEvent("a", "d", "e", "t");
+            out.addEvent("a", "d", "f", "t");
+            out.addEvent("b", "d", "e", "f");
+            out.addEvent("b", "d", "f", "f");
+            List<Hypothesis> hypotheses = new LinkedList<Hypothesis>();
+            Hypothesis hypothesis = new Hypothesis(new Rule(xa, yc, ze));
+            hypothesis.addClass(classT);
+            hypotheses.add(hypothesis);
+            out.setOutputHypotheses(hypotheses);
+            return out;
+    }
+
+    public static Output generateNonPrunnableOutput() {
             Output out = generateOutputWithDefaultAttributes();
             out.addEvent("a", "c", "e", "t");
             out.addEvent("a", "c", "f", "f");
@@ -133,5 +182,42 @@ public class RulePrunnerTest {
         out.addAttribute("z", "nominal", "{e, f}");
         out.addAttribute("class", "nominal", "{t, f}");
         return out;
+    }
+
+    public static void verifyPrunnableResult(List<Hypothesis> hypotheses) {
+        assertEquals(1, hypotheses.size());
+        List<Rule> rules = hypotheses.get(0).rules;
+        assertEquals(1, rules.size());
+        List<Selector> selectors = rules.get(0).getSelectors();
+        assertEquals(2, selectors.size());
+        for (Selector selector : selectors) {
+            boolean case1 = selector.toString().equalsIgnoreCase("[x=a]");
+            boolean case2 = selector.toString().equalsIgnoreCase("[z=e]");
+            boolean impossible = selector.toString().equalsIgnoreCase("[y=c]");
+            assertTrue((case1 || case2)&&!impossible);
+        }
+    }
+
+    public static void verifyPrunnableLastResult(List<Hypothesis> hypotheses) {
+        assertEquals(1, hypotheses.size());
+        List<Rule> rules = hypotheses.get(0).rules;
+        assertEquals(1, rules.size());
+        List<Selector> selectors = rules.get(0).getSelectors();
+        assertEquals(2, selectors.size());
+        for (Selector selector : selectors) {
+            boolean case1 = selector.toString().equalsIgnoreCase("[x=a]");
+            boolean case2 = selector.toString().equalsIgnoreCase("[y=c]");
+            boolean impossible = selector.toString().equalsIgnoreCase("[z=e]");
+            assertTrue((case1 || case2)&&!impossible);
+        }
+    }
+
+    public static void verifyTwicePrunnableResult(List<Hypothesis> hypotheses) {
+        assertEquals(1, hypotheses.size());
+        List<Rule> rules = hypotheses.get(0).rules;
+        assertEquals(1, rules.size());
+        List<Selector> selectors = rules.get(0).getSelectors();
+        assertEquals(1, selectors.size());
+        assertEquals("[x=a]", selectors.get(0).toString());
     }
 }

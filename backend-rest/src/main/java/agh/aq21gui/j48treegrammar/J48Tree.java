@@ -45,7 +45,8 @@ public class J48Tree {
         branch.setFrom(tree.childAt(0, Tj48TreeParser.ID).value());
         branch.setTo(tree.childAt(1, Tj48TreeParser.ID).value());
         branch.setComparator(tree.childAt(2, Tj48TreeParser.EQUAL).value());
-        branch.setValue(tree.childAt(3, Tj48TreeParser.FLOAT).doubleValue());
+        CommonTree valueTree = tree.childAt(3, TreeNode.ANY_TYPE).tree();
+        branch.setValue(valueTree.getText());
         this.getBranches().add(branch);
     }
 
