@@ -101,6 +101,7 @@ public class JrippService {
         return cmdline.toArray(new String[cmdline.size()]);
     }
 
+    
    
     
     public List<Hypothesis> prepareAndRunJripp(Input input, Test run) throws Exception {
@@ -118,6 +119,17 @@ public class JrippService {
         s.setValue(tokens[2]);
         return s;
     }
+    
+    private static Selector convertFromStringSelector(String sel) {
+        Selector s = new Selector();
+        sel = sel.replaceAll("\\(", "").replaceAll("\\)", "");
+        String[] tokens = sel.split(" ");
+        s.setName(tokens[0]);
+        s.setComparator(tokens[1]);
+        s.setValue(tokens[2]);
+        return s;
+    }
+
     
      private static Hypothesis getHypotheses(List<Hypothesis> hyps,Attribute attr, String claz) {
         for (Hypothesis h : hyps) {
@@ -143,21 +155,59 @@ public class JrippService {
         jripp.setOptions(cmdline);
         jripp.buildClassifier(instances);
         List<Hypothesis> hyps = new LinkedList<Hypothesis>();
-        
-        for (weka.classifiers.rules.Rule item : jripp.getRuleset()) {
-            RipperRule ripperRule = (RipperRule) item;
-            String consequent = ripperRule.toString(attr).split("=>")[1];
-            String claz = consequent.split("=")[1].trim(); // get class value
-            
-            Hypothesis hypo = getHypotheses(hyps, attr, claz);
-            System.out.println(ripperRule.toString(attr));
-            Rule rule = new Rule();
-            
-            for (Antd a : ripperRule.getAntds()) {
-                rule.addSelector(convertFromJripSelector(a));
+
+        String[] tokens = jripp.toString().split("\n");
+        List<String> filtered = new LinkedList<String>();
+        for (String token:tokens) {
+            if (token.endsWith(")")) {
+                String ant = token.split("=>")[0];
+                String consequent = token.split("=>")[1];
+                String claz = consequent.split("=")[1].split("\\(")[0].trim();
+                Hypothesis hypo = getHypotheses(hyps, attr, claz);
+                
+                Rule rule = new Rule();
+//                if (!claz.trim().equalsIgnoreCase("adi2") ) {
+//                    Selector s = new Selector();
+//                    s.setName("wytrzym_zmecz_mpa");
+//                    s.setComparator("<");
+//                    s.setValue("270");
+//                    rule.addSelector(s);
+//                }
+                for (String sel :ant.split("and")) {
+                    if (!sel.trim().isEmpty()) {
+                        rule.addSelector(convertFromStringSelector(sel));
+                    }
+                }
+                
+                hypo.rules.add(rule);
             }
-            
-            hypo.rules.add(rule);
+        }
+        
+//        for (weka.classifiers.rules.Rule item : jripp.getRuleset()) {
+//            RipperRule ripperRule = (RipperRule) item;
+//            System.out.println(attr.value((int)ripperRule.getConsequent()));
+//            System.out.println(ripperRule.toString(attr));
+//            String consequent = ripperRule.toString(attr).split("=>")[1];
+//            String claz = consequent.split("=")[1].trim(); // get class value
+//            
+//            Hypothesis hypo = getHypotheses(hyps, attr, claz);
+//            Rule rule = new Rule();
+//            if (claz.trim().equalsIgnoreCase("adi7") ) {
+//                Selector s = new Selector();
+//                s.setName("wytrzym_zmecz_mpa");
+//                s.setComparator("<");
+//                s.setValue("270");
+//                rule.addSelector(s);
+//            }
+//            for (Antd a : ripperRule.getAntds()) {
+//                rule.addSelector(convertFromJripSelector(a));
+//            }
+//            
+//            hypo.rules.add(rule);
+//        }
+        
+        for (Hypothesis h:hyps) {
+            System.out.println(h.toString());
         }
         
         return hyps;
