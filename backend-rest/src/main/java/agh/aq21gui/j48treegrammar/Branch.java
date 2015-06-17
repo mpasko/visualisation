@@ -13,7 +13,7 @@ public class Branch {
     private String to;
     private String attribute;
     private String comparator;
-    private Double value;
+    private String value;
 
     /**
      * @return the from
@@ -60,14 +60,14 @@ public class Branch {
     /**
      * @return the value
      */
-    public Double getValue() {
+    public String getValue() {
         return value;
     }
 
     /**
      * @param value the value to set
      */
-    public void setValue(Double value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

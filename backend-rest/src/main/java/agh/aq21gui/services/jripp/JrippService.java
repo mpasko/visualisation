@@ -45,7 +45,7 @@ public class JrippService {
         instances.setClassIndex(classIndex);
     }
 
-    private static String[] paramsetToCmdline(Test run) {
+    public static String[] paramsetToCmdline(Test run) {
          ArrayList<String> cmdline = new ArrayList<String>();
         int folds = 0;
         double minimal_weights = 0.0;
@@ -72,7 +72,7 @@ public class JrippService {
                 not_use_pruning = param.isTrue();
             } 
         }
-        if (!debug) {
+        if (debug) {
             cmdline.add("-D");
         }
         if (not_check_error_rate) {
@@ -217,7 +217,8 @@ public class JrippService {
         }
         filteredData.getRunsGroup().setRuns(new_runs);
     }
-    private List<Hypothesis> runAll(Input input) {
+    
+    public List<Hypothesis> runAll(Input input) {
         List<Hypothesis> hypotheses_all = new LinkedList<Hypothesis>();
         try {
             for (Test run : input.runsGroup.runs) {

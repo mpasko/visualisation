@@ -110,21 +110,6 @@ public class Util {
         return parser.parse(in.toString());
     }
     
-    //public static Rule deepCopySelector(Rule rule) {
-
-    public static Rule shallowCopyRule(Rule rule) {
-        List<Selector> selectors = rule.getSelectors();
-        return new Rule(selectors.toArray(new Selector[selectors.size()]));
-    }
-
-    public static Hypothesis shallowCopyHypothesis(Hypothesis hypothesis) {
-        List<Rule> rules = hypothesis.rules;
-        Hypothesis new_hypo = new Hypothesis(rules.toArray(new Rule[rules.size()]));
-        new_hypo.name = hypothesis.name;
-        new_hypo.setClasses(new LinkedList<ClassDescriptor>(hypothesis.getClasses()));
-        return new_hypo;
-    }
-    
     public static String objectToJson(Object item) {
         try {
             //System.out.println(item.toString());
