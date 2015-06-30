@@ -94,4 +94,16 @@ public class Rule {
         }
         return matches;
     }
+    
+    public boolean matchesEventStrictly(Map<String, Object> map) {
+        boolean matches = true;
+        for (Selector sel : this.getSelectors()) {
+            Object eventValue = map.get(sel.getName());
+            //Util.isNull(eventValue, "eventValue");
+            //Util.isNull(sel, "sel");
+            matches &= sel.matchesValueStrictly(eventValue.toString());
+        }
+        return matches;
+    }
+
 }

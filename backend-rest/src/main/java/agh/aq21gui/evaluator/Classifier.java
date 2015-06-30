@@ -19,8 +19,14 @@ import java.util.Map;
 public class Classifier {
     private final Input input;
     
+    private boolean questionAsFalse = false;
+    
     public Classifier(Input globalData){
         input = globalData;
+    }
+    
+    public void setQuestionAsFalse(boolean _qasf) {
+        //this.questionAsFalse = _qasf;
     }
     
     public StatsAgregator performStatistics(Collection<Hypothesis> hypos) {
@@ -45,8 +51,15 @@ public class Classifier {
         Map<String, Object> map = input.generateKeyValue(event);
         String eventClass = map.get(hypothesisClass.name).toString();
         if (!NumericUtil.isWildcard(eventClass)) {
-            boolean premiseMatches = hypo.matchesEvent(map);
-            boolean theoryMatches = hypothesisClass.matchesValue(eventClass);
+            boolean premiseMatches;
+            boolean theoryMatches;
+            if (questionAsFalse) {
+                premiseMatches = hypo.matchesEventStrictly(map);
+                theoryMatches = hypothesisClass.matchesValueStrictly(eventClass);
+            } else {
+                premiseMatches = hypo.matchesEvent(map);
+                theoryMatches = hypothesisClass.matchesValue(eventClass);
+            }
             logSingleEvent(event, premiseMatches, theoryMatches);
             stats.analyzeCase(premiseMatches, theoryMatches);
         }

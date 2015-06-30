@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -146,6 +147,7 @@ public class Parameter implements IAQ21Serializable {
         }
     }
 
+    @JsonIgnore
     public boolean isTrue() {
         return this.value.equalsIgnoreCase("true");
     }

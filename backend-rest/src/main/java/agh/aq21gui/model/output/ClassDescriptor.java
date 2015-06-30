@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -213,6 +214,9 @@ public class ClassDescriptor extends NameValueEntity {
     }
 
     public boolean matchesValue(String actualValue) {
+//        if (NumericUtil.isWildcard(actualValue)) {
+//            return false;
+//        }
         boolean outcome = false;
         if (value.isEmpty()) {
             if (!range_begin.isEmpty()) {
@@ -308,6 +312,7 @@ public class ClassDescriptor extends NameValueEntity {
         return result;
     }
 
+    @JsonIgnore
     public boolean isCustomValue() {
         return getValue().equalsIgnoreCase("*");
     }
@@ -326,8 +331,6 @@ public class ClassDescriptor extends NameValueEntity {
             char dir2 = comp2.charAt(0);
             Double doubleval1 = NumericUtil.tryParse(val1);
             Double doubleval2 = NumericUtil.tryParse(val2);
-
-            Selector newsel = null;
             if (this.getRange_begin().isEmpty()) {
                 if (dir1 == dir2) {
                     result = this.matchesValue(val2);
@@ -353,5 +356,12 @@ public class ClassDescriptor extends NameValueEntity {
 
     public boolean comparatorIsNonequality() {
         return comparator.equals("!=") || comparator.equals("<>");
+    }
+
+    public boolean matchesValueStrictly(String actualValue) {
+        if (NumericUtil.isWildcard(actualValue)) {
+            return false;
+        }
+        return matchesValue(actualValue);
     }
 }

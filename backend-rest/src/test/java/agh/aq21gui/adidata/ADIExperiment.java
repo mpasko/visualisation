@@ -33,11 +33,11 @@ import java.util.TreeMap;
  * @author marcin
  */
 public class ADIExperiment {
-    
+
     TreeMap<String, Statistics> statTable = new TreeMap<String, Statistics>();
     private Input inputPattern;
     private List<Entry<IResource, String>> algSet;
-    
+
     public ADIExperiment() {
         generateDefaultConfig();
     }
@@ -48,7 +48,7 @@ public class ADIExperiment {
     public void setInput(Input input) {
         this.inputPattern = input;
     }
-    
+
     public void setAlgList(List<Entry<IResource, String>> list) {
         this.algSet = list;
     }
@@ -56,13 +56,13 @@ public class ADIExperiment {
     private void generateDefaultConfig() {
         setInput(StubFactory.loadAdiData());
         algSet = new LinkedList<Entry<IResource, String>>();
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), ""));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), ""));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
     }
-    
+
     public void runAllPossibilities(String className, String threshold, List<String> ignore) {
         statTable = new TreeMap<String, Statistics>();
         for (Entry<IResource, String> entry : algSet) {
@@ -71,16 +71,18 @@ public class ADIExperiment {
         String table = formatTextResults();
         System.out.println(table);
     }
-    
+
     public void runExperiment(IResource resource, String mode, String className, String threshold, List<String> ignore) {
-        String name = String.format("%s-%s",resource.getName().replace("Resource", ""), mode);
+        String name = String.format("%s-%s", resource.getName().replace("Resource", ""), mode);
         System.out.println(String.format("Experiment, mode=%s:", name));
         Input input = Util.deepCopyInput(inputPattern);
-        
+
         RunsGroup runsGroup = resource.generateConfig(input);
         runsGroup.enforceClassForAll(className, threshold);
         runsGroup.enforceModeForAll(mode);
-        runsGroup.enforceParameter("prune", "true");
+        if (mode.equalsIgnoreCase("prune")) {
+            runsGroup.enforceParameter("prune", "true");
+        }
         input.setRunsGroup(runsGroup);
         //System.out.println(input.toString());
         input = new AttributeRemover().dropAttributes(input, ignore);
@@ -88,21 +90,25 @@ public class ADIExperiment {
         //System.out.println(input.toString());
         Output result = resource.performExperiment(input);
         /* *x/
-        Output processed = new RuleVerticalAgregator().agregate(result);
-        /* *x/
-        Output processed = new RulePrunner().doAll(result);
-        /* */
-        Output processed=result;
+         Output processed = new RuleVerticalAgregator().agregate(result);
+         /* *x/
+         Output processed = new RulePrunner().doAll(result);
+         /* */
+        Output processed = result;
         /* */
         processed = new RuleSorter().sort(processed);
-        
+
         //System.out.println(sortedResult);
         System.out.println(processed.obtainOutputHypotheses().toString());
-        StatsAgregator metrics = new MetricsResource().analyze(processed);
+        MetricsResource metricsResource = new MetricsResource();
+        if (mode.equalsIgnoreCase("strict")) {
+            metricsResource.questionAsFalse = true;
+        }
+        StatsAgregator metrics = metricsResource.analyze(processed);
         System.out.println(metrics.toString());
         for (Hypothesis hypo : processed.getOutputHypotheses()) {
             String hypoName = hypo.getName();
-            statTable.put(name+hypoName, metrics.getParticular().get(hypoName));
+            statTable.put(name + hypoName, metrics.getParticular().get(hypoName));
         }
     }
 

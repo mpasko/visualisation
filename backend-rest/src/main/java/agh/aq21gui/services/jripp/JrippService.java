@@ -246,12 +246,15 @@ public class JrippService {
         Output out = new Output(filteredData);
         List<Hypothesis> hypos = runAll(filteredData);
         out.setOutputHypotheses(hypos);
+        /*
         Output agragated = new RuleAgregator().agregate(out);
         
         for (Hypothesis hypo: agragated.getOutputHypotheses()) {
             System.out.println(hypo.toString());
         }
         return agragated;
+        */
+        return out;
     }
     
     public static void expandRunsForStar(Input filteredData, ClassDescriptor descriptor) {

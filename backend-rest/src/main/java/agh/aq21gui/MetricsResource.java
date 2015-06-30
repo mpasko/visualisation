@@ -20,6 +20,8 @@ import javax.ws.rs.core.MediaType;
 @Path("metrics")
 public class MetricsResource {
     
+    public boolean questionAsFalse = false;
+    
     @POST
 	@Path("analyze")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -28,6 +30,7 @@ public class MetricsResource {
 	})
     public StatsAgregator analyze(Output out){
         Classifier cfier = new Classifier(out);
+        cfier.setQuestionAsFalse(questionAsFalse);
         return cfier.performStatistics(out.getOutputHypotheses());
     }
 }

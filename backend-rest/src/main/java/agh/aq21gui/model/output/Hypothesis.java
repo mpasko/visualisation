@@ -136,5 +136,13 @@ public class Hypothesis {
         }
         return matches;
     }
+
+    public boolean matchesEventStrictly(Map<String, Object> map) {
+        boolean matches = false;
+        for (Rule rule : this.rules) {
+            matches |= rule.matchesEventStrictly(map);
+        }
+        return matches;
+    }
 	
 }

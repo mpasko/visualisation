@@ -94,7 +94,7 @@ public class Util {
         } else if (comparator.equals("!=") || comparator.equals("<>")) {
             neg = "=";
         } else {
-            neg = "!=";
+            neg = "<>";
         }
         return neg;
     }
@@ -109,7 +109,7 @@ public class Util {
         
         //System.out.print(attachLines(in.toString()));
         String json = Util.objectToJson(in);
-        return Util.JsonToInput(json));
+        return Util.JsonToInput(json);
     }
     
     public static Input JsonToInput(String json) {
