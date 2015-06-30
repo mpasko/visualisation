@@ -123,7 +123,7 @@ public class JrippService {
     private static Selector convertFromStringSelector(String sel) {
         Selector s = new Selector();
         sel = sel.replaceAll("\\(", "").replaceAll("\\)", "");
-        String[] tokens = sel.split(" ");
+        String[] tokens = sel.trim().split(" ");
         s.setName(tokens[0]);
         s.setComparator(tokens[1]);
         s.setValue(tokens[2]);
@@ -160,7 +160,8 @@ public class JrippService {
         List<String> filtered = new LinkedList<String>();
         for (String token:tokens) {
             if (token.endsWith(")")) {
-                String ant = token.split("=>")[0];
+                String ant;
+                ant = token.split("=>")[0];
                 String consequent = token.split("=>")[1];
                 String claz = consequent.split("=")[1].split("\\(")[0].trim();
                 Hypothesis hypo = getHypotheses(hyps, attr, claz);
