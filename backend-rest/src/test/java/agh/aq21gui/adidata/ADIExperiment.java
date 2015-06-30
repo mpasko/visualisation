@@ -13,6 +13,7 @@ import agh.aq21gui.evaluator.Statistics;
 import agh.aq21gui.filters.RuleSorter;
 import agh.aq21gui.evaluator.StatsAgregator;
 import agh.aq21gui.filters.AttributeRemover;
+import agh.aq21gui.filters.RulePrunner;
 import agh.aq21gui.filters.RuleVerticalAgregator;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
@@ -56,10 +57,10 @@ public class ADIExperiment {
         setInput(StubFactory.loadAdiData());
         algSet = new LinkedList<Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), ""));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), ""));
-       // algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
-        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
-        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), ""));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
     }
     
     public void runAllPossibilities(String className, String threshold, List<String> ignore) {
@@ -78,14 +79,21 @@ public class ADIExperiment {
         RunsGroup runsGroup = resource.generateConfig(input);
         runsGroup.enforceClassForAll(className, threshold);
         runsGroup.enforceModeForAll(mode);
+        runsGroup.enforceParameter("prune", "true");
         input.setRunsGroup(runsGroup);
         //System.out.println(input.toString());
         input = new AttributeRemover().dropAttributes(input, ignore);
         //System.out.println("After setting correct class:");
         //System.out.println(input.toString());
         Output result = resource.performExperiment(input);
-        Output sortedResult = new RuleSorter().sort(result);
-        Output processed = new RuleVerticalAgregator().agregate(sortedResult);
+        /* *x/
+        Output processed = new RuleVerticalAgregator().agregate(result);
+        /* *x/
+        Output processed = new RulePrunner().doAll(result);
+        /* */
+        Output processed=result;
+        /* */
+        processed = new RuleSorter().sort(processed);
         
         //System.out.println(sortedResult);
         System.out.println(processed.obtainOutputHypotheses().toString());

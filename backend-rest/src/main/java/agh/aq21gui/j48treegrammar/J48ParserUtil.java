@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.j48treegrammar;
 
+import agh.aq21gui.utils.Util;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.runtime.ANTLRStringStream;
@@ -37,7 +38,9 @@ public class J48ParserUtil {
             //System.out.println("tree:");
             //System.out.println(tree.toStringTree());
         }catch(RecognitionException ex){
-            Logger.getLogger(J48ParserUtil.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(J48ParserUtil.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(Util.attachLines(out));
+            throw new RuntimeException(ex);
         }
         return tree;
     }

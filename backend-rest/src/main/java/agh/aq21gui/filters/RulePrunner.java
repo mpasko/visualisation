@@ -11,9 +11,15 @@ import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.Rule;
 import agh.aq21gui.model.output.Selector;
+import agh.aq21gui.utils.MapList;
 import agh.aq21gui.utils.Util;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  *
@@ -22,6 +28,10 @@ import java.util.List;
 public class RulePrunner {
 
     public RulePrunner() {
+    }
+    
+    public Output doAll(Output out) {
+        return this.sortByAccuracyAndApplyElse(this.prune(out));
     }
 
     public Output prune(Output out) {
@@ -32,6 +42,15 @@ public class RulePrunner {
             Hypothesis best_modification = simplifyHypothesis(hypothesis, classifier);
             new_hypotheses.add(best_modification);
         }
+        result.setOutputHypotheses(new_hypotheses);
+        return result;
+    }
+    
+    public Output sortByAccuracyAndApplyElse(Output out) {
+        Output result = out; //deepcopy
+        List<Hypothesis> old_hypotheses = result.getOutputHypotheses();
+        List<Hypothesis> med_hypotheses = sortHypothesesByAccuracy(result, old_hypotheses);
+        List<Hypothesis> new_hypotheses = applyElseOnAll(med_hypotheses);
         result.setOutputHypotheses(new_hypotheses);
         return result;
     }
@@ -89,5 +108,96 @@ public class RulePrunner {
         new_hypo.name = hypothesis.name;
         new_hypo.setClasses(new LinkedList<ClassDescriptor>(hypothesis.getClasses()));
         return new_hypo;
+    }
+
+    private List<Hypothesis> sortHypothesesByAccuracy(Output result, List<Hypothesis> old_hypotheses) {
+        Classifier classifier = new Classifier(result);
+        List<Hypothesis> new_hypotheses = new LinkedList<Hypothesis>();
+        HashMap<Hypothesis, Double> accuracies = new HashMap<Hypothesis, Double>();
+        for (Hypothesis hypo : old_hypotheses) {
+            accuracies.put(hypo, classifier.performStatistics(hypo).getAccuracy());
+        }
+        new_hypotheses.addAll(old_hypotheses);
+        Collections.sort(new_hypotheses, new HypothesisCompartor(accuracies));
+        return new_hypotheses;
+    }
+
+    private List<Hypothesis> applyElseOnAll(List<Hypothesis> med_hypotheses) {
+        List<Hypothesis> new_hypotheses = new LinkedList<Hypothesis>();
+        MapList<Hypothesis> map = new MapList<Hypothesis>();
+        for (Hypothesis hypo : med_hypotheses) {
+            String key = createClassNameSignatureKey(hypo.getClasses());
+            map.add(key, hypo);
+        }
+        for (String key: map.keySet()){
+            LinkedList<Hypothesis> list = map.get(key);
+            new_hypotheses.addAll(applyElseCascadely(list));
+        }
+        return new_hypotheses;
+    }
+
+    private String createClassNameSignatureKey(List<ClassDescriptor> classes) {
+        StringBuilder build = new StringBuilder();
+        for (ClassDescriptor desc : classes) {
+            build.append(desc.getName());
+        }
+        return build.toString();
+    }
+    
+    private String createClassValueSignatureKey(List<ClassDescriptor> classes) {
+        StringBuilder build = new StringBuilder();
+        for (ClassDescriptor desc : classes) {
+            build.append(desc.getValue());
+        }
+        return build.toString();
+    }
+
+    private Collection<? extends Hypothesis> applyElseCascadely(LinkedList<Hypothesis> list) {
+        HypothesisAnd and = new HypothesisAnd();
+        HypothesisNegation neg = new HypothesisNegation();
+        LinkedList<Hypothesis> result = new LinkedList<Hypothesis>();
+        HashMap<String, Hypothesis> elseStack = new HashMap<String, Hypothesis>();
+        for (Hypothesis hypo : list) {
+            Hypothesis new_hypo;
+            String key = createClassValueSignatureKey(hypo.getClasses());
+            Hypothesis found = null;
+            for (Entry<String, Hypothesis> entry : elseStack.entrySet()) {
+                if (!key.equalsIgnoreCase(entry.getKey())) {
+                    found = entry.getValue();
+                }
+            }
+            if (elseStack.get(key)==null) {
+                elseStack.put(key, neg.negateHypothesis(hypo));
+            }
+            if (found==null) {
+                new_hypo = hypo;
+            } else {
+                new_hypo = and.and(found, hypo);
+            }
+            result.add(new_hypo);
+        }
+        return result;
+    }
+    
+    static class HypothesisCompartor implements Comparator<Hypothesis> {
+        private final HashMap<Hypothesis, Double> accuracies;
+
+        public HypothesisCompartor(HashMap<Hypothesis, Double> accuracies) {
+            this.accuracies = accuracies;
+        }
+        
+        @Override
+        public int compare(Hypothesis t0, Hypothesis t1) {
+            Double a0 = accuracies.get(t0);
+            Double a1 = accuracies.get(t1);
+            if (a0>a1) {
+                return 1;
+            } else if (a0<a1) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+        
     }
 }

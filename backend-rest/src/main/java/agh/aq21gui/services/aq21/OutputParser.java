@@ -42,6 +42,7 @@ public class OutputParser {
 //            System.out.println(tree.toStringTree());
         }catch(RecognitionException ex){
             //Logger.getLogger(Aq21Resource.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(Util.attachLines(out));
             throw new RuntimeException(ex);
         }
         return tree;

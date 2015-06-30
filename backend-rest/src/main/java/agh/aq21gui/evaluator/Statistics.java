@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 /**
  *
@@ -16,6 +17,21 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
+@JsonPropertyOrder(
+        { "truePositive", 
+        "trueNegative", 
+        "falsePositive",
+        "falseNegative",
+        "all",
+        "accuracy",
+        "precision",
+        "sensitivity",
+        "specificity",
+        "negativePredictiveValue",
+        "falseNegativeRate",
+        "falseDiscoveryRate",
+        "fallOut",
+        "f1Score"})
 public class Statistics {
     private int truePositive=0;
     private int trueNegative=0;

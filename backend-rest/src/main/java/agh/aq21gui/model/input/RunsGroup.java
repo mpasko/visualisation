@@ -31,15 +31,19 @@ public class RunsGroup extends TestsGroup{
 
     public void enforceModeForAll(String mode) {
         if (!mode.isEmpty()) {
-            for (Test run : this.runs) {
-                run.switchParam("mode", mode);
-            }
+            enforceParameter("mode", mode);
         }
     }
 
     public void enforceClassForAll(final String newClass, String threshold) {
         for (Test run : this.runs) {
             run.enforceClass(newClass, threshold);
+        }
+    }
+
+    public void enforceParameter(String param, String value) {
+        for (Test run : this.runs) {
+            run.switchParam(param, value);
         }
     }
 }

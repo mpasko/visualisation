@@ -4,6 +4,9 @@
  */
 package agh.aq21gui.filters;
 
+import agh.aq21gui.evaluator.Classifier;
+import agh.aq21gui.evaluator.Statistics;
+import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
@@ -32,6 +35,7 @@ public class RulePrunnerTest {
     private static Selector ze;
     private static Selector zf;
     private static ClassDescriptor classT;
+    private static ClassDescriptor classF;
 
     public RulePrunnerTest() {
     }
@@ -46,6 +50,7 @@ public class RulePrunnerTest {
             ze = Selector.parse("[z=e]");
             zf = Selector.parse("[z=f]");
             classT = ClassDescriptor.parse("[class=t]");
+            classF = ClassDescriptor.parse("[class=f]");
         } catch (RecognitionException ex) {
             Logger.getLogger(RulePrunnerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -98,81 +103,121 @@ public class RulePrunnerTest {
         List<Hypothesis> hypotheses = result.getOutputHypotheses();
         List<Hypothesis> originalHypos = out.getOutputHypotheses();
         assertEquals(originalHypos.size(), hypotheses.size());
-        for (int i = 0; i<hypotheses.size(); ++i) {
+        for (int i = 0; i < hypotheses.size(); ++i) {
             assertEquals(originalHypos.get(i), hypotheses.get(i));
+        }
+    }
+    
+    @Test
+    public void when_sortable_then_sort() {
+        System.out.println("when_sortable_then_sort");
+        Output out = generateIfElseOutput();
+        RulePrunner instance = new RulePrunner();
+        Output result = instance.sortByAccuracyAndApplyElse(out);
+        System.out.println(result.toString());
+        List<Hypothesis> hypotheses = result.getOutputHypotheses();
+        assertEquals(2, hypotheses.size());
+        Hypothesis best = hypotheses.get(0);
+        Hypothesis worse = hypotheses.get(1);
+        Classifier classifier = new Classifier(out);
+        assertEquals("f", best.getClasses().get(0).getValue());
+        assertEquals("t", worse.getClasses().get(0).getValue()); //sorted
+        assertEquals(1, best.getRules().size());
+        assertEquals(2, worse.getRules().size()); //else applied
+        for (Event e : out.obtainEventsGroup().events) {
+            Statistics best_stats = new Statistics();
+            classifier.analyzeEvent(e, best, best_stats);
+            Statistics worse_stats = new Statistics();
+            classifier.analyzeEvent(e, worse, worse_stats);
+            assertEquals(0, worse_stats.getFalsePositive());
+            assertEquals(0, best_stats.getFalsePositive());
+            boolean best_applied = best_stats.getTruePositive()==1;
+            boolean worse_applied = worse_stats.getTruePositive()==1;
+            boolean if_best_then_not_worse = !(best_applied && worse_applied);
+            assertTrue(if_best_then_not_worse);
         }
     }
 
     public static Output generatePrunnableOutput() {
-            Output out = generateOutputWithDefaultAttributes();
-            out.addEvent("a", "c", "e", "t");
-            out.addEvent("a", "c", "f", "f");
-            out.addEvent("b", "c", "e", "f");
-            out.addEvent("b", "c", "f", "f");
-            out.addEvent("a", "d", "e", "t");
-            out.addEvent("a", "d", "f", "f");
-            out.addEvent("b", "d", "e", "f");
-            out.addEvent("b", "d", "f", "f");
-            List<Hypothesis> hypotheses = new LinkedList<Hypothesis>();
-            Hypothesis hypothesis = new Hypothesis(new Rule(xa, yc, ze));
-            hypothesis.addClass(classT);
-            hypotheses.add(hypothesis);
-            out.setOutputHypotheses(hypotheses);
-            return out;
+        Output out = generateOutputWithDefaultAttributes();
+        out.addEvent("a", "c", "e", "t");
+        out.addEvent("a", "c", "f", "f");
+        out.addEvent("b", "c", "e", "f");
+        out.addEvent("b", "c", "f", "f");
+        out.addEvent("a", "d", "e", "t");
+        out.addEvent("a", "d", "f", "f");
+        out.addEvent("b", "d", "e", "f");
+        out.addEvent("b", "d", "f", "f");
+        return addDefaultHypothesis(out);
     }
 
     public static Output generatePrunnableLastOutput() {
-            Output out = generateOutputWithDefaultAttributes();
-            out.addEvent("a", "c", "e", "t");
-            out.addEvent("a", "c", "f", "t");
-            out.addEvent("b", "c", "e", "f");
-            out.addEvent("b", "c", "f", "f");
-            out.addEvent("a", "d", "e", "f");
-            out.addEvent("a", "d", "f", "f");
-            out.addEvent("b", "d", "e", "f");
-            out.addEvent("b", "d", "f", "f");
-            List<Hypothesis> hypotheses = new LinkedList<Hypothesis>();
-            Hypothesis hypothesis = new Hypothesis(new Rule(xa, yc, ze));
-            hypothesis.addClass(classT);
-            hypotheses.add(hypothesis);
-            out.setOutputHypotheses(hypotheses);
-            return out;
+        Output out = generateOutputWithDefaultAttributes();
+        out.addEvent("a", "c", "e", "t");
+        out.addEvent("a", "c", "f", "t");
+        out.addEvent("b", "c", "e", "f");
+        out.addEvent("b", "c", "f", "f");
+        out.addEvent("a", "d", "e", "f");
+        out.addEvent("a", "d", "f", "f");
+        out.addEvent("b", "d", "e", "f");
+        out.addEvent("b", "d", "f", "f");
+        return addDefaultHypothesis(out);
     }
-    
+
     public static Output generateTwicePrunnableOutput() {
-            Output out = generateOutputWithDefaultAttributes();
-            out.addEvent("a", "c", "e", "t");
-            out.addEvent("a", "c", "f", "t");
-            out.addEvent("b", "c", "e", "f");
-            out.addEvent("b", "c", "f", "f");
-            out.addEvent("a", "d", "e", "t");
-            out.addEvent("a", "d", "f", "t");
-            out.addEvent("b", "d", "e", "f");
-            out.addEvent("b", "d", "f", "f");
-            List<Hypothesis> hypotheses = new LinkedList<Hypothesis>();
-            Hypothesis hypothesis = new Hypothesis(new Rule(xa, yc, ze));
-            hypothesis.addClass(classT);
-            hypotheses.add(hypothesis);
-            out.setOutputHypotheses(hypotheses);
-            return out;
+        Output out = generateOutputWithDefaultAttributes();
+        out.addEvent("a", "c", "e", "t");
+        out.addEvent("a", "c", "f", "t");
+        out.addEvent("b", "c", "e", "f");
+        out.addEvent("b", "c", "f", "f");
+        out.addEvent("a", "d", "e", "t");
+        out.addEvent("a", "d", "f", "t");
+        out.addEvent("b", "d", "e", "f");
+        out.addEvent("b", "d", "f", "f");
+        return addDefaultHypothesis(out);
     }
 
     public static Output generateNonPrunnableOutput() {
-            Output out = generateOutputWithDefaultAttributes();
-            out.addEvent("a", "c", "e", "t");
-            out.addEvent("a", "c", "f", "f");
-            out.addEvent("b", "c", "e", "f");
-            out.addEvent("b", "c", "f", "f");
-            out.addEvent("a", "d", "e", "f");
-            out.addEvent("a", "d", "f", "f");
-            out.addEvent("b", "d", "e", "f");
-            out.addEvent("b", "d", "f", "f");
-            List<Hypothesis> hypotheses = new LinkedList<Hypothesis>();
-            Hypothesis hypothesis = new Hypothesis(new Rule(xa, yc, ze));
-            hypothesis.addClass(classT);
-            hypotheses.add(hypothesis);
-            out.setOutputHypotheses(hypotheses);
-            return out;
+        Output out = generateOutputWithDefaultAttributes();
+        out.addEvent("a", "c", "e", "t");
+        out.addEvent("a", "c", "f", "f");
+        out.addEvent("b", "c", "e", "f");
+        out.addEvent("b", "c", "f", "f");
+        out.addEvent("a", "d", "e", "f");
+        out.addEvent("a", "d", "f", "f");
+        out.addEvent("b", "d", "e", "f");
+        out.addEvent("b", "d", "f", "f");
+        return addDefaultHypothesis(out);
+    }
+
+    private static Output addDefaultHypothesis(Output out) {
+        List<Hypothesis> hypotheses = new LinkedList<Hypothesis>();
+        Hypothesis hypothesis = new Hypothesis(new Rule(xa, yc, ze));
+        hypothesis.addClass(classT);
+        hypotheses.add(hypothesis);
+        out.setOutputHypotheses(hypotheses);
+        return out;
+    }
+
+    public static Output generateIfElseOutput() {
+        Output out = generateOutputWithDefaultAttributes();
+        out.addEvent("a", "c", "e", "t");
+        out.addEvent("a", "c", "f", "t");
+        out.addEvent("b", "c", "e", "f");
+        out.addEvent("b", "c", "f", "t");
+        out.addEvent("a", "d", "e", "f");
+        out.addEvent("a", "d", "f", "f");
+        out.addEvent("b", "d", "e", "f");
+        out.addEvent("b", "d", "f", "f");
+        List<Hypothesis> hypotheses = new LinkedList<Hypothesis>();
+        Hypothesis best_hypothesis = new Hypothesis(new Rule(xb, ze));
+        best_hypothesis.addClass(classF);
+        Hypothesis worse_hypothesis = new Hypothesis(new Rule(yc));
+        worse_hypothesis.addClass(classT);
+        hypotheses.add(worse_hypothesis);
+        hypotheses.add(best_hypothesis);
+        out.setOutputHypotheses(hypotheses);
+        return out;
     }
 
     private static Output generateOutputWithDefaultAttributes() {
@@ -194,7 +239,7 @@ public class RulePrunnerTest {
             boolean case1 = selector.toString().equalsIgnoreCase("[x=a]");
             boolean case2 = selector.toString().equalsIgnoreCase("[z=e]");
             boolean impossible = selector.toString().equalsIgnoreCase("[y=c]");
-            assertTrue((case1 || case2)&&!impossible);
+            assertTrue((case1 || case2) && !impossible);
         }
     }
 
@@ -208,7 +253,7 @@ public class RulePrunnerTest {
             boolean case1 = selector.toString().equalsIgnoreCase("[x=a]");
             boolean case2 = selector.toString().equalsIgnoreCase("[y=c]");
             boolean impossible = selector.toString().equalsIgnoreCase("[z=e]");
-            assertTrue((case1 || case2)&&!impossible);
+            assertTrue((case1 || case2) && !impossible);
         }
     }
 
