@@ -16,6 +16,11 @@ import java.util.List;
 public class AttributeRemover {
     
     public Input dropAttributes(Input in, List<String> attributes) {
+        // NOW ADDED
+        if (attributes.isEmpty()) {
+            return in;
+        }
+        
         Input copy = Util.deepCopyInput(in);
         for (String attribute : attributes) {
             dropAttributeOpt(copy, attribute);
