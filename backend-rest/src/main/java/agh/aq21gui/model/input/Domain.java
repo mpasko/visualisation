@@ -12,6 +12,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.antlr.runtime.tree.CommonTree;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
@@ -165,6 +166,7 @@ public class Domain extends NameValueEntity{
 	}
     
     @Deprecated
+     @JsonIgnore
     public List<String> getRangeRecursively(DomainsGroup dg) {
 		return dg.getRangeRecursively(this);
 	}
@@ -177,32 +179,35 @@ public class Domain extends NameValueEntity{
 
 	
     @Deprecated
+     @JsonIgnore
 	public String getdomainNameRecursively(DomainsGroup dg){
         Domain domainObject = dg.getdomainObjectRecursively(this);
 		return domainObject.getdomain();
 	}
     
     @Deprecated
+     @JsonIgnore
     public Domain getdomainObjectRecursively(DomainsGroup dg){
 		return dg.getdomainObjectRecursively(this);
 	}
-
+    @JsonIgnore
     public boolean isContinuous() {
         return domain.equalsIgnoreCase("continuous");
     }
-
+    @JsonIgnore
     public boolean isInteger() {
         return domain.equalsIgnoreCase("integer");
     }
 
+    @JsonIgnore
     public boolean isNominal() {
         return domain.equalsIgnoreCase("nominal");
     }
-
+    @JsonIgnore
     public boolean isLinear() {
         return domain.equalsIgnoreCase("linear");
     }
-
+     @JsonIgnore
     public boolean isTerminal() {
         return isContinuous()||isInteger()||isLinear()||isNominal();
     }

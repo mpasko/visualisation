@@ -57,7 +57,7 @@ public class ADIExperiment {
         setInput(StubFactory.loadAdiData());
         algSet = new LinkedList<Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), ""));
-        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), ""));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), ""));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
@@ -76,6 +76,7 @@ public class ADIExperiment {
         String name = String.format("%s-%s",resource.getName().replace("Resource", ""), mode);
         System.out.println(String.format("Experiment, mode=%s:", name));
         Input input = Util.deepCopyInput(inputPattern);
+        
         RunsGroup runsGroup = resource.generateConfig(input);
         runsGroup.enforceClassForAll(className, threshold);
         runsGroup.enforceModeForAll(mode);

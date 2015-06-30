@@ -37,16 +37,17 @@ public class NewClass {
         
         
         Input input = StubFactory.loadAdiData();
+        Input input1 = Util.deepCopyInput(input);
         JRipResource config = new JRipResource();
-        RunsGroup runsGroup = config.generateConfig(input);
+        RunsGroup runsGroup = config.generateConfig(input1);
         runsGroup.enforceClassForAll("stop", null);
         runsGroup.enforceModeForAll("");
         runsGroup.enforceParameter("prune", "true");
-        input.setRunsGroup(runsGroup);
+        input1.setRunsGroup(runsGroup);
         
         //System.out.println(input.toString());
-        input = new AttributeRemover().dropAttributes(input, new LinkedList<String>());
-        Instances ourInstances = new Aq21InputToWeka().aq21ToWeka(input);
+        input1 = new AttributeRemover().dropAttributes(input1, new LinkedList<String>());
+        Instances ourInstances = new Aq21InputToWeka().aq21ToWeka(input1);
         String stried = ourInstances.toString();
         ourInstances.setClassIndex(0);
         JRip jripp = new JRip();    

@@ -54,7 +54,7 @@ public class JRipArchetypConfig extends IArchetypeConfig {
     private void addJRipSpecificParameters(Test r, String condition) {
         r.addParameter("folds", "3");
         r.addParameter("minimal_weights", "2.0");
-        r.addParameter("number_of_runs", "10");
+        r.addParameter("number_of_runs", "2");
         r.addParameter("debug", "false");
         r.addParameter("seed", "1");
         r.addParameter("not_check_error_rate", "false");

@@ -106,8 +106,23 @@ public class Util {
 
     public static Input deepCopyInput(Input in) {
         OutputParser parser = new OutputParser();
+        
         //System.out.print(attachLines(in.toString()));
-        return parser.parse(in.toString());
+        String json = Util.objectToJson(in);
+        return Util.JsonToInput(json));
+    }
+    
+    public static Input JsonToInput(String json) {
+        try {
+            //System.out.println(item.toString());
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationConfig.Feature.INDENT_OUTPUT);
+            return mapper.readValue(json, Input.class);
+        } catch (Throwable ex) {
+            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+        //return "";
     }
     
     public static String objectToJson(Object item) {
