@@ -7,6 +7,8 @@ package agh.aq21gui.services.jripp;
 import agh.aq21gui.converters.Aq21InputToWeka;
 import agh.aq21gui.filters.ContinuousClassFilter;
 import agh.aq21gui.filters.Discretizer;
+import agh.aq21gui.filters.HypothesisAnd;
+import agh.aq21gui.filters.HypothesisNegation;
 import agh.aq21gui.filters.RuleAgregator;
 import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.Input;
@@ -207,9 +209,9 @@ public class JrippService {
 //            hypo.rules.add(rule);
 //        }
         
-        for (Hypothesis h:hyps) {
-            System.out.println(h.toString());
-        }
+//        for (Hypothesis h:hyps) {
+//            System.out.println(h.toString());
+//        }
         
         return hyps;
     }
@@ -245,6 +247,10 @@ public class JrippService {
         List<Hypothesis> hypos = runAll(filteredData);
         out.setOutputHypotheses(hypos);
         Output agragated = new RuleAgregator().agregate(out);
+        
+        for (Hypothesis hypo: agragated.getOutputHypotheses()) {
+            System.out.println(hypo.toString());
+        }
         return agragated;
     }
     
@@ -291,7 +297,32 @@ public class JrippService {
     private static List<Hypothesis> prepareAndRunSingle(Test run, Input input) throws Exception {
         Instances instances = prepareDataForRun(run, input);
         List<Hypothesis> hypotheses = runJripp(run, instances);
-        return hypotheses;
+        
+        List<Hypothesis> ifElsedHypothesis = new LinkedList<Hypothesis>();
+        
+        Hypothesis elseStore = null;
+        
+        HypothesisNegation negator = new HypothesisNegation();
+        HypothesisAnd ander = new HypothesisAnd();
+        
+        for (Hypothesis hypothesis : hypotheses) {
+            if (elseStore==null) {
+                ifElsedHypothesis.add(hypothesis);
+                elseStore = negator.negateHypothesis(hypothesis);
+            } else {
+                //Hypothesis newhypothesis = ander.and(elseStore, negator.negateHypothesis(hypothesis));
+                Hypothesis newhypothesis = ander.and(elseStore,hypothesis);
+                ifElsedHypothesis.add(newhypothesis);
+                
+                elseStore = ander.and(elseStore, negator.negateHypothesis(hypothesis));
+            }
+        }
+        
+        for (Hypothesis hypothesis : ifElsedHypothesis) {
+            System.out.println(hypothesis.toString());
+        }
+        
+        return ifElsedHypothesis;
     }
     
     public static Instances prepareDataForRun(Test run, Input input) {

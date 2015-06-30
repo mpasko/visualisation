@@ -22,17 +22,31 @@ public class RuleAgregator {
     public Output agregate(Output result) {
         Output copy = result;//Util.deepCopyOutput(result);
         List<Hypothesis> outputHypotheses = copy.getOutputHypotheses();
-        agregateHypotheses(outputHypotheses);
+        List<Hypothesis> aggregatedHypotheses = agregateHypotheses(outputHypotheses);
+        copy.setOutputHypotheses(aggregatedHypotheses);
         return copy;
     }
 
-    private void agregateHypotheses(List<Hypothesis> outputHypotheses) {
+    private List<Hypothesis> agregateHypotheses(List<Hypothesis> outputHypotheses) {
+        List<Hypothesis> aggregatedHypotheses = new LinkedList<Hypothesis>();
         for (Hypothesis hypo : outputHypotheses) {
+            LinkedList<Rule> rules = new LinkedList<Rule>();
             for (Rule rule : hypo.rules) {
-                List<Selector> selectors = rule.getSelectors();
-                rule.setSelectors(agregateSelectors(selectors));
+                try {
+                    List<Selector> selectors = rule.getSelectors();
+                    rule.setSelectors(agregateSelectors(selectors));
+                    rules.add(rule);
+                }
+                catch (Exception e) {
+                    // System.out.println(e.getMessage());
+                }
+                
             }
+            hypo.setRules(rules);
+            aggregatedHypotheses.add(hypo);
         }
+        
+        return aggregatedHypotheses;
     }
 
     public List<Selector> agregateSelectors(List<Selector> selectors) {
