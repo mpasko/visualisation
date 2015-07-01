@@ -338,6 +338,12 @@ public class StubFactory {
         return converter.convert(data);
     }
 
+    public static Input loadAdiUpdatedData() {
+        final String data = Util.loadFile("experiment_inputs/adi_new.csv");
+        CSVConverter converter = new CSVConverter();
+        return converter.convert(data);
+    }
+
     public static Input generatePolynomialInput(int size, String className) {
         Input in = new Input();
         in.addAttribute("marker", "integer", "");
