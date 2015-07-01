@@ -360,6 +360,9 @@ public class ClassDescriptor extends NameValueEntity {
 
     public boolean matchesValueStrictly(String actualValue) {
         if (NumericUtil.isWildcard(actualValue)) {
+            if (("?".equals(value)) && ("?".equals(actualValue)) && ("=".equals(comparator))) {
+                return true;
+            }
             return false;
         }
         return matchesValue(actualValue);

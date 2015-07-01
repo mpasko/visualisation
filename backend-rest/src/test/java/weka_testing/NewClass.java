@@ -54,6 +54,6 @@ public class NewClass {
         
         jripp.setOptions(new String[] {"-S", "1", "-O","2", "-N","2.0","-F", "3"});
         jripp.buildClassifier(ourInstances);
-        
+        System.out.println(jripp.toString());
     }
 }

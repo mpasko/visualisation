@@ -306,6 +306,7 @@ public class JrippService {
         Hypothesis elseStore = null;
         
         HypothesisNegation negator = new HypothesisNegation();
+        negator.setAddQuestions(true);
         HypothesisAnd ander = new HypothesisAnd();
         
         for (Hypothesis hypothesis : hypotheses) {

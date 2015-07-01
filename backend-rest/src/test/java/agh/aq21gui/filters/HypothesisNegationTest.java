@@ -159,6 +159,20 @@ public class HypothesisNegationTest {
         assertEquals("<=", result.get(0).getComparator());
         assertEquals("3.5", result.get(0).getValue());
     }
+    
+    
+    @Test
+    public void testNegateJrippSelector() {
+        System.out.println("negateSelector");
+        HypothesisNegation instance = new HypothesisNegation();
+        instance.setAddQuestions(true);
+        List<Selector> result = instance.negateSelector(sel1);
+        assertEquals(2, result.size());
+        assertEquals("<=", result.get(0).getComparator());
+        assertEquals("3.5", result.get(0).getValue());
+        assertEquals("=", result.get(1).getComparator());
+        assertEquals("?", result.get(1).getValue());
+    }
 
     @Test
     public void when_range_then_two_resultset() {

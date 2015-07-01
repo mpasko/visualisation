@@ -26,7 +26,7 @@ public class Classifier {
     }
     
     public void setQuestionAsFalse(boolean _qasf) {
-        //this.questionAsFalse = _qasf;
+        this.questionAsFalse = _qasf;
     }
     
     public StatsAgregator performStatistics(Collection<Hypothesis> hypos) {

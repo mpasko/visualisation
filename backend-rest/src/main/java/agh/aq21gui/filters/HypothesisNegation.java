@@ -17,6 +17,8 @@ import java.util.List;
  * @author marcin
  */
 public class HypothesisNegation {
+    
+    private boolean addQuestions = false;
 
     private LinkedList<Rule> recursivelyMyltiply(LinkedList<Rule> little) {
         LinkedList<Rule> local_copy = new LinkedList<Rule>(little);
@@ -74,19 +76,27 @@ public class HypothesisNegation {
     }
 
     public List<Selector> negateSelector(Selector sel) {
+        LinkedList<Selector> list = new LinkedList<Selector>();
+        
         if (sel.getRange_begin().isEmpty()) {
             String negatedComparator = Util.negatedComparator(sel.comparator);
             Selector result = new Selector(sel.name, negatedComparator, sel.getValue());
-            LinkedList<Selector> list = new LinkedList<Selector>();
+            
             list.add(result);
-            return list;
         } else {
             Selector left = new Selector(sel.getName(), "<", sel.getRange_begin());
             Selector right = new Selector(sel.getName(), ">", sel.getRange_end());
-            LinkedList<Selector> list = new LinkedList<Selector>();
             list.add(left);
             list.add(right);
-            return list;
         }
+        if(this.addQuestions) {
+            list.add(new Selector(sel.getName(), "=", "?"));
+        }
+        
+        return list;
+    }
+
+    public void setAddQuestions(boolean b) {
+        this.addQuestions = b;
     }
 }
