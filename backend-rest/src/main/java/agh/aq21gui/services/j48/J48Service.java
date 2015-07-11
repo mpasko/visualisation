@@ -54,8 +54,7 @@ public class J48Service {
         Output out = new Output(filteredData);
         List<Hypothesis> hypos = runAll(filteredData);
         out.setOutputHypotheses(hypos);
-        Output agragated = new RuleAgregator().agregate(out);
-        return agragated;
+        return out;
     }
 
     public List<Hypothesis> runAll(Input input) {

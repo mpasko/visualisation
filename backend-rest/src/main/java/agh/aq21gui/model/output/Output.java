@@ -89,6 +89,9 @@ public class Output extends Input{
 		TreeNode childTree = new TreeNode(tree, TParser.OUTPUT).childOf(TParser.HYPOTHESES);
 		outHypo.parseHypothesis(childTree);
 /*before refactor: */
+        if (tree==null||tree.getChildren()==null) {
+            throw new RuntimeException(raw_data);
+        }
 		for (Object t: tree.getChildren()){
 			CommonTree childTree = (CommonTree)t;
 			if(childTree.getType()==TParser.HYPOTHESES){

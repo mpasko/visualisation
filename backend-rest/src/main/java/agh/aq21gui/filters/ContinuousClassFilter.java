@@ -37,13 +37,22 @@ public class ContinuousClassFilter {
         int index = in.gAG().getIndexOfAttribute(cd.getName());
         if (cd.getSet_elements().size() > 0) {
             LinkedList<String> labels = prepareLabels(cd.getSet_elements(), "<");
-            setupNewDomain(labels, result, cd.getName());
-            result = processEventsMultiple(result, index, cd, labels);
+            result = filter(result, cd, labels);
         } else {
             LinkedList<String> labels = prepareLabels(Util.strings(cd.getValue()), cd.getComparator());
             setupNewDomain(labels, result, cd.getName());
             result = processEventsSingle(result, index, cd, labels.get(0), labels.get(1));
         }
+        return result;
+    }
+
+    public Input filter(Input result, ClassDescriptor cd, List<String> labels) {
+        if ((labels == null) || (labels.size() < cd.set_elements.size()-1)) {
+            labels = prepareLabels(cd.getSet_elements(), "<");
+        }
+        setupNewDomain(labels, result, cd.getName());
+        int index = result.gAG().getIndexOfAttribute(cd.getName());
+        result = processEventsMultiple(result, index, cd, labels);
         return result;
     }
 
@@ -90,7 +99,7 @@ public class ContinuousClassFilter {
         return result;
     }
 
-    private Input processEventsMultiple(Input result, int index, ClassDescriptor cd, LinkedList<String> labels) {
+    private Input processEventsMultiple(Input result, int index, ClassDescriptor cd, List<String> labels) {
         for (Event event : result.obtainEventsGroup().events) {
             String currentValue = event.getValues().get(index);
             if (!NumericUtil.isWildcard(currentValue)) {
@@ -153,7 +162,7 @@ public class ContinuousClassFilter {
         return labels;
     }
 
-    private void setupNewDomain(LinkedList<String> labels, Input result, String name) {
+    private void setupNewDomain(List<String> labels, Input result, String name) {
         final Domain triggered = new Domain(name+DOMAIN_POSTFIX, "linear");
         triggered.set_elements = labels;
         result.obtainDomainsGroup().domains.add(triggered);

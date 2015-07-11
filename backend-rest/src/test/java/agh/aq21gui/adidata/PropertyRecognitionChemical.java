@@ -24,9 +24,9 @@ public class PropertyRecognitionChemical {
     private static final String RE_MPA = "re_mpa";
     private static final String RM_MPA = "rm_mpa";
     private static final String STOP = "stop";
-    public static final String K1C_M_PA_VM = "K1c_MPaVm";
-    public static final String A5_PERCENT = "A5_percent";
-    public static final String HC_R = "HCR";
+    public static final String K1C_M_PA_VM = "k1c_mpavm";
+    public static final String A5_PERCENT = "a5_percent";
+    public static final String HC_R = "hcr";
     
     public static void main(String[] args) {
         final ADIExperiment adiExperiment = new ADIExperiment();

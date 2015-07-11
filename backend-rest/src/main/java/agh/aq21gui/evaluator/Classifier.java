@@ -10,6 +10,7 @@ import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.utils.NumericUtil;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -49,7 +50,8 @@ public class Classifier {
     public void analyzeEvent(Event event, Hypothesis hypo, Statistics stats) {
         ClassDescriptor hypothesisClass = hypo.getClasses().get(0);
         Map<String, Object> map = input.generateKeyValue(event);
-        String eventClass = map.get(hypothesisClass.name).toString();
+        String className = hypothesisClass.name.toLowerCase(Locale.getDefault());
+        String eventClass = map.get(className).toString().toLowerCase(Locale.getDefault());
         if (!NumericUtil.isWildcard(eventClass)) {
             boolean premiseMatches;
             boolean theoryMatches;

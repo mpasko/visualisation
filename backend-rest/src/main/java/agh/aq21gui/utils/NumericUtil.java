@@ -4,6 +4,9 @@
  */
 package agh.aq21gui.utils;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  *
  * @author marcin
@@ -89,5 +92,21 @@ public class NumericUtil {
         } catch (NumberFormatException _) {
             return defaultValue;
         }
+    }
+
+    public static List<String> dobleListToStringList(List<Double> values) {
+        LinkedList<String> result = new LinkedList<String>();
+        for (Double value : values) {
+            result.add(value.toString());
+        }
+        return result;
+    }
+    
+    public static List<Double> intListToDoubleList(List<Integer> values) {
+        LinkedList<Double> result = new LinkedList<Double>();
+        for (Integer value : values) {
+            result.add(value.doubleValue());
+        }
+        return result;
     }
 }

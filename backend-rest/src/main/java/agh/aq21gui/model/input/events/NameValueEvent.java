@@ -7,9 +7,11 @@ package agh.aq21gui.model.input.events;
 import agh.aq21gui.model.input.Attribute;
 import agh.aq21gui.model.input.AttributesGroup;
 import agh.aq21gui.model.input.Event;
+import agh.aq21gui.utils.Util;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -61,7 +63,7 @@ public class NameValueEvent implements EventAdapter {
             }
         } catch (java.util.NoSuchElementException ex) {
             for (String value : values) {
-                System.err.println(value.toString());
+                System.err.println(value);
             }
             System.err.println(attributesGroup.toString());
             throw new RuntimeException("List of values is greater than list of attributes!");
@@ -70,10 +72,12 @@ public class NameValueEvent implements EventAdapter {
     }
 
     private List<String> mapToList(Map<String, Object> event, AttributesGroup attributes) {
+        Map<String, Object> lcevent = Util.lowercaseKeys(event);
         LinkedList<String> values = new LinkedList<String>();
         for (Attribute attr : attributes.attributes) {
-            String name = attr.getname();
-            values.add(event.get(name).toString());
+            String name = attr.getname().toLowerCase(Locale.getDefault());
+            String value = lcevent.get(name).toString().toLowerCase(Locale.getDefault());
+            values.add(value);
         }
         return values;
     }

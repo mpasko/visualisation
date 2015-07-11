@@ -31,6 +31,7 @@ public class J48ParserUtil {
     public CommonTree genericParse(String out) {
         Tj48TreeParser parser = prepareParser(out);
         CommonTree tree = null;
+        System.out.println(Util.attachLines(out));
         try{
 //			System.out.println("parse:");
             Tj48TreeParser.output_return out_ret = parser.output();

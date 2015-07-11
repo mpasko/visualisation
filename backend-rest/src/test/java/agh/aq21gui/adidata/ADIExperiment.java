@@ -13,14 +13,18 @@ import agh.aq21gui.evaluator.Statistics;
 import agh.aq21gui.filters.RuleSorter;
 import agh.aq21gui.evaluator.StatsAgregator;
 import agh.aq21gui.filters.AttributeRemover;
+import agh.aq21gui.filters.ContinuousClassFilter;
+import agh.aq21gui.filters.RuleAgregator;
 import agh.aq21gui.filters.RulePrunner;
 import agh.aq21gui.filters.RuleVerticalAgregator;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
+import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.stubs.StubFactory;
 import agh.aq21gui.utils.FormatterUtil;
+import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.Util;
 import java.util.AbstractMap;
 import java.util.LinkedList;
@@ -37,9 +41,10 @@ public class ADIExperiment {
     TreeMap<String, Statistics> statTable = new TreeMap<String, Statistics>();
     private Input inputPattern;
     private List<Entry<IResource, String>> algSet;
+    private List<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
 
     public ADIExperiment() {
-        generateDefaultConfig();
+        generateDefaultAlgorithmSet();
     }
 
     /**
@@ -53,14 +58,14 @@ public class ADIExperiment {
         this.algSet = list;
     }
 
-    private void generateDefaultConfig() {
+    private void generateDefaultAlgorithmSet() {
         setInput(StubFactory.loadAdiData());
         algSet = new LinkedList<Entry<IResource, String>>();
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
     }
 
     public void runAllPossibilities(String className, String threshold, List<String> ignore) {
@@ -76,29 +81,11 @@ public class ADIExperiment {
         String name = String.format("%s-%s", resource.getName().replace("Resource", ""), mode);
         System.out.println(String.format("Experiment, mode=%s:", name));
         Input input = Util.deepCopyInput(inputPattern);
-
-        RunsGroup runsGroup = resource.generateConfig(input);
-        runsGroup.enforceClassForAll(className, threshold);
-        runsGroup.enforceModeForAll(mode);
-        if (mode.equalsIgnoreCase("prune")) {
-            runsGroup.enforceParameter("prune", "true");
-        }
-        input.setRunsGroup(runsGroup);
-        //System.out.println(input.toString());
-        input = new AttributeRemover().dropAttributes(input, ignore);
-        //System.out.println("After setting correct class:");
-        //System.out.println(input.toString());
+        initializeProperConfiguration(resource, input, className, threshold, mode);
+        input = inputPreProcessing(input, ignore);
         Output result = resource.performExperiment(input);
-        /* *x/
-         Output processed = new RuleVerticalAgregator().agregate(result);
-         /* *x/
-         Output processed = new RulePrunner().doAll(result);
-         /* */
-        Output processed = result;
-        /* */
-        processed = new RuleSorter().sort(processed);
+        Output processed = outputPostProcessing(result);
 
-        //System.out.println(sortedResult);
         System.out.println(processed.obtainOutputHypotheses().toString());
         MetricsResource metricsResource = new MetricsResource();
         if (mode.equalsIgnoreCase("strict")) {
@@ -151,5 +138,51 @@ public class ADIExperiment {
         }
         max += 3;
         return max;
+    }
+
+    /**
+     * @param ranges the ranges to set
+     */
+    public void setRanges(List<DiscretizerRanges> ranges) {
+        this.ranges = ranges;
+    }
+
+    private Input applyRangeDiscretization(Input in) {
+        Input result = in;
+        for(DiscretizerRanges range : ranges) {
+            ClassDescriptor cd = new ClassDescriptor(range.attribute, NumericUtil.dobleListToStringList(range.values));
+            result = new ContinuousClassFilter().filter(result, cd, range.labels);
+        }
+        return result;
+    }
+
+    public void initializeProperConfiguration(IResource resource, Input input, String className, String threshold, String mode) {
+        RunsGroup runsGroup = resource.generateConfig(input);
+        runsGroup.enforceClassForAll(className, threshold);
+        runsGroup.enforceModeForAll(mode);
+        if (mode.equalsIgnoreCase("prune")) {
+            runsGroup.enforceParameter("prune", "true");
+        }
+        input.setRunsGroup(runsGroup);
+    }
+
+    public Output outputPostProcessing(Output result) {
+        Output processed = result;
+        
+        processed = new RuleAgregator().agregate(processed);
+        /* *x/
+        processed = new RuleVerticalAgregator().agregate(processed);
+        /* *x/
+        processed = new RulePrunner().doAll(processed);
+        /* *x/
+        processed = new RuleSorter().sort(processed);
+        /* */
+        return processed;
+    }
+
+    public Input inputPreProcessing(Input input, List<String> ignore) {
+        input = applyRangeDiscretization(input);
+        input = new AttributeRemover().dropAttributes(input, ignore);
+        return input;
     }
 }

@@ -79,8 +79,19 @@ class PredictedDomain {
         Domain dom = new Domain();
         dom.setdomain(type.value);
         dom.setname("domain" + number);
+        if (min>max) {
+            double tmp = min;
+            min = max;
+            max = tmp;
+        }
         switch (type) {
             case INTEGER:
+                if (min<=Double.MIN_VALUE) {
+                    min = (double)Integer.MIN_VALUE;
+                }
+                if (max>=Double.MAX_VALUE) {
+                    max = (double)Integer.MAX_VALUE;
+                }
             case CONTINUOUS:
                 dom.setRange(min, max);
                 break;

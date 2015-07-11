@@ -6,6 +6,7 @@ package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.utils.TreeNode;
+import agh.aq21gui.utils.Util;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,8 +89,8 @@ public class Rule {
         boolean matches = true;
         for (Selector sel : this.getSelectors()) {
             Object eventValue = map.get(sel.getName());
-            //Util.isNull(eventValue, "eventValue");
-            //Util.isNull(sel, "sel");
+            Util.isNull(eventValue, "eventValue");
+            Util.isNull(sel, "sel");
             matches &= sel.matchesValue(eventValue.toString());
         }
         return matches;

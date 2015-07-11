@@ -22,12 +22,12 @@ import java.util.Map.Entry;
  */
 public class PropertyRecognitionUpdated {
     private static final String STOP = "stop";
-    private static final String W_ROZ = "wytrzym_rozciag_Mpa";
+    private static final String W_ROZ = "wytrzym_rozciag_mpa";
     private static final String WYDL = "wydluzenie";
     private static final String PRZEW = "przewezenie";
     private static final String UDAR= "udarnosc";
-    private static final String G_PLAST = "granica_plast_Mpa";
-    private static final String W_ZME = "wytrzym_zmecz_Mpa";
+    private static final String G_PLAST = "granica_plast_mpa";
+    private static final String W_ZME = "wytrzym_zmecz_mpa";
     private static final String FRAC = "frac_toughness";
     
     public static void main(String[] args) {
@@ -36,12 +36,20 @@ public class PropertyRecognitionUpdated {
         LinkedList<Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
-        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         //// Error:
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
         adiExperiment.setAlgList(algSet);
-        
+        LinkedList<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
+        ranges.add(new DiscretizerRanges(W_ROZ, 820, 970, 1140, 1350, 1550));
+        ranges.add(new DiscretizerRanges(WYDL, 1, 3, 4, 5, 6, 8, 10));
+        ranges.add(new DiscretizerRanges(PRZEW, 0.5, 1., 2., 4., 6., 8.));
+        ranges.add(new DiscretizerRanges(UDAR, 35, 60, 80, 100, 110));
+        ranges.add(new DiscretizerRanges(G_PLAST, 600, 700, 850, 850, 1100, 1350));
+        ranges.add(new DiscretizerRanges(W_ZME, 225, 240, 265, 275));
+        ranges.add(new DiscretizerRanges(FRAC, 50, 54, 59, 60, 62));
+        adiExperiment.setRanges(ranges);
 		adiExperiment.runAllPossibilities(W_ROZ, null, allWithout(W_ROZ));
         adiExperiment.runAllPossibilities(WYDL, null, allWithout(WYDL));
         adiExperiment.runAllPossibilities(PRZEW, null, allWithout(PRZEW));

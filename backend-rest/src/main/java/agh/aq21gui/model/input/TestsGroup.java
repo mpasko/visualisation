@@ -63,7 +63,7 @@ public class TestsGroup implements IAQ21Serializable {
 
 	@XmlElement(name = "globalLearningParameters")
 	public void setGlobalLearningParameters(List<Parameter> parameters) {
-		Logger.getLogger("Serialization").log(Level.INFO, "class name:{0}", parameters.getClass().getCanonicalName());
+		//Logger.getLogger("Serialization").log(Level.INFO, "class name:{0}", parameters.getClass().getCanonicalName());
 		globalLearningParameters.parameters = parameters;
 	}
 

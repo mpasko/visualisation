@@ -9,6 +9,7 @@ import agh.aq21gui.Configuration;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.services.AbstractInvoker;
+import agh.aq21gui.utils.Util;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ public class Aq21Invoker extends AbstractInvoker{
 
     @Override
 	public Output invoke(Input input) {
+        //System.out.println(Util.attachLines(input.toString())+"\n----------------------------");
 		if (input == null) {
 			Logger.getLogger(Aq21Resource.class.getName()).warning("AQ21 received null or empty object!");
 			return null;

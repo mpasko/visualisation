@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -107,6 +108,7 @@ public class CSVConverter {
         nls = nls.replace(" ", "");
         nls = nls.replaceAll("\t", "");
         nls = nls.replaceAll("\r", "");
+        nls = nls.toLowerCase(Locale.getDefault());
 
         EventsGroup eventsGroup = new EventsGroup();
         List<String> offeredNames = new LinkedList<String>();

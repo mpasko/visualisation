@@ -22,9 +22,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.runtime.RecognitionException;
@@ -166,5 +170,14 @@ public class Util {
                 throw new RuntimeException(ex);
             }
         }
+    }
+
+    public static Map<String, Object> lowercaseKeys(Map<String, Object> event) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        for (Entry<String, Object> entry : event.entrySet()) {
+            //result.put(entry.getKey(), entry.getValue());
+            result.put(entry.getKey().toLowerCase(Locale.getDefault()), entry.getValue());
+        }
+        return result;
     }
 }
