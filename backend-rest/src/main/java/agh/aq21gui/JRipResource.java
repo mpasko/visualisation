@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType;
  *
  * @author legion-primary
  */
+@Path("jripp")
 public class JRipResource implements IResource{
 
     @POST
