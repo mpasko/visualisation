@@ -55,6 +55,13 @@ public class Aq21Invoker extends AbstractInvoker{
 
     @Override
     public String getAppPath() {
-        return Configuration.AQ21PATH;
+        final String osName = System.getProperty("os.name");
+        String path;
+        if (true || osName.toLowerCase().contains("windows")) {
+            path = Configuration.AQ21WINPATH;
+        } else {
+            path = Configuration.AQ21LINPATH;
+        }
+        return path;
     }
 }

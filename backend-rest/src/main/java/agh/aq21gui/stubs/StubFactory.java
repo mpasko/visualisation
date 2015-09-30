@@ -339,7 +339,7 @@ public class StubFactory {
     }
 
     public static Input loadAdiUpdatedData() {
-        final String data = Util.loadFile("experiment_inputs/adi_new.csv");
+        final String data = Util.loadFile("experiment_inputs/adi_06.07.2015.csv");
         CSVConverter converter = new CSVConverter();
         return converter.convert(data);
     }

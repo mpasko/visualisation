@@ -142,9 +142,10 @@ public class Util {
         //return "";
     }
     
-    public static String attachLines(String in) {
+    public static String attachLines(String in, Class<?> invokedIn) {
         StringBuilder b = new StringBuilder();
         int i=0;
+        b.append("Raised from: ").append(invokedIn.getCanonicalName());
         for (String line : in.split("\n")) {
             b.append(++i);
             b.append("\t");

@@ -15,20 +15,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import static agh.aq21gui.adidata.ADIExperiment.*;
 
 /**
  *
  * @author marcin
  */
 public class PropertyRecognitionUpdated {
-    private static final String STOP = "stop";
-    private static final String W_ROZ = "wytrzym_rozciag_mpa";
-    private static final String WYDL = "wydluzenie";
-    private static final String PRZEW = "przewezenie";
-    private static final String UDAR= "udarnosc";
-    private static final String G_PLAST = "granica_plast_mpa";
-    private static final String W_ZME = "wytrzym_zmecz_mpa";
-    private static final String FRAC = "frac_toughness";
     
     public static void main(String[] args) {
         final ADIExperiment adiExperiment = new ADIExperiment();
@@ -50,20 +43,12 @@ public class PropertyRecognitionUpdated {
         ranges.add(new DiscretizerRanges(W_ZME, 225, 240, 265, 275));
         ranges.add(new DiscretizerRanges(FRAC, 50, 54, 59, 60, 62));
         adiExperiment.setRanges(ranges);
-		adiExperiment.runAllPossibilities(W_ROZ, null, allWithout(W_ROZ));
-        adiExperiment.runAllPossibilities(WYDL, null, allWithout(WYDL));
-        adiExperiment.runAllPossibilities(PRZEW, null, allWithout(PRZEW));
-        adiExperiment.runAllPossibilities(UDAR, null, allWithout(UDAR));
-        adiExperiment.runAllPossibilities(G_PLAST, null, allWithout(G_PLAST));
-        adiExperiment.runAllPossibilities(W_ZME, null, allWithout(W_ZME));
-        adiExperiment.runAllPossibilities(FRAC, null, allWithout(FRAC));
-        
-        //adiExperiment.runAllPossibilities(FRAC, null, new LinkedList<String>());
-    }
-
-    private static List<String> allWithout(String item) {
-        List<String> strings = Util.strings(STOP, W_ROZ, WYDL, PRZEW, UDAR, G_PLAST, W_ZME, FRAC);
-        strings.remove(item);
-        return strings;
+		adiExperiment.runAllPossibilities(W_ROZ, null, allPropertiesWithout(W_ROZ));
+        adiExperiment.runAllPossibilities(WYDL, null, allPropertiesWithout(WYDL));
+        adiExperiment.runAllPossibilities(PRZEW, null, allPropertiesWithout(PRZEW));
+        adiExperiment.runAllPossibilities(UDAR, null, allPropertiesWithout(UDAR));
+        adiExperiment.runAllPossibilities(G_PLAST, null, allPropertiesWithout(G_PLAST));
+        adiExperiment.runAllPossibilities(W_ZME, null, allPropertiesWithout(W_ZME));
+        adiExperiment.runAllPossibilities(FRAC, null, allPropertiesWithout(FRAC));
     }
 }

@@ -35,14 +35,14 @@ public class OutputParser {
         CommonTree tree = null;
         try{
 //            System.out.println("Parsing:");
-            System.out.println(Util.attachLines(out));
+//            System.out.println(Util.attachLines(out));
             output_return out_ret = parser.output();
             tree = (CommonTree)out_ret.getTree();
 //            System.out.println("tree:");
 //            System.out.println(tree.toStringTree());
         }catch(RecognitionException ex){
             //Logger.getLogger(Aq21Resource.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(Util.attachLines(out));
+            System.out.println(Util.attachLines(out, getClass()));
             throw new RuntimeException(ex);
         }
         return tree;

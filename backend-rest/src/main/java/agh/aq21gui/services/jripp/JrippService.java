@@ -25,6 +25,8 @@ import agh.aq21gui.utils.Util;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import weka.classifiers.rules.JRip;
 import weka.classifiers.rules.JRip.Antd;
 import weka.classifiers.rules.JRip.RipperRule;
@@ -36,8 +38,9 @@ import weka.core.Instances;
  * @author marcin
  */
 public class JrippService {
+
     private static String lastRaw = "";
-    
+
     public static void main(String args[]) throws Exception {
         Input input = StubFactory.getInput();
         Test run = input.runsGroup.runs.get(0);
@@ -50,7 +53,7 @@ public class JrippService {
     }
 
     public static String[] paramsetToCmdline(Test run) {
-         ArrayList<String> cmdline = new ArrayList<String>();
+        ArrayList<String> cmdline = new ArrayList<String>();
         int folds = 0;
         double minimal_weights = 0.0;
         int number_of_runs = 0;
@@ -58,7 +61,7 @@ public class JrippService {
         int seed = 0;
         boolean not_check_error_rate = false;
         boolean not_use_pruning = false;
-        
+
         for (Parameter param : run.getRunSpecificParameters()) {
             if (param.name.equalsIgnoreCase("folds")) {
                 folds = NumericUtil.parseIntegerDefault(param.value, folds);
@@ -74,7 +77,7 @@ public class JrippService {
                 not_check_error_rate = param.isTrue();
             } else if (param.name.equalsIgnoreCase("not_use_pruning")) {
                 not_use_pruning = param.isTrue();
-            } 
+            }
         }
         if (debug) {
             cmdline.add("-D");
@@ -82,76 +85,77 @@ public class JrippService {
         if (not_check_error_rate) {
             cmdline.add("-E");
         }
-        
+
         if (not_use_pruning) {
             cmdline.add("-P");
         }
-        
+
         cmdline.add("-S");
         cmdline.add(Integer.toString(seed));
-        
+
         cmdline.add("-O");
         cmdline.add(Integer.toString(number_of_runs));
-        
-        
+
+
         cmdline.add("-N");
         cmdline.add(Double.toString(minimal_weights));
-        
+
         cmdline.add("-F");
         cmdline.add(Integer.toString(folds));
-        
-        
-        
+
+
+
         return cmdline.toArray(new String[cmdline.size()]);
     }
 
-    
-   
-    
     public List<Hypothesis> prepareAndRunJripp(Input input, Test run) throws Exception {
         Instances instances = new Aq21InputToWeka().aq21ToWeka(input);
         String className = run.grepClassName();
         JrippService.setClassificationClass(input, className, instances);
         return runJripp(run, instances);
     }
-    
+
     private static Selector convertFromJripSelector(Antd selector) {
-         Selector s = new Selector();
+        Selector s = new Selector();
         String[] tokens = selector.toString().split(" ");
         s.setName(tokens[0]);
         s.setComparator(tokens[1]);
         s.setValue(tokens[2]);
         return s;
     }
-    
+
     private static Selector convertFromStringSelector(String sel) {
-        Selector s = new Selector();
-        sel = sel.replaceAll("\\(", "").replaceAll("\\)", "");
-        String[] tokens = sel.trim().split(" ");
-        s.setName(tokens[0]);
-        s.setComparator(tokens[1]);
-        s.setValue(tokens[2]);
-        return s;
+        try {
+            Selector s = new Selector();
+            sel = sel.replaceAll("\\(", "").replaceAll("\\)", "");
+            String[] tokens = sel.trim().split(" ");
+            s.setName(tokens[0]);
+            s.setComparator(tokens[1]);
+            s.setValue(tokens[2]);
+            return s;
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            String message = String.format("Bad selector format! expected: [name] [comparator] [value], received: %s", sel);
+            throw new RuntimeException(message, ex);
+        }
     }
 
-    
-     private static Hypothesis getHypotheses(List<Hypothesis> hyps,Attribute attr, String claz) {
+    private static Hypothesis getHypotheses(List<Hypothesis> hyps, Attribute attr, String claz) {
         for (Hypothesis h : hyps) {
-            ClassDescriptor desc =  h.getClasses().get(0);
+            ClassDescriptor desc = h.getClasses().get(0);
             if (desc.getValue().equalsIgnoreCase(claz)) {
                 return h;
             }
         }
-        
+
         // hypothesis not found
         Hypothesis hyp = new Hypothesis();
         ClassDescriptor clasDesc = prepareDescriptor(attr.name(), claz);
         hyp.setClasses(Util.singleElemList(clasDesc));
         hyps.add(hyp);
-        
+
         return hyp;
     }
-    
+
     public static List<Hypothesis> runJripp(Test run, Instances instances) throws Exception {
         Attribute attr = instances.classAttribute();
         JRip jripp = new JRip();
@@ -159,18 +163,25 @@ public class JrippService {
         jripp.setOptions(cmdline);
         jripp.buildClassifier(instances);
         List<Hypothesis> hyps = new LinkedList<Hypothesis>();
-        
-        lastRaw = jripp.toString();
-        String[] tokens = lastRaw.split("\n");
+        String output = jripp.toString();
+        lastRaw = output;
+        parseJrippOutput(hyps, attr, output);
+
+        return hyps;
+    }
+
+    private static void parseJrippOutput(List<Hypothesis> hyps, Attribute attr, String output) {
+        output = output.replaceAll("_and_", "&&"); //quickfix
+        String[] tokens = output.split("\n");
         List<String> filtered = new LinkedList<String>();
-        for (String token:tokens) {
+        for (String token : tokens) {
             if (token.endsWith(")")) {
                 String ant;
                 ant = token.split("=>")[0];
                 String consequent = token.split("=>")[1];
                 String claz = consequent.split("=")[1].split("\\(")[0].trim();
                 Hypothesis hypo = getHypotheses(hyps, attr, claz);
-                
+
                 Rule rule = new Rule();
 //                if (!claz.trim().equalsIgnoreCase("adi2") ) {
 //                    Selector s = new Selector();
@@ -179,16 +190,17 @@ public class JrippService {
 //                    s.setValue("270");
 //                    rule.addSelector(s);
 //                }
-                for (String sel :ant.split("and")) {
+                for (String selector : ant.split("and")) {
+                    String sel = selector.replaceAll("&&", "_and_"); //quickfix
                     if (!sel.trim().isEmpty()) {
                         rule.addSelector(convertFromStringSelector(sel));
                     }
                 }
-                
+
                 hypo.rules.add(rule);
             }
         }
-        
+
 //        for (weka.classifiers.rules.Rule item : jripp.getRuleset()) {
 //            RipperRule ripperRule = (RipperRule) item;
 //            System.out.println(attr.value((int)ripperRule.getConsequent()));
@@ -211,12 +223,10 @@ public class JrippService {
 //            
 //            hypo.rules.add(rule);
 //        }
-        
+
 //        for (Hypothesis h:hyps) {
 //            System.out.println(h.toString());
 //        }
-        
-        return hyps;
     }
 
     public static ClassDescriptor prepareDescriptor(String clasAttr, String claz) {
@@ -226,7 +236,7 @@ public class JrippService {
         classDescriptor.setValue(claz);
         return classDescriptor;
     }
-    
+
     public Output convertAndRun(Input input) {
         //System.out.println(Util.attachLines(input.toString()));
         //System.out.println("----------------------------------------------------------------------------");
@@ -250,17 +260,17 @@ public class JrippService {
         List<Hypothesis> hypos = runAll(filteredData);
         out.setOutputHypotheses(hypos);
         /*
-        Output agragated = new RuleAgregator().agregate(out);
+         Output agragated = new RuleAgregator().agregate(out);
         
-        for (Hypothesis hypo: agragated.getOutputHypotheses()) {
-            System.out.println(hypo.toString());
-        }
-        return agragated;
-        */
+         for (Hypothesis hypo: agragated.getOutputHypotheses()) {
+         System.out.println(hypo.toString());
+         }
+         return agragated;
+         */
         out.setRaw(lastRaw);
         return out;
     }
-    
+
     public static void expandRunsForStar(Input filteredData, ClassDescriptor descriptor) {
         List<Test> new_runs = new LinkedList<Test>();
         for (Test run : filteredData.runsGroup.runs) {
@@ -281,7 +291,7 @@ public class JrippService {
         }
         filteredData.getRunsGroup().setRuns(new_runs);
     }
-    
+
     public List<Hypothesis> runAll(Input input) {
         List<Hypothesis> hypotheses_all = new LinkedList<Hypothesis>();
         try {
@@ -295,50 +305,48 @@ public class JrippService {
                 hypotheses_all.addAll(hypotheses);
             }
         } catch (Exception ex) {
-            //           Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
         return hypotheses_all;
     }
-    
+
     private static List<Hypothesis> prepareAndRunSingle(Test run, Input input) throws Exception {
         Instances instances = prepareDataForRun(run, input);
         List<Hypothesis> hypotheses = runJripp(run, instances);
-        
+
         List<Hypothesis> ifElsedHypothesis = new LinkedList<Hypothesis>();
-        
+
         Hypothesis elseStore = null;
-        
+
         HypothesisNegation negator = new HypothesisNegation();
         negator.setAddQuestions(true);
         HypothesisAnd ander = new HypothesisAnd();
-        
+
         for (Hypothesis hypothesis : hypotheses) {
-            if (elseStore==null) {
+            if (elseStore == null) {
                 ifElsedHypothesis.add(hypothesis);
                 elseStore = negator.negateHypothesis(hypothesis);
             } else {
                 //Hypothesis newhypothesis = ander.and(elseStore, negator.negateHypothesis(hypothesis));
-                Hypothesis newhypothesis = ander.and(elseStore,hypothesis);
+                Hypothesis newhypothesis = ander.and(elseStore, hypothesis);
                 ifElsedHypothesis.add(newhypothesis);
-                
+
                 elseStore = ander.and(elseStore, negator.negateHypothesis(hypothesis));
             }
         }
-        
+
         for (Hypothesis hypothesis : ifElsedHypothesis) {
             System.out.println(hypothesis.toString());
         }
-        
+
         return ifElsedHypothesis;
     }
-    
+
     public static Instances prepareDataForRun(Test run, Input input) {
         String className = run.grepClassName();
         Instances instances = new Aq21InputToWeka().aq21ToWeka(input);
         setClassificationClass(input, className, instances);
         return instances;
     }
-    
-   
 }

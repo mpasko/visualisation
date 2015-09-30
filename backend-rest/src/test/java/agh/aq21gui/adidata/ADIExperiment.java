@@ -37,6 +37,21 @@ import java.util.TreeMap;
  * @author marcin
  */
 public class ADIExperiment {
+    
+    public static final String STOP = "stop";
+    public static final String W_ROZ = "wytrzym_rozciag_mpa";
+    public static final String WYDL = "wydluzenie";
+    public static final String PRZEW = "przewezenie";
+    public static final String UDAR= "udarnosc";
+    public static final String G_PLAST = "granica_plast_mpa";
+    public static final String W_ZME = "wytrzym_zmecz_mpa";
+    public static final String FRAC = "frac_toughness";
+
+    public static List<String> allPropertiesWithout(String item) {
+        List<String> strings = Util.strings(STOP, W_ROZ, WYDL, PRZEW, UDAR, G_PLAST, W_ZME, FRAC);
+        strings.remove(item);
+        return strings;
+    }
 
     TreeMap<String, Statistics> statTable = new TreeMap<String, Statistics>();
     private Input inputPattern;
@@ -61,11 +76,11 @@ public class ADIExperiment {
     private void generateDefaultAlgorithmSet() {
         setInput(StubFactory.loadAdiData());
         algSet = new LinkedList<Entry<IResource, String>>();
-        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
-        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
-        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
-        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
     }
 
     public void runAllPossibilities(String className, String threshold, List<String> ignore) {
