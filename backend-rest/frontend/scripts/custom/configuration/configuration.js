@@ -1,9 +1,31 @@
-define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "dijit/form/TextBox", "dgrid/editor", "custom/grid", "dojo/topic", "dijit/form/Button"], function(Memory, registry, ContentPane, TextBox, editor, grid, topic, Button) {
+define(["dojo/store/Memory",
+    "dojo/data/ObjectStore",
+    "dijit/registry",
+    "dijit/layout/ContentPane",
+    "dijit/form/TextBox",
+    "dgrid/editor",
+    "custom/grid",
+    "dojo/topic",
+    "dijit/form/Button"], 
+function(Memory, ObjectStore, registry, ContentPane, TextBox, editor, grid, topic, Button) {    
   var internal, module;
   internal = {
     stores: {
       params: new Memory(),
-      runs: new Memory()
+      runs: new Memory(),
+      algorithms: new ObjectStore({
+        objectStore: new Memory({
+            data: [
+                {id: "empty", label: "Please choose an algorithm..."}, 
+                {id: "aq21", label: "AQ21 (Windows binary)"}, 
+                {id: "j48", label: "J48 (from Weka)" }, 
+                {id: "jripp", label: "JRipper (from Weka)" }
+            ]})
+      }),
+      wholeInput: {},
+      internalState: {
+          algorithm: 'aq21'
+      }
     },
     getConfiguration: function() {
       var input, parametersStore, runNames, runsStore, x;
@@ -47,6 +69,9 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
       };
       return input;
     },
+    getInput: function() {
+      return internal.stores.wholeInput;
+    },
     deleteRun: function(object, data, cell) {
       var btnDelete;
       if (object.id === "globalLearningParameters") {
@@ -75,6 +100,12 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
       }, cell.appendChild(document.createElement("div")));
       btnDelete._destroyOnRemove = true;
       return btnDelete;
+    },
+    setAlgorithm: function(alg) {
+        internal.stores.internalState.algorithm = alg;
+    },
+    getAlgorithm: function() {
+        return internal.stores.internalState.algorithm;
     }
   };
   module = {
@@ -82,6 +113,7 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
       var conf_grid, parameters, params_grid, runs, x;
       conf_grid = registry.byId("runs");
       params_grid = registry.byId("parameters");
+      internal.stores.wholeInput = input;
       runs = input.runsGroup;
       parameters = runs.runs.reduce((function(x, y) {
         return x.concat(y.runSpecificParameters);
@@ -106,6 +138,7 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
     },
     setup: function() {
       var conf_grid, param_grid;
+      var algorithm_select = registry.byId("algorithm");
       conf_grid = new grid.onDemand({
         columns: [
           {
@@ -150,7 +183,11 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
         return param_grid.refresh();
       });
       registry.byId("run_button").on("click", function() {
-        return topic.publish("run experiment", internal.getConfiguration());
+        var config = {
+            'configuration':internal.getConfiguration(),
+            'algorithm':internal.getAlgorithm()
+        };
+        return topic.publish("run experiment", config);
       });
       registry.byId("export_button").on("click", function() {
         return topic.publish("run export", internal.getConfiguration());
@@ -176,6 +213,25 @@ define(["dojo/store/Memory", "dijit/registry", "dijit/layout/ContentPane", "diji
           selected: true
         });
         return registry.byId("runs").refresh();
+      });
+      algorithm_select.setStore(internal.stores.algorithms);
+      algorithm_select.set("value", "empty");
+      algorithm_select.on("change", function() {
+         var alg = algorithm_select.get("value");
+         if (alg != "empty") {
+            internal.stores.algorithms.fetch({
+                query: {id: "empty" },
+                onComplete:  function (items) {
+                    internal.stores.algorithms.deleteItem(items[0]);
+                }
+            });
+            var config = {
+               "configuration":internal.getInput(),
+               "algorithm":alg
+            };
+            topic.publish("algorithm selection", config); 
+            internal.setAlgorithm(alg);
+         }
       });
       return registry.byId("newParameterButton").on("click", function() {
         var params_grid;

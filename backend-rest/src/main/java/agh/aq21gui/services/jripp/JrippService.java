@@ -36,6 +36,8 @@ import weka.core.Instances;
  * @author marcin
  */
 public class JrippService {
+    private static String lastRaw = "";
+    
     public static void main(String args[]) throws Exception {
         Input input = StubFactory.getInput();
         Test run = input.runsGroup.runs.get(0);
@@ -157,8 +159,9 @@ public class JrippService {
         jripp.setOptions(cmdline);
         jripp.buildClassifier(instances);
         List<Hypothesis> hyps = new LinkedList<Hypothesis>();
-
-        String[] tokens = jripp.toString().split("\n");
+        
+        lastRaw = jripp.toString();
+        String[] tokens = lastRaw.split("\n");
         List<String> filtered = new LinkedList<String>();
         for (String token:tokens) {
             if (token.endsWith(")")) {
@@ -254,6 +257,7 @@ public class JrippService {
         }
         return agragated;
         */
+        out.setRaw(lastRaw);
         return out;
     }
     

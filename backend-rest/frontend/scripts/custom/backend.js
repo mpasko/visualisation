@@ -2,6 +2,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
   var internal, module;
   internal = {
     hostname: window.location.origin + "/jersey/aq21/",
+    jerseyPath: window.location.origin + "/jersey/",
     csvhostname: window.location.origin + "/jersey/csv/",
     sendMessage: function(configuration, onEnd) {
       var message;
@@ -34,7 +35,7 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
     runExperiment: function(configuration) {
       var callback;
       callback = function(message) {
-        request.post(internal.hostname + "postIt", {
+        request.post(internal.jerseyPath + configuration.algorithm + "/postIt", {
           data: message,
           handleAs: "json",
           headers: {
@@ -52,7 +53,33 @@ define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topi
         });
       };
       
-      internal.sendMessage(configuration, callback);
+      internal.sendMessage(configuration.configuration, callback);
+    },
+    generateConfig: function(configuration) {
+        var message = {
+          id: 0
+        };
+        message = lang.mixin(message, configuration.configuration);
+        if (configuration.algorithm == "") {
+            if (message.runsGroup) {
+                message.runsGroup = {};
+            }
+            topic.publish("experiment loaded from backend", message);
+            return;
+        }
+        request.post(internal.jerseyPath + configuration.algorithm + "/generateConfig", {
+          data: JSON.stringify(message),
+          handleAs: "json",
+          headers: {
+            "Content-Type": "application/json; charset=UTF-8"
+          }
+        }).then((function(runsGroup) {
+          humane.log("Configuration for "+configuration.algorithm+" generated successfully");
+          var newConfig = lang.mixin(configuration.configuration, {"runsGroup":runsGroup});
+          topic.publish("experiment loaded from backend", newConfig);
+        }), function(error) {
+          humane.log("Couldn't generate configuration");
+        });
     },
     getExperimentList: function() {
       console.log("output");

@@ -51,6 +51,7 @@ require(["dojo/ready", "dijit/registry", "custom/data_sources/file",
     topic.subscribe("experiment loaded from backend", conf.update);
     topic.subscribe("collect experiment data", data.collectForExperiment);
     topic.subscribe("visualise results", visual.update);
+    topic.subscribe("algorithm selection", backend.generateConfig);
     
     topic.subscribe("render database experiments", function(experiments) {
       registry.byId("database_grid").refresh();

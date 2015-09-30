@@ -31,6 +31,7 @@ import weka.core.Instances;
  * @author marcin
  */
 public class J48Service {
+    private static String lastRaw = "";
 
     public Output convertAndRun(Input input) {
         //System.out.println(Util.attachLines(input.toString()));
@@ -54,6 +55,7 @@ public class J48Service {
         Output out = new Output(filteredData);
         List<Hypothesis> hypos = runAll(filteredData);
         out.setOutputHypotheses(hypos);
+        out.setRaw(lastRaw);
         return out;
     }
 
@@ -126,7 +128,8 @@ public class J48Service {
         j48.buildClassifier(instances);
         //System.out.println(j48.graph());
         J48ParserUtil parser = new J48ParserUtil();
-        J48Tree tree = parser.parse(j48.graph());
+        lastRaw = j48.graph();
+        J48Tree tree = parser.parse(lastRaw);
         List<Hypothesis> hypothesis = new J48TreeToRuleSet().treeToRules(tree, run.grepClassName());
         return hypothesis;
     }
