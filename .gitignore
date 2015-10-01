@@ -8,3 +8,8 @@ przewodnik.log
 /backend-rest/logs
 /*.txt~
 /backend-rest/src/main/resources/agh/aq21gui/model/input/jaxb.properties
+.metadata
+/backend-rest/input.aq21
+/backend-rest/nb-configuration.xml
+/backend-rest/nbactions.xml
+/model/*.pdf
