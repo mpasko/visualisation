@@ -13,13 +13,17 @@ define(["dojo/dom", "dijit/registry"], function(dom, registry) {
     },
     renderSelector: function(selector) {
       var index, output;
+      var name = selector.name.replace(/_/g, "\\ ");
+      var value = selector.value.replace(/_/g, "\\ ");
+      console.log(name);
+      
       if (!this.isEmpty(selector.range_begin) && !this.isEmpty(selector.range_end)) {
-        return ["(", selector.name, "\\in\\langle", selector.range_begin, ",\\ ", selector.range_end, "\\rangle", ")"].join(" ");
+        return ["(", name, "\\in\\langle", selector.range_begin, ",\\ ", selector.range_end, "\\rangle", ")"].join(" ");
       } else if (!this.isEmpty(selector.set_elements)) {
         index = 0;
-        output = ["(", selector.name, "\\in\\{"];
+        output = ["(", name, "\\in\\{"];
         selector.set_elements.forEach(function(element) {
-          output.push(element);
+          output.push(element.replace(/_/g, "\\ "));
           ++index;
           if (index !== selector.set_elements.length) {
             return output.push(",\\ ");
@@ -28,7 +32,7 @@ define(["dojo/dom", "dijit/registry"], function(dom, registry) {
         output.push("\\})");
         return output.join(" ");
       } else {
-        return ["(", selector.name, this.dict[selector.comparator], selector.value, ")"].join(" ");
+        return ["(", name, this.dict[selector.comparator], value, ")"].join(" ");
       }
     },
     renderRule: function(rule, consequent) {

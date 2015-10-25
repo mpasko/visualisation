@@ -8,6 +8,7 @@ import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.input.Test;
 import agh.aq21gui.model.output.Output;
+import agh.aq21gui.services.AlgorithmIOWrapper;
 import agh.aq21gui.services.aq21.Aq21Invoker;
 import agh.aq21gui.services.csv.Aq21ArchetypeConfig;
 import agh.aq21gui.services.csv.J48ArchetypeConfig;
@@ -26,6 +27,8 @@ import javax.ws.rs.core.MediaType;
 @Path("j48")
 public class J48Resource implements IResource{
     
+    AlgorithmIOWrapper wrapper = new AlgorithmIOWrapper();
+    
     @POST
 	@Path("postIt")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -34,8 +37,11 @@ public class J48Resource implements IResource{
 	})
     @Override
     public Output performExperiment(Input input) {
+        input = wrapper.inputPreProcessing(input);
 		J48Service srv = new J48Service();
-        return srv.convertAndRun(input);
+        Output output = srv.convertAndRun(input);
+        output = wrapper.outputPostProcessing(output);
+        return output;
     }
     
     @POST
@@ -51,6 +57,7 @@ public class J48Resource implements IResource{
         List<Test> runs = new J48ArchetypeConfig().createConfig(in);
         RunsGroup group = new RunsGroup();
         group.setRuns(runs);
+        wrapper.addDefaultValues(in, group);
         return group;
     }
     

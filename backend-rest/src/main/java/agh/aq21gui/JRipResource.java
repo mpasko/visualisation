@@ -9,6 +9,7 @@ import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.input.Test;
 import agh.aq21gui.model.output.Output;
+import agh.aq21gui.services.AlgorithmIOWrapper;
 import agh.aq21gui.services.aq21.Aq21Invoker;
 import agh.aq21gui.services.csv.Aq21ArchetypeConfig;
 import agh.aq21gui.services.csv.J48ArchetypeConfig;
@@ -28,6 +29,7 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("jripp")
 public class JRipResource implements IResource{
+    AlgorithmIOWrapper wrapper = new AlgorithmIOWrapper();
 
     @POST
 	@Path("postIt")
@@ -37,8 +39,11 @@ public class JRipResource implements IResource{
 	})
     @Override
     public Output performExperiment(Input input) {
-	JrippService srv = new JrippService();
-        return srv.convertAndRun(input);
+        input = wrapper.inputPreProcessing(input);
+        JrippService srv = new JrippService();
+        Output output = srv.convertAndRun(input);
+        output = wrapper.outputPostProcessing(output);
+        return output;
     }
     
     @POST
@@ -54,6 +59,7 @@ public class JRipResource implements IResource{
         List<Test> runs = new JRipArchetypConfig().createConfig(in);
         RunsGroup group = new RunsGroup();
         group.setRuns(runs);
+        wrapper.addDefaultValues(in, group);
         return group;
     }
     

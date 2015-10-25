@@ -8,6 +8,7 @@ import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Hypothesis;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -112,6 +113,11 @@ public class Input implements IAQ21Serializable {
 
     public List<Map<String, Object>> getEvents() {
         return eventsGroup.formatEvents(this.attributesGroup);
+    }
+    
+    public Object obtainCell(int row, String col) {
+        String column = col.toLowerCase(Locale.US);
+        return this.getEvents().get(row).get(column);
     }
 
     @XmlElement(name = "testingEvents")
@@ -269,7 +275,7 @@ public class Input implements IAQ21Serializable {
     public LinkedList<String> getCollumnOfData(String claz) {
         LinkedList<String> items = new LinkedList<String>();
         for (int i = 0; i < getEvents().size(); ++i) {
-            String stringValue = (String) getEvents().get(i).get(claz);
+            String stringValue = (String) this.obtainCell(i, claz);
             items.add(stringValue);
         }
         return items;

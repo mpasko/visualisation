@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.adidata;
 
+import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;
@@ -31,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import testtools.MeasurmentResultFormatter;
 
 /**
  *
@@ -52,11 +54,10 @@ public class ADIExperiment {
         strings.remove(item);
         return strings;
     }
-
-    TreeMap<String, Statistics> statTable = new TreeMap<String, Statistics>();
     private Input inputPattern;
     private List<Entry<IResource, String>> algSet;
     private List<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
+    private MeasurmentResultFormatter statTable;
 
     public ADIExperiment() {
         generateDefaultAlgorithmSet();
@@ -84,11 +85,11 @@ public class ADIExperiment {
     }
 
     public void runAllPossibilities(String className, String threshold, List<String> ignore) {
-        statTable = new TreeMap<String, Statistics>();
+        statTable = new MeasurmentResultFormatter();
         for (Entry<IResource, String> entry : algSet) {
             runExperiment(entry.getKey(), entry.getValue(), className, threshold, ignore);
         }
-        String table = formatTextResults();
+        String table = statTable.formatTextResults(this);
         System.out.println(table);
     }
 
@@ -100,7 +101,7 @@ public class ADIExperiment {
         input = inputPreProcessing(input, ignore);
         Output result = resource.performExperiment(input);
         Output processed = outputPostProcessing(result);
-
+        System.out.println(result.getRaw());
         System.out.println(processed.obtainOutputHypotheses().toString());
         MetricsResource metricsResource = new MetricsResource();
         if (mode.equalsIgnoreCase("strict")) {
@@ -108,51 +109,12 @@ public class ADIExperiment {
         }
         StatsAgregator metrics = metricsResource.analyze(processed);
         System.out.println(metrics.toString());
-        for (Hypothesis hypo : processed.getOutputHypotheses()) {
-            String hypoName = hypo.getName();
-            statTable.put(name + hypoName, metrics.getParticular().get(hypoName));
-        }
+        statTable.consumeResults(processed, name, metrics);
     }
 
-    private String formatTextResults() {
-        int max = computeFirstRowSize();
-        StringBuilder build = new StringBuilder();
-        build.append(FormatterUtil.alignStringForward(max, " ", "name"));
-        build.append("||  TP |  TN |  FP |  FN |\n");
-        for (Entry<String, Statistics> entry : statTable.entrySet()) {
-            build.append(FormatterUtil.alignStringForward(max, "=", ""));
-            build.append("++=====+=====+=====+=====+\n");
-            build.append(FormatterUtil.alignStringForward(max, " ", entry.getKey()));
-            build.append("||");
-            Statistics stat = entry.getValue();
-            build.append(alignNumber(stat.getTruePositive()));
-            build.append("|");
-            build.append(alignNumber(stat.getTrueNegative()));
-            build.append("|");
-            build.append(alignNumber(stat.getFalsePositive()));
-            build.append("|");
-            build.append(alignNumber(stat.getFalseNegative()));
-            build.append("|\n");
-        }
-        String table = build.toString();
-        return table;
-    }
-
-    public String alignNumber(int truePositive1) {
-        String truePositive = new Integer(truePositive1).toString();
-        String alignString = FormatterUtil.alignString(5, " ", truePositive);
-        return alignString;
-    }
-
-    private int computeFirstRowSize() {
-        int max = 7;
-        for (String key : statTable.keySet()) {
-            if (key.length() > max) {
-                max = key.length();
-            }
-        }
-        max += 3;
-        return max;
+    public String alignNumber(int number) {
+        String stringified = Integer.valueOf(number).toString();
+        return FormatterUtil.alignString(5, " ", stringified);
     }
 
     /**

@@ -71,8 +71,6 @@ tokens {
     package agh.aq21gui.aq21grammar;
 }
 
-//output : output_items EOF -> ^(START output_items) ;
-
 output : NL? output_item* EOF
  -> ^(OUTPUT output_item*) ;
 
@@ -176,8 +174,8 @@ value : simple_value
 class_descriptions : class_description+
  -> ^(CLASSES class_description+) ;
 
-class_description : OPEN_SQR name=ID kind=EQUAL simple_value CLOSE_SQR
- -> ^(CLASS_DESCRIPTION $name $kind simple_value) ;
+class_description : OPEN_SQR name=ID kind=EQUAL atom CLOSE_SQR
+ -> ^(CLASS_DESCRIPTION $name $kind atom) ;
 
 events : EVENTS NL? OPEN NL? row* CLOSE NL?
   -> row*;
@@ -189,15 +187,6 @@ row : simple_value (COMA simple_value)* NL
   -> ^(ROW simple_value+); 
 
 atom
-//	: id_value=ID ->  $id_value
-//	| in_value=INT ->  $in_value 
-//	| first=INT DOT rest=INT -> {new CommonTree(new CommonToken(ID, $first.text+"."+$rest.text))}
-//	| first=ID  RANGE_OP last=ID  -> ^(RANGE $first $last)
-//	| first=INT RANGE_OP last=INT -> ^(RANGE $first $last)
-//	| ID ( COMA ID )+ -> ^(VALUE_SET ID+)
-
-//before uncomment fix the code!
-//	| INT ( COMA INT )+ -> ^(VALUE_SET INT+)
 	: simple_value -> simple_value
 	| simple_value RANGE_OP simple_value -> ^(RANGE simple_value+) 
 	| simple_value (COMA simple_value)+ -> ^(VALUE_SET simple_value+)
@@ -205,8 +194,6 @@ atom
 
 simple_value
 	: id_value=ID ->  $id_value
-//	| in_value=INT ->  $in_value 
-	| fl_value=FLOAT ->  $fl_value 
-//	| first=INT DOT rest=INT -> {new CommonTree(new CommonToken(ID, $first.text+"."+$rest.text))}
+	| fl_value=FLOAT ->  $fl_value
 	| pe_value=PERCENT ->  $pe_value
 	;

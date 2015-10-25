@@ -30,6 +30,11 @@ public class Discretizer {
     }
 
     public Input discretize(Input in, String class_name, String buckets_number, Mode mode) {
+        ClassDescriptor cd = generateRanges(in, class_name, buckets_number, mode);
+        return new ContinuousClassFilter().filter(in, cd);
+    }
+
+    public ClassDescriptor generateRanges(Input in, String class_name, String buckets_number, Mode mode) throws RuntimeException {
         int events_size = countRealSize(in.getEvents(), class_name);
         int separators = getBucketsNumberFromString(buckets_number, events_size) - 1;
         if (separators < 1) {
@@ -42,7 +47,7 @@ public class Discretizer {
             discretizeSimillarBucketsSize(events_size, in, class_name, separators, values);
         }
         ClassDescriptor cd = new ClassDescriptor(class_name, values);
-        return new ContinuousClassFilter().filter(in, cd);
+        return cd;
     }
 
     public static int getBucketsNumberFromString(String buckets_number, int size) {

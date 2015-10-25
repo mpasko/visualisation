@@ -40,8 +40,10 @@ public class J48ArchetypeConfig extends IArchetypeConfig{
     public List<Test> createJ48Config(AttributesGroup attributes, DomainsGroup domains, EventsGroup events) {
         List<Test> runs = new LinkedList<Test>();
         final int collumn = attributes.attributes.size() - 1;
-        final Attribute classAttr = attributes.attributes.get(collumn);
-        runs.add(generateRun(classAttr, domains, events, collumn));
+        if (collumn >= 0) {
+            final Attribute classAttr = attributes.attributes.get(collumn);
+            runs.add(generateRun(classAttr, domains, events, collumn));
+        }
         return runs;
     }
     

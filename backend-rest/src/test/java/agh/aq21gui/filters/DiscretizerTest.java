@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -44,7 +45,7 @@ public class DiscretizerTest {
         Input result = instance.discretize(in, CLASS_NAME, "4", Mode.HISTOGRAM);
         
         Map<String, Integer> counters = new HashMap<String, Integer>();
-        List<String> items = performMeasure(in, result, size, counters);
+        List<String> items = performMeasure(in, result, size, CLASS_NAME, counters);
         //System.out.println();
         assertEquals((long)8, (long)counters.get(items.get(0)));
         assertEquals((long)4, (long)counters.get(items.get(10)));
@@ -61,7 +62,7 @@ public class DiscretizerTest {
         Input result = instance.discretize(in, CLASS_NAME, "square root", Mode.SIMILAR_SIZE);
         
         Map<String, Integer> counters = new HashMap<String, Integer>();
-        List<String> items = performMeasure(in, result, size, counters);
+        List<String> items = performMeasure(in, result, size, CLASS_NAME, counters);
         //System.out.println();
         assertEquals(4.5, (double)counters.get(items.get(1)), 0.51);
         assertEquals(4.5, (double)counters.get(items.get(5)), 0.51);
@@ -78,7 +79,7 @@ public class DiscretizerTest {
         Input result = instance.discretize(in, CLASS_NAME, "square root", Mode.SIMILAR_SIZE);
         
         Map<String, Integer> counters = new HashMap<String, Integer>();
-        List<String> items = performMeasure(in, result, size, counters);
+        List<String> items = performMeasure(in, result, size, CLASS_NAME, counters);
         //System.out.println();
         assertEquals((long)2, (long)counters.get(items.get(0)));
         assertEquals((long)2, (long)counters.get(items.get(3)));
@@ -93,7 +94,7 @@ public class DiscretizerTest {
         Input result = instance.discretize(in, CLASS_NAME, "3", Mode.SIMILAR_SIZE);
         
         Map<String, Integer> counters = new HashMap<String, Integer>();
-        List<String> items = performMeasure(in, result, size, counters);
+        List<String> items = performMeasure(in, result, size, CLASS_NAME, counters);
         //System.out.println();
         assertEquals((long)2, (long)counters.get(items.get(0)));
         assertEquals((long)2, (long)counters.get(items.get(2)));
@@ -110,9 +111,10 @@ public class DiscretizerTest {
         assertEquals(expResult, result);
     }
     
-    public static void countValues(Input result, int size, String claz, Map<String, Integer> counters) {
+    public static void countValues(Input result, int size, String clazz, Map<String, Integer> counters) {
+        String key = clazz.toLowerCase(Locale.US);
         for (int i = 0; i < size; ++i){
-            String stringValue = (String)result.getEvents().get(i).get(claz);
+            String stringValue = (String)result.obtainCell(i, key);
             if (!counters.containsKey(stringValue)) {
                 counters.put(stringValue, 1);
             } else {
@@ -121,18 +123,18 @@ public class DiscretizerTest {
         }
     }
 
-    private List<String> performMeasure(Input in, Input result, int size, Map<String, Integer> counters) {
-        List<String> items = result.getCollumnOfData(CLASS_NAME);
-        countValues(result, size, CLASS_NAME, counters);
+    public static List<String> performMeasure(Input in, Input result, int size, String class_name, Map<String, Integer> counters) {
+        List<String> items = result.getCollumnOfData(class_name);
+        countValues(result, size, class_name, counters);
         for (int i = 0; i < size; ++i){
-            String originalValue = (String)in.getEvents().get(i).get(CLASS_NAME);
-            String stringValue = (String)result.getEvents().get(i).get(CLASS_NAME);
-            /*
+            String originalValue = (String)in.obtainCell(i, class_name);
+            String stringValue = (String)result.obtainCell(i, class_name);
+            
             System.out.print(originalValue);
             System.out.print(" in ");
             System.out.print(stringValue);
             System.out.println();
-            */
+            
             assertNotSame(originalValue, stringValue);
         }
         return items;

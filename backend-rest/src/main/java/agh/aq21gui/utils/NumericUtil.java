@@ -109,4 +109,12 @@ public class NumericUtil {
         }
         return result;
     }
+
+    public static List<Double> stringListToDoubleList(List<String> values) {
+        LinkedList<Double> result = new LinkedList<Double>();
+        for (String value : values) {
+            result.add(tryParse(value));
+        }
+        return result;
+    }
 }

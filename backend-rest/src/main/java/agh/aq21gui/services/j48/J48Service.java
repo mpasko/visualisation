@@ -128,8 +128,9 @@ public class J48Service {
         j48.buildClassifier(instances);
         //System.out.println(j48.graph());
         J48ParserUtil parser = new J48ParserUtil();
-        lastRaw = j48.graph();
-        J48Tree tree = parser.parse(lastRaw);
+        String graph = j48.graph();
+        J48Tree tree = parser.parse(graph);
+        lastRaw = String.format("%s%n%n%s", j48.toString(), graph);
         List<Hypothesis> hypothesis = new J48TreeToRuleSet().treeToRules(tree, run.grepClassName());
         return hypothesis;
     }

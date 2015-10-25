@@ -12,6 +12,7 @@ import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.model.management.InputPair;
 import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.model.output.Output;
+import agh.aq21gui.services.AlgorithmIOWrapper;
 import agh.aq21gui.services.aq21.Aq21FunctionalityWrapper;
 import agh.aq21gui.services.csv.CSVConverter;
 import agh.aq21gui.services.aq21.OutputParser;
@@ -37,7 +38,8 @@ import javax.ws.rs.core.SecurityContext;
 @Path("aq21")
 public class Aq21Resource implements IResource{
     public static final String DATABASE = "database";
-	
+	AlgorithmIOWrapper wrapper = new AlgorithmIOWrapper();
+    
 	@Context
     private SecurityContext security;
 	/**
@@ -55,7 +57,10 @@ public class Aq21Resource implements IResource{
 	})
     @Override
     public Output performExperiment(Input input) {
-		return new Aq21FunctionalityWrapper().enhancedInvoke(input);
+        input = wrapper.inputPreProcessing(input);
+        Output output = new Aq21FunctionalityWrapper().enhancedInvoke(input);
+        output = wrapper.outputPostProcessing(output);
+		return output;
     }
     
     @Override
@@ -98,6 +103,7 @@ public class Aq21Resource implements IResource{
         List<Test> runs = new Aq21ArchetypeConfig().createConfig(in);
         RunsGroup group = new RunsGroup();
         group.setRuns(runs);
+        wrapper.addDefaultValues(in, group);
         return group;
     }
 	

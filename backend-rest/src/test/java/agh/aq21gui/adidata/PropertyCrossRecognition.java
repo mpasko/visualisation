@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.adidata;
 
+import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;

@@ -9,6 +9,7 @@ import agh.aq21gui.model.input.NameValueEntity;
 import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.TreeNode;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
@@ -69,8 +70,18 @@ public class ClassDescriptor extends NameValueEntity {
     public void setValue(String val) {
         if (!val.isEmpty()) {
             this.value = val;
-            this.range_begin = "";
-            this.set_elements = new LinkedList<String>();
+            if (val.contains(",")) {
+                String trimmed = val.replaceAll(" ", "");
+                if (trimmed.contains("{")) {
+                    this.range_begin = trimmed.split(",")[0];
+                    this.range_end = trimmed.split(",")[1];
+                } else {
+                    this.set_elements = Arrays.asList(trimmed.split(","));
+                }
+            } else {
+                this.range_begin = "";
+                this.set_elements = new LinkedList<String>();
+            }
         }
     }
 

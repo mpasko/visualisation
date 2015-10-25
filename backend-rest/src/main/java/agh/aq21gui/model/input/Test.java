@@ -11,6 +11,7 @@ import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -59,9 +60,9 @@ public class Test implements IAQ21Serializable {
     
 	public void addParameter(String name, String value, List<ClassDescriptor> descriptors) {
 		Parameter p = new Parameter(this.getName());
-		p.name = name.toLowerCase();
+		p.name = name.toLowerCase(Locale.US);
         p.setDescriptors(descriptors);
-		p.value = value.toLowerCase();
+        p.setValue(value.toLowerCase(Locale.US));
 		runSpecificParameters.parameters.add(p);
 	}
     
