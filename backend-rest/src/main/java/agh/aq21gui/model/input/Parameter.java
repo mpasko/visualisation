@@ -100,7 +100,7 @@ public class Parameter implements IAQ21Serializable {
                 final OutputParser outputParser = new OutputParser();
                 CommonTree tree = (CommonTree) outputParser.prepareParser(value).value().getTree();
                 parseValue(tree);
-            } catch (RecognitionException ex) {
+            } catch (Throwable ex) {
             }
         }
         return this.descriptors;
@@ -157,9 +157,13 @@ public class Parameter implements IAQ21Serializable {
 
     public List<ClassDescriptor> parseDescriptors(String val) throws RecognitionException {
         LinkedList<ClassDescriptor> descs = new LinkedList<ClassDescriptor>();
-        String[] strings = val.split("(?<=\\])(?=\\[)");
-        for (String str : strings) {
-            descs.add(ClassDescriptor.parse(str));
+        if (val.length() > 0) {
+            String[] strings = val.split("(?<=\\])(?=\\[)");
+            for (String str : strings) {
+                if (!str.replaceAll("\\w", "").equals("[]")) {
+                    descs.add(ClassDescriptor.parse(str));
+                }
+            }
         }
         return descs;
     }

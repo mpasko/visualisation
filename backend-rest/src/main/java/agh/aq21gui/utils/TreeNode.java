@@ -90,4 +90,8 @@ public class TreeNode {
         String value = this.value();
         return Double.parseDouble(value);
     }
+
+    public int childCount() {
+        return this.tree.getChildCount();
+    }
 }

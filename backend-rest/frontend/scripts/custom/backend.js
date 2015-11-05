@@ -1,9 +1,10 @@
 define(["dojo/request", "dojo/topic", "dojo/_base/lang"], function(request, topic, lang) {
   var internal, module;
+  var location = window.location.origin;
   internal = {
-    hostname: window.location.origin + "/jersey/aq21/",
-    jerseyPath: window.location.origin + "/jersey/",
-    csvhostname: window.location.origin + "/jersey/csv/",
+    hostname: location + "/jersey/aq21/",
+    jerseyPath: location + "/jersey/",
+    csvhostname: location + "/jersey/csv/",
     sendMessage: function(configuration, onEnd) {
       var message;
       message = {

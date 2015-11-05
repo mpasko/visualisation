@@ -92,7 +92,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-servlet</artifactId>
-            <version>1.17.1</version>
+            <version>${jersey-version}</version>
             <type>jar</type>
         </dependency>
         
@@ -200,28 +200,13 @@
         </plugins>
     </reporting-->
     <properties>
-        <jersey-version>1.17.1</jersey-version>
+        <jersey-version>1.18.1</jersey-version>
     </properties>
     <repositories>
-        <repository>
+        <!--repository>
             <id>codehaus-release-repo</id>
             <name>Codehaus Release Repo</name>
             <url>http://repository.codehaus.org</url>
-        </repository>
-        <!--repository>
-            <id>eulergui-maven2</id>
-            <name>eulergui-maven2</name>
-            <url>http://eulergui.sourceforge.net/maven2/</url>
-        </repository-->
-        <!--repository>
-            <id>gephi-snapshots</id>
-            <name>Gephi Snapshots</name>
-            <url>http://nexus.gephi.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>gephi-releases</id>
-            <name>Gephi Releases</name>
-            <url>http://nexus.gephi.org/nexus/content/repositories/releases/</url>
         </repository-->
     </repositories>
 </project>

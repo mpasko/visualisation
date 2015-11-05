@@ -61,8 +61,11 @@ public class Test implements IAQ21Serializable {
 	public void addParameter(String name, String value, List<ClassDescriptor> descriptors) {
 		Parameter p = new Parameter(this.getName());
 		p.name = name.toLowerCase(Locale.US);
-        p.setDescriptors(descriptors);
-        p.setValue(value.toLowerCase(Locale.US));
+        if (descriptors.size()>0) {
+            p.setDescriptors(descriptors);
+        } else {
+            p.setValue(value.toLowerCase(Locale.US));
+        }
 		runSpecificParameters.parameters.add(p);
 	}
     

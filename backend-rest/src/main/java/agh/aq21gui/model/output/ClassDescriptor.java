@@ -86,11 +86,16 @@ public class ClassDescriptor extends NameValueEntity {
     }
 
     public String getValue() {
-        if (value.isEmpty() && (set_elements.size() >= 1)) {
-            setToString();
+        StringBuilder b = new StringBuilder();
+        b.append(setToString());
+        if (!range_begin.isEmpty()) {
+            if (set_elements.size() >= 1) {
+                b.append(",");
+            }
+            b.append(rangeToString());
         }
-        if (value.isEmpty() && (!range_begin.isEmpty())) {
-            rangeToString();
+        if (b.length()>0) {
+            this.value = b.toString();
         }
         return this.value;
     }
@@ -136,21 +141,46 @@ public class ClassDescriptor extends NameValueEntity {
     public void parseSelector(TreeNode desc) {
         name = desc.childAt(0, TParser.ID).value();
         comparator = desc.childAt(1, TParser.EQUAL).value();
-        if (desc.tree().getChild(2).getType() == TParser.RANGE) {
-            TreeNode range = desc.childAt(2, TParser.RANGE);
-            range_begin = range.childAt(0, TreeNode.ANY_TYPE).value();
-            range_end = range.childAt(1, TreeNode.ANY_TYPE).value();
-            rangeToString();
-        } else if (desc.tree().getChild(2).getType() == TParser.VALUE_SET) {
-            //Logger.getLogger("Parser").info("Parsing value set");
-            TreeNode set = desc.childAt(2, TParser.VALUE_SET);
-            set_elements = new LinkedList<String>();
-            for (TreeNode itemNode : set.iterator(TreeNode.ANY_TYPE)) {
-                set_elements.add(itemNode.value());
+        if (desc.childCount() >= 3) {
+            /*
+            if (desc.tree().getChild(2).getType() == TParser.RANGE) {
+                TreeNode range = desc.childAt(2, TParser.RANGE);
+                range_begin = range.childAt(0, TreeNode.ANY_TYPE).value();
+                range_end = range.childAt(1, TreeNode.ANY_TYPE).value();
+                rangeToString();
+            } else if (desc.tree().getChild(2).getType() == TParser.VALUE_SET) {
+                //Logger.getLogger("Parser").info("Parsing value set");
+                TreeNode set = desc.childAt(2, TParser.VALUE_SET);
+                set_elements = new LinkedList<String>();
+                for (TreeNode itemNode : set.iterator(TreeNode.ANY_TYPE)) {
+                    set_elements.add(itemNode.value());
+                }
+                setToString();
+            } else {
+                value = desc.childAt(2, TreeNode.ANY_TYPE).value();
             }
-            setToString();
-        } else {
-            value = desc.childAt(2, TreeNode.ANY_TYPE).value();
+            */
+            if (desc.tree().getChild(2).getType() == TParser.VALUE_SET) {
+                TreeNode node = desc.childAt(2, TParser.VALUE_SET);
+                LinkedList<String> temporary = new LinkedList<String>();
+                boolean rangeOpUsed = false;
+                for (int i=0; i<node.childCount(); ++i) {
+                    if (node.tree().getChild(i).getType() == TParser.RANGE) {
+                        rangeOpUsed = true;
+                    } else {
+                        temporary.addLast(node.childAt(i, TreeNode.ANY_TYPE).value());
+                    }
+                }
+                if (rangeOpUsed) {
+                    range_end = temporary.removeLast();
+                    range_begin = temporary.removeLast();
+                } else if (temporary.size()==1) {
+                    value = temporary.get(0); 
+                }
+                set_elements = new LinkedList<String>(temporary);
+            } else {
+                value = desc.childAt(2, TreeNode.ANY_TYPE).value();
+            }
         }
     }
 
@@ -158,9 +188,11 @@ public class ClassDescriptor extends NameValueEntity {
         String cdString = bracketify(string);
         TParser tokens = new OutputParser().prepareParser(cdString);
         CommonTree cd_tree = (CommonTree) tokens.class_description().getTree();
-        TreeNode node = new TreeNode(cd_tree, TParser.CLASS_DESCRIPTION);
         ClassDescriptor cd = new ClassDescriptor();
-        cd.parseSelector(node);
+        if (!string.replaceAll("\\w", "").equalsIgnoreCase("[]")) {
+            TreeNode node = new TreeNode(cd_tree, TParser.CLASS_DESCRIPTION);
+            cd.parseSelector(node);
+        }
         return cd;
     }
 
@@ -205,7 +237,7 @@ public class ClassDescriptor extends NameValueEntity {
         return hash;
     }
 
-    private void setToString() {
+    private String setToString() {
         StringBuilder build = new StringBuilder();
         for (String element : set_elements) {
             if (build.length() > 0) {
@@ -213,15 +245,15 @@ public class ClassDescriptor extends NameValueEntity {
             }
             build.append(element);
         }
-        value = build.toString();
+        return build.toString();
     }
 
-    private void rangeToString() {
+    private String rangeToString() {
         StringBuilder builder = new StringBuilder();
         builder.append(range_begin);
         builder.append("..");
         builder.append(range_end);
-        value = builder.toString();
+        return builder.toString();
     }
 
     public boolean matchesValue(String actualValue) {

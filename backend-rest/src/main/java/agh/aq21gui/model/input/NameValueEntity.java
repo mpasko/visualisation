@@ -22,8 +22,8 @@ public abstract class NameValueEntity implements IAQ21Serializable {
         }
         return selectorString;
     }
-	public long id;
-	public String name;
+	public long id = 0;
+	public String name = "";
 	public List<String> set_elements = new LinkedList<String>();
 
 	public NameValueEntity() {

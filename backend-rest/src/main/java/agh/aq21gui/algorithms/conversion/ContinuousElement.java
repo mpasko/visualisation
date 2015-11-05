@@ -11,35 +11,38 @@ import java.util.logging.Logger;
  *
  * @author marcin
  */
-public class ContinuousElement extends RangeElement{
-	
-	private Double value;
+public class ContinuousElement extends RangeElement {
 
-	ContinuousElement(String value, String comparator) {
-		try{
-			this.value = Double.parseDouble(value);
-		}catch(NumberFormatException e){
-			String message = "Error creating range boundary for type continuous. Number format parse exception. v={0}";
-			Logger.getLogger("GLD").log(Level.SEVERE, message, value);
-		}
-		
-		this.setComparator(comparator);
-	}
+    private Double value;
 
-	@Override
-	public int minus(RangeElement other) {
-		ContinuousElement next = (ContinuousElement)other;
-		int cmp = value.compareTo(next.value);
-		if (cmp==0) {
-			return classify(this)-classify(next);
-		} else {
-			return cmp;
-		}
-	}
+    ContinuousElement(String value, String comparator) {
+        try {
+            this.value = Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            String message = "Error creating range boundary for type continuous. Number format parse exception. v={0}";
+            Logger.getLogger("GLD").log(Level.SEVERE, message, value);
+        }
 
-	@Override
-	public String getValue() {
-		return value.toString();
-	}
-	
+        this.setComparator(comparator);
+    }
+
+    @Override
+    public int minus(RangeElement other) {
+        if (other instanceof ContinuousElement) {
+            ContinuousElement next = (ContinuousElement) other;
+            int cmp = value.compareTo(next.value);
+            if (cmp == 0) {
+                return classify(this) - classify(next);
+            } else {
+                return cmp;
+            }
+        } else {
+            throw new RuntimeException("Case is unsupported!");
+        }
+    }
+
+    @Override
+    public String getValue() {
+        return value.toString();
+    }
 }

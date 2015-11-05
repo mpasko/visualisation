@@ -160,8 +160,8 @@ rule_additional_params : COLON simple_parameter (NL? COMA simple_parameter)*
 coma_parameter : name=ID COMA fl_value=simple_value
  -> ^(PARAMETER $name $fl_value) ;
 
-simple_parameter : name=ID EQUAL fl_value=simple_value
- -> ^(PARAMETER $name $fl_value) ;
+simple_parameter : name=ID EQUAL fl_value=simple_value?
+ -> ^(PARAMETER $name $fl_value?) ;
 
 enhanced_parameter : name=ID EQUAL value?
  -> ^(PARAMETER $name value?) ;
@@ -174,8 +174,10 @@ value : simple_value
 class_descriptions : class_description+
  -> ^(CLASSES class_description+) ;
 
-class_description : OPEN_SQR name=ID kind=EQUAL atom CLOSE_SQR
- -> ^(CLASS_DESCRIPTION $name $kind atom) ;
+class_description : OPEN_SQR name=ID kind=EQUAL atom? CLOSE_SQR
+ -> ^(CLASS_DESCRIPTION $name $kind atom?) 
+ | OPEN_SQR CLOSE_SQR
+ -> ^(NULL) ;
 
 events : EVENTS NL? OPEN NL? row* CLOSE NL?
   -> row*;
@@ -187,10 +189,18 @@ row : simple_value (COMA simple_value)* NL
   -> ^(ROW simple_value+); 
 
 atom
-	: simple_value -> simple_value
-	| simple_value RANGE_OP simple_value -> ^(RANGE simple_value+) 
-	| simple_value (COMA simple_value)+ -> ^(VALUE_SET simple_value+)
+//	: simple_value -> simple_value
+//	| simple_value RANGE_OP simple_value -> ^(RANGE simple_value+) 
+//	| simple_value (COMA simple_value)+ -> ^(VALUE_SET simple_value+)
+    : coma_separated
+        -> ^(VALUE_SET coma_separated) 
+    | coma_separated RANGE_OP last=simple_value
+        -> ^(VALUE_SET coma_separated RANGE $last) 
 	;
+
+coma_separated
+    : simple_value (COMA simple_value)* -> simple_value+
+    ;
 
 simple_value
 	: id_value=ID ->  $id_value

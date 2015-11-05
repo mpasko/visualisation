@@ -4,14 +4,9 @@
  */
 package agh.aq21gui.utils;
 
-import agh.aq21gui.evaluator.StatsAgregator;
 import agh.aq21gui.model.gld.processing.CellValue;
 import agh.aq21gui.model.input.Input;
-import agh.aq21gui.model.output.ClassDescriptor;
-import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
-import agh.aq21gui.model.output.Rule;
-import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.services.aq21.OutputParser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,7 +26,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.antlr.runtime.RecognitionException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
@@ -40,50 +34,51 @@ import org.codehaus.jackson.map.SerializationConfig;
  * @author marcin
  */
 public class Util {
-	public static void isNull(Object obj, String name){
-		if(obj==null){
-			System.out.println(name+" is null!");
-		}
-	}
-    
-    public static <T> List<T> singleElemList(T item){
-		List<T> list = new LinkedList<T>();
+
+    public static void isNull(Object obj, String name) {
+        if (obj == null) {
+            System.out.println(name + " is null!");
+        }
+    }
+
+    public static <T> List<T> singleElemList(T item) {
+        List<T> list = new LinkedList<T>();
         list.add(item);
         return list;
     }
 
-	public static List<String> strings(String... elem) {
-		List<String> elems1 = new LinkedList<String>();
-		elems1.addAll(Arrays.asList(elem));
-		return elems1;
-	}
+    public static List<String> strings(String... elem) {
+        List<String> elems1 = new LinkedList<String>();
+        elems1.addAll(Arrays.asList(elem));
+        return elems1;
+    }
 
-	public static void collectionIntoArray(Iterable<CellValue> mesh_cells, List<CellValue> array) {
-		Iterator<CellValue> iter = mesh_cells.iterator();
-		while (iter.hasNext()) {
-			CellValue val = iter.next();
-			array.add(val);
-		}
-	}
+    public static void collectionIntoArray(Iterable<CellValue> mesh_cells, List<CellValue> array) {
+        Iterator<CellValue> iter = mesh_cells.iterator();
+        while (iter.hasNext()) {
+            CellValue val = iter.next();
+            array.add(val);
+        }
+    }
 
-	public static String streamToString(InputStream in) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		StringBuilder out = new StringBuilder();
-		String line;
-		while ((line = br.readLine()) != null) {
-			out.append(line).append("\n");
-		}
-		return out.toString();
-	}
+    public static String streamToString(InputStream in) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        StringBuilder out = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+            out.append(line).append("\n");
+        }
+        return out.toString();
+    }
 
-	public static void stringToStream(String in, OutputStream out) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));
-		for (String line : in.split("\n")) {
-			bw.write(line);
-			bw.newLine();
-		}
-		bw.close();
-	}
+    public static void stringToStream(String in, OutputStream out) throws IOException {
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));
+        for (String line : in.split("\n")) {
+            bw.write(line);
+            bw.newLine();
+        }
+        bw.close();
+    }
 
     public static String negatedComparator(final String comparator) {
         String neg;
@@ -110,12 +105,12 @@ public class Util {
 
     public static Input deepCopyInput(Input in) {
         OutputParser parser = new OutputParser();
-        
+
         //System.out.print(attachLines(in.toString()));
         String json = Util.objectToJson(in);
         return Util.JsonToInput(json);
     }
-    
+
     public static Input JsonToInput(String json) {
         try {
             //System.out.println(item.toString());
@@ -128,7 +123,7 @@ public class Util {
         }
         //return "";
     }
-    
+
     public static String objectToJson(Object item) {
         try {
             //System.out.println(item.toString());
@@ -140,19 +135,6 @@ public class Util {
             throw new RuntimeException(ex);
         }
         //return "";
-    }
-    
-    public static String attachLines(String in, Class<?> invokedIn) {
-        StringBuilder b = new StringBuilder();
-        int i=0;
-        b.append("Raised from: ").append(invokedIn.getCanonicalName());
-        for (String line : in.split("\n")) {
-            b.append(++i);
-            b.append("\t");
-            b.append(line);
-            b.append("\n");
-        }
-        return b.toString();
     }
 
     public static String loadFile(String filename) {

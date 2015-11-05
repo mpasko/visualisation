@@ -7,7 +7,9 @@ package agh.aq21gui.services.aq21;
 import agh.aq21gui.aq21grammar.TLexer;
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.aq21grammar.TParser.output_return;
+import agh.aq21gui.j48treegrammar.ParseError;
 import agh.aq21gui.model.output.Output;
+import agh.aq21gui.utils.Printer;
 import agh.aq21gui.utils.Util;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -40,9 +42,9 @@ public class OutputParser {
             tree = (CommonTree)out_ret.getTree();
 //            System.out.println("tree:");
 //            System.out.println(tree.toStringTree());
-        }catch(RecognitionException ex){
-            //Logger.getLogger(Aq21Resource.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(Util.attachLines(out, getClass()));
+        }catch(Throwable ex){
+            Printer.printLines(out, getClass());
+            Printer.logException(this.getClass(), "AQ21 Format parsing exception", ex);
             throw new RuntimeException(ex);
         }
         return tree;

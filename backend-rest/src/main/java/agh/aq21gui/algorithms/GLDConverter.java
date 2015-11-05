@@ -134,7 +134,7 @@ public class GLDConverter {
 				}
 			}
 		} else {
-			if (selector.set_elements.size()>=1){
+			if (selector.set_elements.size()>1){
 				range.addSet(selector.getSet_elements(), "=");
 			} else if (selector.range_begin.isEmpty()) {
 				range.addAny(selector.getValue(), selector.comparator);

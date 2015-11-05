@@ -19,7 +19,6 @@ class PredictedDomain {
     public Double max;
     public Double min;
     public int number;
-    private final CSVConverter domainPredictor;
     
     public enum DomainType {
 
@@ -34,12 +33,11 @@ class PredictedDomain {
         }
     }
 
-    public PredictedDomain(int id, final CSVConverter domainPredictor) {
-        this.domainPredictor = domainPredictor;
+    public PredictedDomain(int id) {
         number = id;
         type = DomainType.INTEGER;
         values = new LinkedList<String>();
-        max = Double.MIN_VALUE;
+        max = -Double.MAX_VALUE;
         min = Double.MAX_VALUE;
     }
 
@@ -86,10 +84,10 @@ class PredictedDomain {
         }
         switch (type) {
             case INTEGER:
-                if (min<=Double.MIN_VALUE) {
+                if (min<=Integer.MIN_VALUE) {
                     min = (double)Integer.MIN_VALUE;
                 }
-                if (max>=Double.MAX_VALUE) {
+                if (max>=Integer.MAX_VALUE) {
                     max = (double)Integer.MAX_VALUE;
                 }
             case CONTINUOUS:

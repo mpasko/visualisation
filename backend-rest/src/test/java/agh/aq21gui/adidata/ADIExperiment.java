@@ -4,34 +4,29 @@
  */
 package agh.aq21gui.adidata;
 
-import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;
 import agh.aq21gui.JRipResource;
 import agh.aq21gui.MetricsResource;
-import agh.aq21gui.evaluator.Statistics;
-import agh.aq21gui.filters.RuleSorter;
 import agh.aq21gui.evaluator.StatsAgregator;
 import agh.aq21gui.filters.AttributeRemover;
 import agh.aq21gui.filters.ContinuousClassFilter;
 import agh.aq21gui.filters.RuleAgregator;
-import agh.aq21gui.filters.RulePrunner;
-import agh.aq21gui.filters.RuleVerticalAgregator;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.output.ClassDescriptor;
-import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
+import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.stubs.StubFactory;
 import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.NumericUtil;
+import agh.aq21gui.utils.Printer;
 import agh.aq21gui.utils.Util;
 import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 import testtools.MeasurmentResultFormatter;
 
 /**
@@ -44,16 +39,26 @@ public class ADIExperiment {
     public static final String W_ROZ = "wytrzym_rozciag_mpa";
     public static final String WYDL = "wydluzenie";
     public static final String PRZEW = "przewezenie";
+    public static final String HRC = "hrc";
     public static final String UDAR= "udarnosc";
     public static final String G_PLAST = "granica_plast_mpa";
     public static final String W_ZME = "wytrzym_zmecz_mpa";
     public static final String FRAC = "frac_toughness";
 
     public static List<String> allPropertiesWithout(String item) {
-        List<String> strings = Util.strings(STOP, W_ROZ, WYDL, PRZEW, UDAR, G_PLAST, W_ZME, FRAC);
+        List<String> strings = Util.strings(STOP, W_ROZ, WYDL, PRZEW, HRC, UDAR, G_PLAST, W_ZME, FRAC);
         strings.remove(item);
         return strings;
     }
+    
+    public static List<String> allElementsAndreceipe() {
+        LinkedList<String> strings = new LinkedList<String>();
+        strings.addAll(Util.strings("C", "Si", "Mn", "Mg", "Cu", "Ni", "Mo", "S", "P", "B", "V", "Cr", "Ti", "Sn", "Nb", "Al"));
+        strings.addAll(Util.strings("aust_temp_C", "aust_czas_min", "wygrz_izoterm_temp_C", "wygrz_izoterm_czas_min", "osrodek"));
+        strings.add(STOP);
+        return strings;
+    }
+    
     private Input inputPattern;
     private List<Entry<IResource, String>> algSet;
     private List<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
@@ -101,8 +106,8 @@ public class ADIExperiment {
         input = inputPreProcessing(input, ignore);
         Output result = resource.performExperiment(input);
         Output processed = outputPostProcessing(result);
-        System.out.println(result.getRaw());
-        System.out.println(processed.obtainOutputHypotheses().toString());
+        Printer.printLines(result.getRaw(), this.getClass());
+        Printer.printLines(processed.obtainOutputHypotheses().toString(), this.getClass());
         MetricsResource metricsResource = new MetricsResource();
         if (mode.equalsIgnoreCase("strict")) {
             metricsResource.questionAsFalse = true;

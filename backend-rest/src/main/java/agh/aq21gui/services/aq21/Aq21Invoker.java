@@ -4,15 +4,13 @@
  */
 package agh.aq21gui.services.aq21;
 
-import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.Configuration;
+import agh.aq21gui.aq21grammar.ParsingException;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.services.AbstractInvoker;
-import agh.aq21gui.utils.Util;
+import agh.aq21gui.utils.Printer;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -27,11 +25,11 @@ public class Aq21Invoker extends AbstractInvoker{
 
     @Override
 	public Output invoke(Input input) {
-        //System.out.println(Util.attachLines(input.toString())+"\n----------------------------");
 		if (input == null) {
-			Logger.getLogger(Aq21Resource.class.getName()).warning("AQ21 received null or empty object!");
+			Printer.logException(this.getClass(), "AQ21 received null or empty object!", new RuntimeException());
 			return null;
 		}
+        //System.out.println(Util.attachLines(input.toString(), this.getClass()));
 		OutputParser parser = new OutputParser();
 		//AttributesGroup ag = (AttributesGroup) input.gAG();
 
@@ -40,8 +38,13 @@ public class Aq21Invoker extends AbstractInvoker{
 		try {
 			result = run(AQ21INPUT, input.toString());
 			return parser.parse(result);
-		} catch (Exception ex) {
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, null, ex);
+        } catch (IOException ex) {
+            Printer.logException(this.getClass(), "Error accessing input or output files", ex);
+        } catch (ProgramExecutionException ex) {
+            Printer.logException(this.getClass(), "AQ21 binary runtime failure", ex);
+		} catch (ParsingException ex) {
+            Printer.printLines(result, this.getClass());
+            Printer.logException(this.getClass(), "Error during AQ21 result parsing", ex);
 		}
 		Output stub = new Output();
 		stub.setRaw(result);

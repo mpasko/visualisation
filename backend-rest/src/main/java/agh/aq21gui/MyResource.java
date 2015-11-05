@@ -3,11 +3,8 @@ package agh.aq21gui;
 
 import agh.aq21gui.model.gld.GLDOutput;
 import agh.aq21gui.model.input.Input;
-import agh.aq21gui.model.input.Run;
-import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.management.Directory;
 import agh.aq21gui.stubs.StubFactory;
-import agh.aq21gui.services.aq21.OutputParser;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;

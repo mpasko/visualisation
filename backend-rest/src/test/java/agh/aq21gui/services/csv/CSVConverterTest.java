@@ -54,9 +54,9 @@ public class CSVConverterTest {
         System.out.println("predictDomains");
         final String ASASAS = "asasas";
         EventsGroup events = new EventsGroup();
-        events.addEvent("?","?","?","1");
-        events.addEvent("?","0.5","?","1");
-        events.addEvent("?","?",ASASAS,"1");
+        events.addEvent("?","?","?","0");
+        events.addEvent("?","0.5","?","0");
+        events.addEvent("?","?",ASASAS,"0");
         List<String> offeredNames = Arrays.asList("int","double","str");
         CSVConverter instance = new CSVConverter();
         LinkedList<PredictedDomain> result = instance.predictDomains(events, offeredNames);
@@ -64,20 +64,22 @@ public class CSVConverterTest {
         PredictedDomain intDomain = result.get(0);
         PredictedDomain doubleDomain = result.get(1);
         PredictedDomain strDomain = result.get(2);
+        PredictedDomain intDomain2 = result.get(3);
         
         assertEquals(PredictedDomain.DomainType.INTEGER, intDomain.type);
         assertEquals(PredictedDomain.DomainType.CONTINUOUS, doubleDomain.type);
         assertEquals(PredictedDomain.DomainType.NOMINAL, strDomain.type);
+        assertEquals(PredictedDomain.DomainType.INTEGER, intDomain2.type);
         
         Domain intGenerated = intDomain.generate();
         Domain doubleGenerated = doubleDomain.generate();
         Domain strGenerated = strDomain.generate();
-        Domain lastIntGenerated = result.get(3).generate();
+        Domain lastIntGenerated = intDomain2.generate();
         
         assertEquals(Integer.MIN_VALUE+", "+Integer.MAX_VALUE, intGenerated.getparameters());
         assertEquals("0.5, 0.5", doubleGenerated.getparameters());
         assertEquals("{"+ASASAS+", undefined}", strGenerated.getparameters());
-        assertEquals("1, 1", lastIntGenerated.getparameters());
+        assertEquals("0, 0", lastIntGenerated.getparameters());
     }
 
 }

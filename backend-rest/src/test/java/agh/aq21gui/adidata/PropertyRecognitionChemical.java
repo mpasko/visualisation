@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import static agh.aq21gui.adidata.ADIExperiment.*;
 /**
  *
  * @author marcin
@@ -23,10 +23,8 @@ public class PropertyRecognitionChemical {
     private static final String WYTRZYM_ZMECZ_MPA = "wytrzym_zmecz_mpa";
     private static final String RE_MPA = "re_mpa";
     private static final String RM_MPA = "rm_mpa";
-    private static final String STOP = "stop";
     public static final String K1C_M_PA_VM = "k1c_mpavm";
     public static final String A5_PERCENT = "a5_percent";
-    public static final String HC_R = "hcr";
     
     public static void main(String[] args) {
         final ADIExperiment adiExperiment = new ADIExperiment();
@@ -43,11 +41,11 @@ public class PropertyRecognitionChemical {
         adiExperiment.runAllPossibilities(WYTRZYM_ZMECZ_MPA, null, allWithout(WYTRZYM_ZMECZ_MPA));
         adiExperiment.runAllPossibilities(K1C_M_PA_VM, null, allWithout(K1C_M_PA_VM));
         adiExperiment.runAllPossibilities(A5_PERCENT, null, allWithout(A5_PERCENT));
-        adiExperiment.runAllPossibilities(HC_R, null, allWithout(HC_R));
+        adiExperiment.runAllPossibilities(HRC, null, allWithout(HRC));
     }
 
     private static List<String> allWithout(String item) {
-        List<String> strings = Util.strings(STOP, RE_MPA, WYTRZYM_ZMECZ_MPA, K1C_M_PA_VM, A5_PERCENT, HC_R);
+        List<String> strings = Util.strings(STOP, RE_MPA, WYTRZYM_ZMECZ_MPA, K1C_M_PA_VM, A5_PERCENT, HRC);
         strings.remove(item);
         return strings;
     }

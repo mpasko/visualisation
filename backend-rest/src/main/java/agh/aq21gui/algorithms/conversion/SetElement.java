@@ -19,7 +19,7 @@ class SetElement extends RangeElement {
 	List<String> elems;
 
 	public SetElement(List<String> set_elements) {
-		String [] array = (String[])new ArrayList(set_elements).toArray();
+		String [] array = new ArrayList<String>(set_elements).toArray(new String[set_elements.size()]);
 		Sort.quicksort(array, new Compare() {
 
 			@Override

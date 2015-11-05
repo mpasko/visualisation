@@ -63,6 +63,29 @@ public class AlgorithmIOWrapperTest {
     }
     
     @Test
+    public void when_discretizer_ranges_not_set_then_should_not_discretize() {
+        final int size = 10;
+        System.out.println("when_discretizer_ranges_not_set_then_should_not_discretize");
+        String class_name = "Result";
+        Input input = StubFactory.generatePolynomialInput(size, class_name);
+        Run run = new Run();
+        run.addParameter("discretize_ranges", "[]");
+        input.runsGroup.runs.add(run);
+        
+        AlgorithmIOWrapper instance = new AlgorithmIOWrapper();
+        //System.out.println(input.toString());
+        Input result = instance.inputPreProcessing(input);
+        //System.out.println(result.toString());
+        
+        Map<String, Integer> counters = new HashMap<String, Integer>();
+        List<String> items = DiscretizerTest.performMeasure(input, result, size, class_name, counters);
+        
+        for (int i = 0; i<10; ++i) {
+            assertEquals((long)1, (long)counters.get(items.get(i)));
+        }
+    }
+    
+    @Test
     public void when_remove_params_set_then_should_remove_collumn() {
         System.out.println("when_remove_params_set_then_should_remove_collumn");
         Input input = StubFactory.getInput();

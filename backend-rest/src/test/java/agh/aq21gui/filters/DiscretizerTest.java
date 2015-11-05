@@ -7,16 +7,14 @@ package agh.aq21gui.filters;
 import agh.aq21gui.filters.Discretizer.Mode;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.stubs.StubFactory;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -129,12 +127,12 @@ public class DiscretizerTest {
         for (int i = 0; i < size; ++i){
             String originalValue = (String)in.obtainCell(i, class_name);
             String stringValue = (String)result.obtainCell(i, class_name);
-            
+            /*
             System.out.print(originalValue);
             System.out.print(" in ");
             System.out.print(stringValue);
             System.out.println();
-            
+            */
             assertNotSame(originalValue, stringValue);
         }
         return items;

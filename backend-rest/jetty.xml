@@ -68,6 +68,10 @@
                                                     <Item>com.sun.jersey.config.property.packages</Item>
                                                     <Item>agh.aq21gui</Item>
                                                   </Entry>
+                                                  <Entry>
+                                                    <Item>com.sun.jersey.spi.container.ContainerResponseFilters</Item>
+                                                    <Item>agh.aq21gui.CorsResponseFilter</Item>
+                                                  </Entry>
                                                 </Map>
                                               </Arg>
                                             </New>

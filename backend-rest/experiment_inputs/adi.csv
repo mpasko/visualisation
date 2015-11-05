@@ -1,4 +1,4 @@
-stop, aust_temp_C, aust_czas_min, wygrz_izoterm_temp_C, wygrz_izoterm_czas_min, wytrzym_zmecz_Mpa, osrodek, Rm_MPa, Re_MPa, K1c_MPaVm, A5_percent, HCR
+stop, aust_temp_C, aust_czas_min, wygrz_izoterm_temp_C, wygrz_izoterm_czas_min, wytrzym_zmecz_Mpa, osrodek, Rm_MPa, Re_MPa, K1c_MPaVm, A5_percent, HRC
 ADI2, 900, 90, 320, 120, 350, ?, ?, ?, ?, ?, ?
 ADI2, 900, 90, 360, 120, 270, ?, ?, ?, ?, ?, ?
 ADI3, 900, 90, 320, 120, 290, ?, ?, ?, ?, ?, ?

@@ -13,6 +13,8 @@ import agh.aq21gui.services.aq21.Aq21Invoker;
 import agh.aq21gui.services.csv.Aq21ArchetypeConfig;
 import agh.aq21gui.services.csv.J48ArchetypeConfig;
 import agh.aq21gui.services.j48.J48Service;
+import agh.aq21gui.utils.Printer;
+import agh.aq21gui.utils.Util;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -37,6 +39,8 @@ public class J48Resource implements IResource{
 	})
     @Override
     public Output performExperiment(Input input) {
+        System.out.println("perform experiment input:\n");
+        Printer.printLines(input.toString(), this.getClass());
         input = wrapper.inputPreProcessing(input);
 		J48Service srv = new J48Service();
         Output output = srv.convertAndRun(input);

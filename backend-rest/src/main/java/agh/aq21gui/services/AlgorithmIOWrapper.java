@@ -80,8 +80,8 @@ public class AlgorithmIOWrapper {
             run.addParameter("vertical_aggregate", "false");
             run.addParameter("post_prune", "false");
             run.addParameter("sort", "false");
-            run.addParameter("ignore_attributes", "[ignore={}]");
-            run.addParameter("discretize_ranges", "");
+            run.addParameter("ignore_attributes", "[ignore=]");
+            run.addParameter("discretize_ranges", "[]");
         }
         /*LinkedList<Parameter> parameters = new LinkedList<Parameter>();
          parameters.add();

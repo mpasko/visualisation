@@ -55,7 +55,8 @@ public abstract class AbstractTParser
 
         // This is just a place holder that shows how to override this method
         //
-        super.displayRecognitionError(tokenNames, e);
+        throw new ParsingException(e);
+        //super.displayRecognitionError(tokenNames, e);
     }
 }
 

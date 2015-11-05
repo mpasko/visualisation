@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.j48treegrammar;
 
+import agh.aq21gui.utils.Printer;
 import agh.aq21gui.utils.Util;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,8 +40,8 @@ public class J48ParserUtil {
             //System.out.println("tree:");
             //System.out.println(tree.toStringTree());
         }catch(RecognitionException ex){
-            //Logger.getLogger(J48ParserUtil.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(Util.attachLines(out, getClass()));
+            Printer.printLines(out, getClass());
+            Printer.logException(this.getClass(), "Parse exception during J48 tree parsing", ex);
             throw new RuntimeException(ex);
         }
         return tree;

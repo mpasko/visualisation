@@ -12,7 +12,6 @@ import agh.aq21gui.model.input.DomainsGroup;
 import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.EventsGroup;
 import agh.aq21gui.model.input.Input;
-import agh.aq21gui.model.input.Test;
 import agh.aq21gui.utils.NumericUtil;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,12 +67,12 @@ public class CSVConverter {
         return nls;
     }
 
-    public LinkedList<PredictedDomain> predictDomains(EventsGroup events, List<String> offeredNames) {
+    LinkedList<PredictedDomain> predictDomains(EventsGroup events, List<String> offeredNames) {
         Event event0 = events.events.get(0);
         int len = event0.getValues().size();
         LinkedList<PredictedDomain> columns = new LinkedList<PredictedDomain>();
         for (int i = 1; i <= len; ++i) {
-            columns.add(new PredictedDomain(i, this));
+            columns.add(new PredictedDomain(i));
         }
         for (Event e : events.events) {
             for (int i = 0; i < len; ++i) {
