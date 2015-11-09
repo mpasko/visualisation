@@ -9,6 +9,7 @@ import agh.aq21gui.model.input.NameValueEntity;
 import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.TreeNode;
+import agh.aq21gui.utils.Util;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -256,16 +257,17 @@ public class ClassDescriptor extends NameValueEntity {
         return builder.toString();
     }
 
-    public boolean matchesValue(String actualValue) {
+    public boolean matchesValue(String actualValue, List<String> linearOrder) {
 //        if (NumericUtil.isWildcard(actualValue)) {
 //            return false;
 //        }
         boolean outcome = false;
-        if (value.isEmpty()) {
+        if (!range_begin.isEmpty()||this.set_elements.size() > 1) {
             if (!range_begin.isEmpty()) {
-                outcome = matchesRange(actualValue);
-            } else if (this.set_elements.size() >= 1) {
-                outcome = matchesSet(actualValue);
+                outcome |= matchesRange(actualValue, linearOrder);
+            }
+            if (this.set_elements.size() >= 1) {
+                outcome |= matchesSet(actualValue);
             }
         } else {
             //Descriptor has often format i.e. colour>0.5
@@ -290,11 +292,20 @@ public class ClassDescriptor extends NameValueEntity {
         return right;
     }
 
-    private boolean matchesRange(String actualValue) throws RuntimeException {
-        double begin = parseDouble(range_begin);
-        double end = parseDouble(range_end);
-        double actual = parseDouble(actualValue);
-        final boolean isBetween = ((begin < actual) && (actual < end)) || ((end < actual) && (actual < begin));
+    private boolean matchesRange(String actualValue, List<String> linearOrder) throws RuntimeException {
+        double begin;
+        double end;
+        double actual;
+        if (NumericUtil.isNumber(range_begin)&&NumericUtil.isNumber(range_end)&&NumericUtil.isNumber(actualValue)) {
+            begin = parseDouble(range_begin);
+            end = parseDouble(range_end);
+            actual = parseDouble(actualValue);
+        } else {
+            begin = Util.indexOfIgnoreCase(linearOrder, range_begin);
+            end = Util.indexOfIgnoreCase(linearOrder, range_end);
+            actual = Util.indexOfIgnoreCase(linearOrder, actualValue);
+        }
+        final boolean isBetween = ((begin <= actual) && (actual <= end)) || ((end <= actual) && (actual <= begin));
         boolean result = false;
         if (comparator.equals("=")) {
             result = isBetween;
@@ -360,7 +371,7 @@ public class ClassDescriptor extends NameValueEntity {
         return getValue().equalsIgnoreCase("*");
     }
 
-    public boolean isGeneralizationOf(ClassDescriptor other) {
+    public boolean isGeneralizationOf(ClassDescriptor other, List<String> linearOrder) {
         boolean result;
         if (this.equals(other)) {
             result = true;
@@ -376,7 +387,7 @@ public class ClassDescriptor extends NameValueEntity {
             Double doubleval2 = NumericUtil.tryParse(val2);
             if (this.getRange_begin().isEmpty()) {
                 if (dir1 == dir2) {
-                    result = this.matchesValue(val2);
+                    result = this.matchesValue(val2, linearOrder);
                 } else {
                     result |= comp1.equals(">=") && comp2.equals("=") && (doubleval2 >= doubleval1);
                     result |= comp1.equals("<=") && comp2.equals("=") && (doubleval2 <= doubleval1);
@@ -386,11 +397,11 @@ public class ClassDescriptor extends NameValueEntity {
             } else {
                 if (other.getRange_begin().isEmpty()) {
                     if (comp2.equals("=")) {
-                        result = this.matchesRange(val2);
+                        result = this.matchesRange(val2, linearOrder);
                     }
                 } else {
-                    result |= this.matchesRange(other.getRange_begin());
-                    result &= this.matchesRange(other.getRange_end());
+                    result |= this.matchesRange(other.getRange_begin(), linearOrder);
+                    result &= this.matchesRange(other.getRange_end(), linearOrder);
                 }
             }
         }
@@ -401,13 +412,13 @@ public class ClassDescriptor extends NameValueEntity {
         return comparator.equals("!=") || comparator.equals("<>");
     }
 
-    public boolean matchesValueStrictly(String actualValue) {
+    public boolean matchesValueStrictly(String actualValue, List<String> linearOrder) {
         if (NumericUtil.isWildcard(actualValue)) {
             if (("?".equals(value)) && ("?".equals(actualValue)) && ("=".equals(comparator))) {
                 return true;
             }
             return false;
         }
-        return matchesValue(actualValue);
+        return matchesValue(actualValue, linearOrder);
     }
 }

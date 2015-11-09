@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.evaluator;
 
+import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.ClassDescriptor;
@@ -52,15 +53,16 @@ public class Classifier {
         Map<String, Object> map = input.generateKeyValue(event);
         String className = hypothesisClass.name.toLowerCase(Locale.getDefault());
         String eventClass = map.get(className).toString().toLowerCase(Locale.getDefault());
+        Domain classDom = input.findDomainObjectRrecursively(hypothesisClass.getName());
         if (!NumericUtil.isWildcard(eventClass)) {
             boolean premiseMatches;
             boolean theoryMatches;
             if (questionAsFalse) {
-                premiseMatches = hypo.matchesEventStrictly(map);
-                theoryMatches = hypothesisClass.matchesValueStrictly(eventClass);
+                premiseMatches = hypo.matchesEventStrictly(map, input);
+                theoryMatches = hypothesisClass.matchesValueStrictly(eventClass, classDom.set_elements);
             } else {
-                premiseMatches = hypo.matchesEvent(map);
-                theoryMatches = hypothesisClass.matchesValue(eventClass);
+                premiseMatches = hypo.matchesEvent(map, input);
+                theoryMatches = hypothesisClass.matchesValue(eventClass, classDom.set_elements);
             }
             logSingleEvent(event, premiseMatches, theoryMatches);
             stats.analyzeCase(premiseMatches, theoryMatches);

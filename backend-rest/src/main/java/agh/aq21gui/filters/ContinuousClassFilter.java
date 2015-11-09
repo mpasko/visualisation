@@ -89,7 +89,8 @@ public class ContinuousClassFilter {
         for (Event event : result.obtainEventsGroup().events) {
             String currentValue = event.getValues().get(index);
             if (!NumericUtil.isWildcard(currentValue)) {
-                if (cd.matchesValue(currentValue)) {
+                Domain classDom = result.findDomainObjectRrecursively(cd.getName());
+                if (cd.matchesValue(currentValue, classDom.set_elements)) {
                     event.replaceValueAt(index, match);
                 } else {
                     event.replaceValueAt(index, not_match);

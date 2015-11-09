@@ -4,6 +4,7 @@
  */
 package testtools;
 
+import agh.aq21gui.utils.Util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,19 +28,10 @@ public class Utils {
             }
         }
     }
-
-    public static boolean containsIgnoreCase(List<String> list, String item) {
-        for (String listitem : list) {
-            if (listitem.equalsIgnoreCase(item)) {
-                return true;
-            }
-        }
-        return false;
-    }
     
     public static void assertAllContained(List<String> set_elements, String ...items) {
         for (String item : items) {
-            assertTrue(containsIgnoreCase(set_elements, item));
+            assertTrue(Util.indexOfIgnoreCase(set_elements, item)>=0);
         }
     }
     

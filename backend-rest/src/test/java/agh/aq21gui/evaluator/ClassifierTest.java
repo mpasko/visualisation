@@ -13,10 +13,10 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.runtime.RecognitionException;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -33,14 +33,20 @@ public class ClassifierTest {
     private static Hypothesis num_falseness;
     private static Hypothesis num_wrongY;
     private static Hypothesis num_wrongX;
+    private static Input linearInput;
+    private static Hypothesis set_hypo;
+    private static Hypothesis range_hypo;
+    private static Hypothesis mixed_hypo;
     
     @BeforeClass
     public static void setUpClass() {
         xorInput = generateXorSampleInput();
         numericInput = generateNumericInput();
+        linearInput = generateLinearInput();
         try {
             setupXorRules();
-            setupKartesianRules();            
+            setupKartesianRules();
+            setupOtherRules();
         } catch (RecognitionException ex) {
             Logger.getLogger(ClassifierTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -68,6 +74,33 @@ public class ClassifierTest {
         input.addEvent("0.75", "0.25", "F");
         input.addEvent("0.75", "0.75", "T");
         return input;
+    }
+    
+    public static Input generateLinearInput() {
+        Input input = new Input();
+        input.addAttribute("X", "linear", "{a, b, c, d, e, f, g, h}");
+        input.addAttribute("Class", "nominal", "{T, F}");
+        input.addEvent("a", "T");
+        input.addEvent("b", "F");
+        input.addEvent("c", "T");
+        input.addEvent("d", "F");
+        input.addEvent("e", "T");
+        input.addEvent("f", "T");
+        input.addEvent("g", "T");
+        input.addEvent("h", "T");
+        return input;
+    }
+    
+    public static void setupOtherRules() throws RecognitionException {
+        Rule set_rule = new Rule(Selector.parse("X=a,c,e,g"));
+        Rule range_rule = new Rule(Selector.parse("X=e..h"));
+        Rule mixed_rule = new Rule(Selector.parse("X=a,c,e..h"));
+        set_hypo = new Hypothesis(set_rule);
+        set_hypo.setClasses(Arrays.asList(ClassDescriptor.parse("Class=T")));
+        range_hypo = new Hypothesis(range_rule);
+        range_hypo.setClasses(Arrays.asList(ClassDescriptor.parse("Class=T")));
+        mixed_hypo = new Hypothesis(mixed_rule);
+        mixed_hypo.setClasses(Arrays.asList(ClassDescriptor.parse("Class=T")));
     }
 
     public static void setupXorRules() throws RecognitionException {
@@ -201,5 +234,38 @@ public class ClassifierTest {
         assertEquals(1, result.getTrueNegative());
         assertEquals(1, result.getFalsePositive());
         assertEquals(1, result.getFalseNegative());
+    }
+    
+    @Test
+    public void when_set_selector_then_should_match() {
+        System.out.println("when_set_selector_then_should_match");
+        Classifier instance = new Classifier(linearInput);
+        Statistics result = instance.performStatistics(set_hypo);
+        assertEquals(4, result.getTruePositive());
+        assertEquals(2, result.getTrueNegative());
+        assertEquals(0, result.getFalsePositive());
+        assertEquals(2, result.getFalseNegative());
+    }
+    
+    @Test
+    public void when_range_selector_then_should_match() {
+        System.out.println("when_range_selector_then_should_match");
+        Classifier instance = new Classifier(linearInput);
+        Statistics result = instance.performStatistics(range_hypo);
+        assertEquals(4, result.getTruePositive());
+        assertEquals(2, result.getTrueNegative());
+        assertEquals(0, result.getFalsePositive());
+        assertEquals(2, result.getFalseNegative());
+    }
+    
+    @Test
+    public void when_mixed_selector_then_should_match() {
+        System.out.println("when_mixed_selector_then_should_match");
+        Classifier instance = new Classifier(linearInput);
+        Statistics result = instance.performStatistics(mixed_hypo);
+        assertEquals(6, result.getTruePositive());
+        assertEquals(2, result.getTrueNegative());
+        assertEquals(0, result.getFalsePositive());
+        assertEquals(0, result.getFalseNegative());
     }
 }

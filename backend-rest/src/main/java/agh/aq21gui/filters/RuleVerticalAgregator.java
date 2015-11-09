@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.filters;
 
+import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.output.Rule;
@@ -56,13 +57,13 @@ public class RuleVerticalAgregator {
         List<Hypothesis> outputHypotheses = copy.getOutputHypotheses();
         for (Hypothesis hypo : outputHypotheses) {
             List<Rule> rules = new LinkedList<Rule>(hypo.getRules());
-            agregateRules(rules);
+            agregateRules(rules, result);
             hypo.setRules(rules);
         }
         return copy;
     }
 
-    public void agregateRules(List<Rule> rules) {
+    public void agregateRules(List<Rule> rules, Input in) {
         boolean retry = true;
         boolean all_nonremoving_found = false;
         while (retry) {
@@ -80,7 +81,7 @@ public class RuleVerticalAgregator {
                         mapAllFromRule(rule2, map);
                         LinkedList<Selector> different_selectors = new LinkedList<Selector>();
                         int difference_count = findDifference(map, different_selectors);
-                        new_rule = analiseAllPossibilities(difference_count, rule1, different_selectors);
+                        new_rule = analiseAllPossibilities(difference_count, rule1, different_selectors, in);
                         if ((isShorter(new_rule, rule1) || isShorter(new_rule, rule2)) && !all_nonremoving_found) {
                             new_rule = null;
                         }
@@ -140,7 +141,7 @@ public class RuleVerticalAgregator {
         return difference_count;
     }
 
-    public static Rule analiseAllPossibilities(int difference_count, Rule rule1, LinkedList<Selector> different_selectors) {
+    public static Rule analiseAllPossibilities(int difference_count, Rule rule1, LinkedList<Selector> different_selectors, Input input) {
         Rule new_rule = null;
         if (difference_count == 0) {
             new_rule = rule1;
@@ -151,11 +152,13 @@ public class RuleVerticalAgregator {
                 new_rule = candidate;
             } else {
                 Selector sel1 = different_selectors.get(0);
+                List<String> sel1list = input.findDomainObjectRrecursively(sel1.getName()).set_elements;
                 Selector sel2 = different_selectors.get(1);
-                if (sel1.isGeneralizationOf(sel2)) {
+                List<String> sel2list = input.findDomainObjectRrecursively(sel2.getName()).set_elements;
+                if (sel1.isGeneralizationOf(sel2, sel2list)) {
                     new_rule = candidate;
                     new_rule.addSelector(sel1);
-                } else if (sel2.isGeneralizationOf(sel1)) {
+                } else if (sel2.isGeneralizationOf(sel1, sel1list)) {
                     new_rule = candidate;
                     new_rule.addSelector(sel2);
                 } else {

@@ -78,6 +78,7 @@ public class RuleVerticalAgregatorTest {
         Rule rule2 = new Rule(a_over_90, wc_less_90, wt_over_330);
         Hypothesis hypothesis = new Hypothesis(rule1, rule2);
         input.setOutputHypotheses(Arrays.asList(hypothesis));
+        addNecessaryDomains(input, "a", "wc", "wt");
         return input;
     }
     
@@ -95,6 +96,7 @@ public class RuleVerticalAgregatorTest {
         Rule rule4 = new Rule(a_over_90, wc_over_90, wt_over_330);
         Hypothesis hypothesis = new Hypothesis(rule1, rule2, rule3, rule4);
         input.setOutputHypotheses(Arrays.asList(hypothesis));
+        addNecessaryDomains(input, "a", "wc", "wt");
         return input;
     }
     
@@ -116,7 +118,16 @@ public class RuleVerticalAgregatorTest {
         Rule rule6 = new Rule(a_over_90, wc_equal_90, wt_over_340);
         Hypothesis hypothesis = new Hypothesis(rule1, rule2, rule3, rule4, rule5, rule6);
         input.setOutputHypotheses(Arrays.asList(hypothesis));
+        addNecessaryDomains(input, "a", "wc", "wt");
         return input;
+    }
+
+    private static void addNecessaryDomains(Output input, String ...names) {
+        for (String name : names) {
+            String domainname = name+"_domain";
+            input.addAttribute(name, domainname, "");
+            input.addDomain(domainname, "continuous", "");
+        }
     }
 
     public void verifyAssumedStructure(List<Hypothesis> outputHypotheses) {

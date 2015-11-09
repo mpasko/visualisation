@@ -5,6 +5,7 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.model.input.Input;
 import agh.aq21gui.utils.TreeNode;
 import agh.aq21gui.utils.Util;
 import java.util.Arrays;
@@ -85,24 +86,26 @@ public class Rule {
 		return builder.toString();
 	}
 
-    public boolean matchesEvent(Map<String, Object> map) {
+    public boolean matchesEvent(Map<String, Object> map, Input in) {
         boolean matches = true;
         for (Selector sel : this.getSelectors()) {
             Object eventValue = map.get(sel.getName());
             Util.isNull(eventValue, "eventValue");
             Util.isNull(sel, "sel");
-            matches &= sel.matchesValue(eventValue.toString());
+            List<String> list = in.findDomainObjectRrecursively(sel.name).set_elements;
+            matches &= sel.matchesValue(eventValue.toString(), list);
         }
         return matches;
     }
     
-    public boolean matchesEventStrictly(Map<String, Object> map) {
+    public boolean matchesEventStrictly(Map<String, Object> map, Input in) {
         boolean matches = true;
         for (Selector sel : this.getSelectors()) {
             Object eventValue = map.get(sel.getName());
             //Util.isNull(eventValue, "eventValue");
             //Util.isNull(sel, "sel");
-            matches &= sel.matchesValueStrictly(eventValue.toString());
+            List<String> list = in.findDomainObjectRrecursively(sel.name).set_elements;
+            matches &= sel.matchesValueStrictly(eventValue.toString(), list);
         }
         return matches;
     }

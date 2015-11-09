@@ -5,6 +5,7 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.model.input.Input;
 import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.Arrays;
@@ -129,18 +130,18 @@ public class Hypothesis {
         return classes.toString();
     }
 
-    public boolean matchesEvent(Map<String, Object> map) {
+    public boolean matchesEvent(Map<String, Object> map, Input in) {
         boolean matches = false;
         for (Rule rule : this.rules) {
-            matches |= rule.matchesEvent(map);
+            matches |= rule.matchesEvent(map, in);
         }
         return matches;
     }
 
-    public boolean matchesEventStrictly(Map<String, Object> map) {
+    public boolean matchesEventStrictly(Map<String, Object> map, Input in) {
         boolean matches = false;
         for (Rule rule : this.rules) {
-            matches |= rule.matchesEventStrictly(map);
+            matches |= rule.matchesEventStrictly(map, in);
         }
         return matches;
     }

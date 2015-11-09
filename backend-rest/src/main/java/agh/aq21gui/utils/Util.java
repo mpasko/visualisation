@@ -163,4 +163,15 @@ public class Util {
         }
         return result;
     }
+
+    public static double indexOfIgnoreCase(List<String> list, String item) {
+        int index = 0;
+        for (String listitem : list) {
+            if (listitem.equalsIgnoreCase(item)) {
+                return index;
+            }
+            ++index;
+        }
+        return -1;
+    }
 }
