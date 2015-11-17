@@ -9,7 +9,6 @@ import agh.aq21gui.filters.ContinuousClassFilter;
 import agh.aq21gui.filters.Discretizer;
 import agh.aq21gui.filters.HypothesisAnd;
 import agh.aq21gui.filters.HypothesisNegation;
-import agh.aq21gui.filters.RuleAgregator;
 import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Parameter;
@@ -29,7 +28,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import weka.classifiers.rules.JRip;
 import weka.classifiers.rules.JRip.Antd;
-import weka.classifiers.rules.JRip.RipperRule;
 import weka.core.Attribute;
 import weka.core.Instances;
 
@@ -173,7 +171,6 @@ public class JrippService {
     private static void parseJrippOutput(List<Hypothesis> hyps, Attribute attr, String output) {
         output = output.replaceAll("_and_", "&&"); //quickfix
         String[] tokens = output.split("\n");
-        List<String> filtered = new LinkedList<String>();
         for (String token : tokens) {
             if (token.endsWith(")")) {
                 String ant;
@@ -183,50 +180,19 @@ public class JrippService {
                 Hypothesis hypo = getHypotheses(hyps, attr, claz);
 
                 Rule rule = new Rule();
-//                if (!claz.trim().equalsIgnoreCase("adi2") ) {
-//                    Selector s = new Selector();
-//                    s.setName("wytrzym_zmecz_mpa");
-//                    s.setComparator("<");
-//                    s.setValue("270");
-//                    rule.addSelector(s);
-//                }
                 for (String selector : ant.split("and")) {
                     String sel = selector.replaceAll("&&", "_and_"); //quickfix
                     if (!sel.trim().isEmpty()) {
                         rule.addSelector(convertFromStringSelector(sel));
                     }
                 }
-
+                for (ClassDescriptor cd : hypo.getClasses()) {
+                    cd.name = cd.name.replaceAll("&&", "_and_");
+                    cd.setValue(cd.getValue().replaceAll("&&", "_and_"));
+                }
                 hypo.rules.add(rule);
             }
         }
-
-//        for (weka.classifiers.rules.Rule item : jripp.getRuleset()) {
-//            RipperRule ripperRule = (RipperRule) item;
-//            System.out.println(attr.value((int)ripperRule.getConsequent()));
-//            System.out.println(ripperRule.toString(attr));
-//            String consequent = ripperRule.toString(attr).split("=>")[1];
-//            String claz = consequent.split("=")[1].trim(); // get class value
-//            
-//            Hypothesis hypo = getHypotheses(hyps, attr, claz);
-//            Rule rule = new Rule();
-//            if (claz.trim().equalsIgnoreCase("adi7") ) {
-//                Selector s = new Selector();
-//                s.setName("wytrzym_zmecz_mpa");
-//                s.setComparator("<");
-//                s.setValue("270");
-//                rule.addSelector(s);
-//            }
-//            for (Antd a : ripperRule.getAntds()) {
-//                rule.addSelector(convertFromJripSelector(a));
-//            }
-//            
-//            hypo.rules.add(rule);
-//        }
-
-//        for (Hypothesis h:hyps) {
-//            System.out.println(h.toString());
-//        }
     }
 
     public static ClassDescriptor prepareDescriptor(String clasAttr, String claz) {

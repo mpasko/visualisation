@@ -5,6 +5,7 @@
 package agh.aq21gui.model.output;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.NameValueEntity;
 import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.NumericUtil;
@@ -186,7 +187,7 @@ public class ClassDescriptor extends NameValueEntity {
     }
 
     public static ClassDescriptor parse(String string) throws RecognitionException {
-        String cdString = bracketify(string);
+        String cdString = bracketify(string).replaceAll("!=", "<>");
         TParser tokens = new OutputParser().prepareParser(cdString);
         CommonTree cd_tree = (CommonTree) tokens.class_description().getTree();
         ClassDescriptor cd = new ClassDescriptor();
@@ -210,7 +211,7 @@ public class ClassDescriptor extends NameValueEntity {
 
     @Override
     public boolean equals(Object next) {
-        boolean outcome = false;
+        boolean outcome;
         if (next == null) {
             outcome = false;
         } else if (next instanceof ClassDescriptor) {
@@ -262,11 +263,11 @@ public class ClassDescriptor extends NameValueEntity {
 //            return false;
 //        }
         boolean outcome = false;
-        if (!range_begin.isEmpty()||this.set_elements.size() > 1) {
-            if (!range_begin.isEmpty()) {
+        if (this.hasRange()||this.hasSet()) {
+            if (this.hasRange()) {
                 outcome |= matchesRange(actualValue, linearOrder);
             }
-            if (this.set_elements.size() >= 1) {
+            if (this.hasSet()) {
                 outcome |= matchesSet(actualValue);
             }
         } else {
@@ -292,19 +293,31 @@ public class ClassDescriptor extends NameValueEntity {
         return right;
     }
 
-    private boolean matchesRange(String actualValue, List<String> linearOrder) throws RuntimeException {
-        double begin;
-        double end;
-        double actual;
-        if (NumericUtil.isNumber(range_begin)&&NumericUtil.isNumber(range_end)&&NumericUtil.isNumber(actualValue)) {
-            begin = parseDouble(range_begin);
-            end = parseDouble(range_end);
-            actual = parseDouble(actualValue);
+    private double getDoubleValueOf(String str, List<String> linearOrder) {
+        String string_value = str;
+        if (NumericUtil.isNumber(string_value)) {  
+            return NumericUtil.tryParse(getValue());
         } else {
-            begin = Util.indexOfIgnoreCase(linearOrder, range_begin);
-            end = Util.indexOfIgnoreCase(linearOrder, range_end);
-            actual = Util.indexOfIgnoreCase(linearOrder, actualValue);
+            return Util.indexOfIgnoreCase(linearOrder, string_value);
         }
+    }
+
+    public double getDoubleValue(List<String> linearOrder) {
+        return getDoubleValueOf(getValue(), linearOrder);
+    }
+
+    public boolean hasRange() {
+        return this.range_end!=null && !this.range_end.isEmpty();
+    }
+
+    public boolean hasSet() {
+        return this.set_elements!=null && this.set_elements.size()>1;
+    }
+
+    private boolean matchesRange(String actualValue, List<String> linearOrder) throws RuntimeException {
+        double begin = getDoubleValueOf(range_begin, linearOrder);
+        double end = getDoubleValueOf(range_end, linearOrder);
+        double actual = getDoubleValueOf(actualValue, linearOrder);
         final boolean isBetween = ((begin <= actual) && (actual <= end)) || ((end <= actual) && (actual <= begin));
         boolean result = false;
         if (comparator.equals("=")) {

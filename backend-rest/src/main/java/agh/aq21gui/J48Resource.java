@@ -39,8 +39,8 @@ public class J48Resource implements IResource{
 	})
     @Override
     public Output performExperiment(Input input) {
-        System.out.println("perform experiment input:\n");
-        Printer.printLines(input.toString(), this.getClass());
+        //System.out.println("perform experiment input:\n");
+        //Printer.printLines(input.toString(), this.getClass());
         input = wrapper.inputPreProcessing(input);
 		J48Service srv = new J48Service();
         Output output = srv.convertAndRun(input);

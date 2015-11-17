@@ -16,7 +16,11 @@ import agh.aq21gui.filters.RuleAgregator;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.output.ClassDescriptor;
+import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
+import agh.aq21gui.model.output.OutputHypotheses;
+import agh.aq21gui.model.output.Rule;
+import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.stubs.StubFactory;
 import agh.aq21gui.utils.FormatterUtil;
@@ -26,7 +30,10 @@ import agh.aq21gui.utils.Util;
 import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 import testtools.MeasurmentResultFormatter;
 
 /**
@@ -59,12 +66,19 @@ public class ADIExperiment {
         return strings;
     }
     
+    public static List<String> stopOnly() {
+        return Util.strings(STOP);
+    }
+    
     private Input inputPattern;
     private List<Entry<IResource, String>> algSet;
     private List<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
     private MeasurmentResultFormatter statTable;
+    private final String suiteName;
+    public static final String outputDirectory = "E:\\misc\\temporary_experiments\\";
 
-    public ADIExperiment() {
+    public ADIExperiment(String suiteName) {
+        this.suiteName = suiteName;
         generateDefaultAlgorithmSet();
     }
 
@@ -95,26 +109,57 @@ public class ADIExperiment {
             runExperiment(entry.getKey(), entry.getValue(), className, threshold, ignore);
         }
         String table = statTable.formatTextResults(this);
-        System.out.println(table);
+        //System.out.println(table);
     }
 
     public void runExperiment(IResource resource, String mode, String className, String threshold, List<String> ignore) {
         String name = String.format("%s-%s", resource.getName().replace("Resource", ""), mode);
-        System.out.println(String.format("Experiment, mode=%s:", name));
+        String description = String.format("Experiment, mode=%s\nclass=%s\nignoring=%s", name, className, ignore);
         Input input = Util.deepCopyInput(inputPattern);
         initializeProperConfiguration(resource, input, className, threshold, mode);
         input = inputPreProcessing(input, ignore);
         Output result = resource.performExperiment(input);
         Output processed = outputPostProcessing(result);
-        Printer.printLines(result.getRaw(), this.getClass());
-        Printer.printLines(processed.obtainOutputHypotheses().toString(), this.getClass());
         MetricsResource metricsResource = new MetricsResource();
         if (mode.equalsIgnoreCase("strict")) {
             metricsResource.questionAsFalse = true;
         }
         StatsAgregator metrics = metricsResource.analyze(processed);
-        System.out.println(metrics.toString());
+        printRegularResults(description, result, processed, metrics);
         statTable.consumeResults(processed, name, metrics);
+        saveResume(description, processed, input, name, className);
+    }
+    
+    private static String formatInputByKeyParams(Input input, List<String> keys) {
+        StringBuilder result = new StringBuilder();
+        for (Map<String, Object> event : input.getEvents()) {
+            result.append("{");
+            int index = 0;
+            for (String key : keys) {
+                result.append(key).append(": ");
+                result.append(event.get(key));
+                if (index<keys.size()-1) {
+                    result.append(", ");
+                }
+            }
+            result.append("}\n");
+        }
+        return result.toString();
+    }
+    
+    private static List<String> getKeyParameters(OutputHypotheses hypotheses) {
+        Set<String> result = new TreeSet<String>();
+        for (Hypothesis hypo : hypotheses.hypotheses) {
+            for (Rule rule : hypo.rules) {
+                for (Selector selector : rule.getSelectors()) {
+                    result.add(selector.name);
+                }
+            }
+            for (ClassDescriptor descriptor : hypo.getClasses()) {
+                result.add(descriptor.name);
+            }
+        }
+        return new LinkedList<String>(result);
     }
 
     public String alignNumber(int number) {
@@ -166,5 +211,24 @@ public class ADIExperiment {
         input = applyRangeDiscretization(input);
         input = new AttributeRemover().dropAttributes(input, ignore);
         return input;
+    }
+
+    private void saveResume(String description, Output processed, Input input, String name, String className) {
+        StringBuilder resume = new StringBuilder(description);
+        resume.append("\nKey parameters:\n");
+        List<String> keyParameters = getKeyParameters(processed.obtainOutputHypotheses());
+        resume.append(formatInputByKeyParams(input, keyParameters));
+        resume.append("\nKnowledge:\n");
+        resume.append(processed.obtainOutputHypotheses().toString());
+        //System.out.println(resume.toString());
+        String full_name = String.format("%s%s_%s_%s.txt", outputDirectory, suiteName, name, className);
+        Util.saveFile(full_name, resume.toString());
+    }
+
+    private void printRegularResults(String description, Output result, Output processed, StatsAgregator metrics) {
+        System.out.println(description);
+        Printer.printLines(result.getRaw(), this.getClass());
+        Printer.printLines(processed.obtainOutputHypotheses().toString(), this.getClass());
+        System.out.println(metrics.toString());
     }
 }

@@ -11,6 +11,7 @@ import agh.aq21gui.services.aq21.OutputParser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -173,5 +174,28 @@ public class Util {
             ++index;
         }
         return -1;
+    }
+    
+    public static boolean containsIgnoreCase(List<String> list, String item) {
+        return indexOfIgnoreCase(list, item)>=0;
+    }
+
+    public static void saveFile(String full_name, String content) {
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(full_name);
+            fos.flush();
+            Util.stringToStream(content, fos);
+        } catch (IOException ex) {
+            throw new RuntimeException("Error saving file: "+full_name, ex);
+        } finally {
+            if (fos != null) {
+                try {
+                   fos.close();
+                } catch (IOException ex) {
+                    throw new RuntimeException("Error closing file stream: "+full_name, ex);
+                }
+            }
+        }
     }
 }

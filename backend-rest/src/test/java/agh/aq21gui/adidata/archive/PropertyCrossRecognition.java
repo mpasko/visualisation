@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.adidata;
+package agh.aq21gui.adidata.archive;
 
 import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;
 import agh.aq21gui.JRipResource;
+import agh.aq21gui.adidata.ADIExperiment;
 import static agh.aq21gui.adidata.ADIExperiment.*;
 import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.stubs.StubFactory;
@@ -22,7 +23,7 @@ import java.util.Map;
 public class PropertyCrossRecognition {
     
     public static void main(String[] args) {
-        final ADIExperiment adiExperiment = new ADIExperiment();
+        final ADIExperiment adiExperiment = new ADIExperiment("PropertyCrossRecognition_classic");
         adiExperiment.setInput(StubFactory.loadAdiUpdatedData());
         LinkedList<Map.Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));

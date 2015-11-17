@@ -47,6 +47,9 @@ public class Discretizer {
             discretizeSimillarBucketsSize(events_size, in, class_name, separators, values);
         }
         ClassDescriptor cd = new ClassDescriptor(class_name, values);
+        if (values.size()==1) {
+            cd.comparator="<";
+        }
         return cd;
     }
 

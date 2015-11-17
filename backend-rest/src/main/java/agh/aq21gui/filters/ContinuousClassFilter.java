@@ -35,7 +35,7 @@ public class ContinuousClassFilter {
     public Input filter(Input in, ClassDescriptor cd) {
         Input result = Util.deepCopyInput(in);
         int index = in.gAG().getIndexOfAttribute(cd.getName());
-        if (cd.getSet_elements().size() > 0) {
+        if (cd.hasSet()) {
             LinkedList<String> labels = prepareLabels(cd.getSet_elements(), "<");
             result = filter(result, cd, labels);
         } else {

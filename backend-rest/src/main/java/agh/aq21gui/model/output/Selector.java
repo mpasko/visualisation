@@ -19,7 +19,7 @@ import org.antlr.runtime.tree.CommonTree;
 @XmlRootElement
 public class Selector extends ClassDescriptor{
     public static Selector parse(String string) throws RecognitionException {
-        String selectorString = bracketify(string);
+        String selectorString = bracketify(string).replaceAll("!=", "<>");
         TParser tokens = new OutputParser().prepareParser(selectorString);
         CommonTree cd_tree = (CommonTree) tokens.selector().getTree();
         TreeNode node = new TreeNode(cd_tree, TParser.SELECTOR);

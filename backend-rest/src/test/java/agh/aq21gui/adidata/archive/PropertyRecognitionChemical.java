@@ -2,11 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.adidata;
+package agh.aq21gui.adidata.archive;
 
 import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;
+import agh.aq21gui.adidata.ADIExperiment;
 import agh.aq21gui.stubs.StubFactory;
 import agh.aq21gui.utils.Util;
 import java.util.AbstractMap;
@@ -27,7 +28,7 @@ public class PropertyRecognitionChemical {
     public static final String A5_PERCENT = "a5_percent";
     
     public static void main(String[] args) {
-        final ADIExperiment adiExperiment = new ADIExperiment();
+        final ADIExperiment adiExperiment = new ADIExperiment("PropertyRecognition_ingredients_classic");
         adiExperiment.setInput(StubFactory.loadAdiChemicalData());
         LinkedList<Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), ""));

@@ -11,10 +11,8 @@ import agh.aq21gui.JRipResource;
 import static agh.aq21gui.adidata.ADIExperiment.*;
 import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.stubs.StubFactory;
-import agh.aq21gui.utils.Util;
 import java.util.AbstractMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -22,18 +20,18 @@ import java.util.Map.Entry;
  *
  * @author marcin
  */
-public class HRCOnly {
+public class PropertyRecognitionFromAll {
     
     public static void main(String[] args) {
-        final ADIExperiment adiExperiment = new ADIExperiment("HRC_only");
+        final ADIExperiment adiExperiment = new ADIExperiment("Property_recognition_from_all");
         adiExperiment.setInput(StubFactory.loadAdiUpdatedData());
         LinkedList<Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         //// Error:
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
         adiExperiment.setAlgList(algSet);
         LinkedList<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
         ranges.add(new DiscretizerRanges(W_ROZ, 820, 970, 1140, 1350, 1550));
@@ -45,7 +43,13 @@ public class HRCOnly {
         ranges.add(new DiscretizerRanges(W_ZME, 225, 240, 265, 275));
         ranges.add(new DiscretizerRanges(FRAC, 50, 54, 59, 60, 62));
         adiExperiment.setRanges(ranges);
+		adiExperiment.runAllPossibilities(W_ROZ, null, stopOnly());
+        adiExperiment.runAllPossibilities(WYDL, null, stopOnly());
+        adiExperiment.runAllPossibilities(PRZEW, null, stopOnly());
         adiExperiment.runAllPossibilities(HRC, null, stopOnly());
-        adiExperiment.runAllPossibilities(HRC, null, allElementsAndreceipe());
+        adiExperiment.runAllPossibilities(UDAR, null, stopOnly());
+        adiExperiment.runAllPossibilities(G_PLAST, null, stopOnly());
+        adiExperiment.runAllPossibilities(W_ZME, null, stopOnly());
+        adiExperiment.runAllPossibilities(FRAC, null, stopOnly());
     }
 }
