@@ -7,16 +7,14 @@ package agh.aq21gui.services;
 import agh.aq21gui.filters.DiscretizerTest;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Run;
-import agh.aq21gui.model.input.RunsGroup;
-import agh.aq21gui.model.output.Output;
 import agh.aq21gui.stubs.StubFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -48,7 +46,7 @@ public class AlgorithmIOWrapperTest {
         run.addParameter("discretize_ranges", "[Result=25,100,225]");
         input.runsGroup.runs.add(run);
         
-        AlgorithmIOWrapper instance = new AlgorithmIOWrapper();
+        AlgorithmIOWrapper instance = new AlgorithmIOWrapper("teset");
         //System.out.println(input.toString());
         Input result = instance.inputPreProcessing(input);
         //System.out.println(result.toString());
@@ -72,7 +70,7 @@ public class AlgorithmIOWrapperTest {
         run.addParameter("discretize_ranges", "[]");
         input.runsGroup.runs.add(run);
         
-        AlgorithmIOWrapper instance = new AlgorithmIOWrapper();
+        AlgorithmIOWrapper instance = new AlgorithmIOWrapper("test");
         //System.out.println(input.toString());
         Input result = instance.inputPreProcessing(input);
         //System.out.println(result.toString());
@@ -90,7 +88,7 @@ public class AlgorithmIOWrapperTest {
         System.out.println("when_remove_params_set_then_should_remove_collumn");
         Input input = StubFactory.getInput();
         input.runsGroup.addParameter("ignore_attributes", "[anything=number,length]");
-        AlgorithmIOWrapper instance = new AlgorithmIOWrapper();
+        AlgorithmIOWrapper instance = new AlgorithmIOWrapper("test");
         Input result = instance.inputPreProcessing(input);
         assertEquals(2, result.getAttributes().size());
         for (Map<String, Object> event: result.getEvents()) {

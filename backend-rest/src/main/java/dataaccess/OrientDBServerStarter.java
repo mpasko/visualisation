@@ -4,9 +4,11 @@
  */
 package dataaccess;
 
+import agh.aq21gui.Configuration;
 import com.orientechnologies.orient.server.OServer;
 import com.orientechnologies.orient.server.OServerMain;
 import java.io.File;
+import java.util.Locale;
 
 /**
  *
@@ -17,7 +19,7 @@ public class OrientDBServerStarter {
 	
 	public void start() throws Exception{
 		server = OServerMain.create();
-		server.startup(new File("orientdb.config"));
+		server.startup(new File(getPath()));
 		server.activate();
 	}
 	
@@ -25,4 +27,15 @@ public class OrientDBServerStarter {
 		server.shutdown();
 		server = null;
 	}
+
+    private String getPath() {
+        final String osName = System.getProperty("os.name");
+        String path;
+        if (osName.toLowerCase(Locale.US).contains("windows")) {
+            path = "orientdb.win.config";
+        } else {
+            path = "orientdb.lin.config";
+        }
+        return path;
+    }
 }

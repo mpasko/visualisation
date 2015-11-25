@@ -14,9 +14,9 @@ import agh.aq21gui.model.management.OutputPair;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.services.AlgorithmIOWrapper;
 import agh.aq21gui.services.aq21.Aq21FunctionalityWrapper;
-import agh.aq21gui.services.csv.CSVConverter;
 import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.services.csv.Aq21ArchetypeConfig;
+import agh.aq21gui.services.csv.CSVConverter;
 import dataaccess.Repository;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,7 +38,7 @@ import javax.ws.rs.core.SecurityContext;
 @Path("aq21")
 public class Aq21Resource implements IResource{
     public static final String DATABASE = "database";
-	AlgorithmIOWrapper wrapper = new AlgorithmIOWrapper();
+	AlgorithmIOWrapper wrapper = new AlgorithmIOWrapper(getName());
     
 	@Context
     private SecurityContext security;
@@ -99,6 +99,7 @@ public class Aq21Resource implements IResource{
 	@Produces({
 		MediaType.APPLICATION_JSON
 	})
+    @Override
     public RunsGroup generateConfig(Input in) {
         List<Test> runs = new Aq21ArchetypeConfig().createConfig(in);
         RunsGroup group = new RunsGroup();

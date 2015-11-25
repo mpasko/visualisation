@@ -10,11 +10,7 @@ import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.input.Test;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.services.AlgorithmIOWrapper;
-import agh.aq21gui.services.aq21.Aq21Invoker;
-import agh.aq21gui.services.csv.Aq21ArchetypeConfig;
-import agh.aq21gui.services.csv.J48ArchetypeConfig;
 import agh.aq21gui.services.csv.JRipArchetypConfig;
-import agh.aq21gui.services.j48.J48Service;
 import agh.aq21gui.services.jripp.JrippService;
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -29,7 +25,7 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("jripp")
 public class JRipResource implements IResource{
-    AlgorithmIOWrapper wrapper = new AlgorithmIOWrapper();
+    AlgorithmIOWrapper wrapper = new AlgorithmIOWrapper(getName());
 
     @POST
 	@Path("postIt")

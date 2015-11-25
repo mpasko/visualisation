@@ -4,7 +4,7 @@
  */
 package agh.aq21gui.filters;
 
-import agh.aq21gui.filters.selectoragregator.CaseNotSupportedException;
+import agh.aq21gui.utils.chain.CaseNotSupportedException;
 import agh.aq21gui.filters.selectoragregator.ExcludingSelectorsException;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Hypothesis;

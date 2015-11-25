@@ -7,6 +7,7 @@ package agh.aq21gui.model.output;
 import agh.aq21gui.aq21grammar.TParser;
 import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.NameValueEntity;
+import agh.aq21gui.model.output.ValueMatcher.Token;
 import agh.aq21gui.services.aq21.OutputParser;
 import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.TreeNode;
@@ -122,7 +123,11 @@ public class ClassDescriptor extends NameValueEntity {
 
     @XmlElement(name = "set_elements")
     public List<String> getSet_elements() {
-        return set_elements;
+        if (set_elements.size()<=1 && !hasRange()) {
+            return new LinkedList<String>();
+        } else {
+            return set_elements;
+        }
     }
 
     public void setSet_elements(List<String> values) {
@@ -144,24 +149,6 @@ public class ClassDescriptor extends NameValueEntity {
         name = desc.childAt(0, TParser.ID).value();
         comparator = desc.childAt(1, TParser.EQUAL).value();
         if (desc.childCount() >= 3) {
-            /*
-            if (desc.tree().getChild(2).getType() == TParser.RANGE) {
-                TreeNode range = desc.childAt(2, TParser.RANGE);
-                range_begin = range.childAt(0, TreeNode.ANY_TYPE).value();
-                range_end = range.childAt(1, TreeNode.ANY_TYPE).value();
-                rangeToString();
-            } else if (desc.tree().getChild(2).getType() == TParser.VALUE_SET) {
-                //Logger.getLogger("Parser").info("Parsing value set");
-                TreeNode set = desc.childAt(2, TParser.VALUE_SET);
-                set_elements = new LinkedList<String>();
-                for (TreeNode itemNode : set.iterator(TreeNode.ANY_TYPE)) {
-                    set_elements.add(itemNode.value());
-                }
-                setToString();
-            } else {
-                value = desc.childAt(2, TreeNode.ANY_TYPE).value();
-            }
-            */
             if (desc.tree().getChild(2).getType() == TParser.VALUE_SET) {
                 TreeNode node = desc.childAt(2, TParser.VALUE_SET);
                 LinkedList<String> temporary = new LinkedList<String>();
@@ -259,44 +246,12 @@ public class ClassDescriptor extends NameValueEntity {
     }
 
     public boolean matchesValue(String actualValue, List<String> linearOrder) {
-//        if (NumericUtil.isWildcard(actualValue)) {
-//            return false;
-//        }
-        boolean outcome = false;
-        if (this.hasRange()||this.hasSet()) {
-            if (this.hasRange()) {
-                outcome |= matchesRange(actualValue, linearOrder);
-            }
-            if (this.hasSet()) {
-                outcome |= matchesSet(actualValue);
-            }
-        } else {
-            //Descriptor has often format i.e. colour>0.5
-            //so right is always a value contained in ClassDescriptor
-            double right = NumericUtil.tryParse(this.getValue());
-            double left = NumericUtil.tryParse(actualValue);
-            final boolean textFields = Double.isNaN(right) || Double.isNaN(left);
-            if (textFields) {
-                outcome = matchesTextValue(actualValue);
-            } else {
-                outcome = matchesDoubleValue(left, right);
-            }
-        }
-        return outcome;
+        return new ValueMatcher(linearOrder).matchesValue(this, actualValue);
     }
 
-    private double parseDouble(String value) throws RuntimeException {
-        double right = NumericUtil.tryParse(value);
-        if (Double.isNaN(right)) {
-            throw new RuntimeException("Comparison is only supported for numeric values, found:" + value);
-        }
-        return right;
-    }
-
-    private double getDoubleValueOf(String str, List<String> linearOrder) {
-        String string_value = str;
+    private double getDoubleValueOf(String string_value, List<String> linearOrder) {
         if (NumericUtil.isNumber(string_value)) {  
-            return NumericUtil.tryParse(getValue());
+            return NumericUtil.tryParse(string_value);
         } else {
             return Util.indexOfIgnoreCase(linearOrder, string_value);
         }
@@ -311,72 +266,21 @@ public class ClassDescriptor extends NameValueEntity {
     }
 
     public boolean hasSet() {
-        return this.set_elements!=null && this.set_elements.size()>1;
+        if (this.set_elements == null) {
+            return false;
+        }
+        if (this.set_elements.size() > 1) {
+            return true;
+        }
+        if (this.hasRange()) {
+            return this.set_elements.size()>0;
+        }
+        return false;
     }
 
     private boolean matchesRange(String actualValue, List<String> linearOrder) throws RuntimeException {
-        double begin = getDoubleValueOf(range_begin, linearOrder);
-        double end = getDoubleValueOf(range_end, linearOrder);
-        double actual = getDoubleValueOf(actualValue, linearOrder);
-        final boolean isBetween = ((begin <= actual) && (actual <= end)) || ((end <= actual) && (actual <= begin));
-        boolean result = false;
-        if (comparator.equals("=")) {
-            result = isBetween;
-        } else if (comparatorIsNonequality()) {
-            result = !isBetween;
-        }
-        return result;
-    }
-
-    private boolean matchesSet(String actualValue) {
-        boolean matches_any = false;
-        for (String elem : set_elements) {
-            boolean matches = elem.equalsIgnoreCase(actualValue);
-            matches_any |= matches;
-        }
-        boolean result = false;
-        if (comparator.equals("=")) {
-            result = matches_any;
-        } else if (comparatorIsNonequality()) {
-            result = !matches_any;
-        }
-        return result;
-    }
-
-    private boolean matchesTextValue(String actualValue) throws RuntimeException {
-        boolean result;
-        result = false;
-        if (NumericUtil.isWildcard(actualValue)) {
-            result = true;
-        } else if (comparator.equals("=")) {
-            result = this.getValue().equalsIgnoreCase(actualValue);
-        } else if (comparatorIsNonequality()) {
-            result = !this.getValue().equalsIgnoreCase(actualValue);
-        } else {
-            final String messageFormat = "Comparison using %s is only supported for numeric values. Found:%s and:%s";
-            final String message = String.format(messageFormat, comparator, this.getValue(), actualValue);
-            throw new RuntimeException(message);
-        }
-        return result;
-    }
-
-    private boolean matchesDoubleValue(double left, double right) {
-        boolean result;
-        result = false;
-        if (comparator.equals("<")) {
-            result = left < right;
-        } else if (comparator.equals(">")) {
-            result = left > right;
-        } else if (comparator.equals(">=")) {
-            result = left >= right;
-        } else if (comparator.equals("<=")) {
-            result = left <= right;
-        } else if (comparatorIsNonequality()) {
-            result = Math.abs(right - left) > NumericUtil.EPSILON;
-        } else if (comparator.equals("=")) {
-            result = Math.abs(right - left) < NumericUtil.EPSILON;
-        }
-        return result;
+        Token token = new ValueMatcher.Token(this, actualValue);
+        return new ValueMatcher.RangeCase(linearOrder).agregate(token);
     }
 
     @JsonIgnore

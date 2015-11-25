@@ -4,13 +4,14 @@
  */
 package agh.aq21gui.filters;
 
-import agh.aq21gui.filters.selectoragregator.Chain;
 import agh.aq21gui.filters.selectoragregator.ExcludingSelectorsException;
-import agh.aq21gui.filters.selectoragregator.IAgregatorCase;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.Util;
+import agh.aq21gui.utils.chain.Chain;
+import agh.aq21gui.utils.chain.IAgregatorCase;
+import agh.aq21gui.utils.chain.Pair;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -81,14 +82,14 @@ public class SelectorAndAgregator {
         return result;
         */
         List<String> stringsOrder = input.findDomainObjectRrecursively(next.name).getRange();
-        Chain chain = new Chain();
+        Chain<Pair<Selector>, Selector> chain = new Chain<Pair<Selector>, Selector>();
         chain.add(new LessAndGreaterCase(stringsOrder));
         chain.add(new LessOrGreaterSameDirection(stringsOrder));
         chain.add(new RangeAndLessCase());
         chain.add(new TwoRangesCase());
         chain.add(new EqualityAndInequality());
         chain.add(new TwoSetsCase());
-        return chain.agregate(next, actual);
+        return chain.agregate(new Pair<Selector>(next, actual));
     }
     
     private static Selector getPrototype(Selector next) {
@@ -153,39 +154,39 @@ public class SelectorAndAgregator {
         return result;
     }
     
-    private static class TwoRangesCase implements IAgregatorCase {
+    private static class TwoRangesCase implements IAgregatorCase<Pair<Selector>, Selector> {
 
         @Override
-        public boolean matches(Selector next, Selector actual) {
-            boolean r1 = next.hasRange();
-            boolean r2 = actual.hasRange();
+        public boolean matches(Pair<Selector> item) {
+            boolean r1 = item.next.hasRange();
+            boolean r2 = item.actual.hasRange();
             return r1&&r2;
         }
 
         @Override
-        public Selector agregate(Selector next, Selector actual) {
-            return aggregateTwoRanges(next, actual);
+        public Selector agregate(Pair<Selector> item) {
+            return aggregateTwoRanges(item.next, item.actual);
         }
         
     }
     
-    private static class RangeAndLessCase implements IAgregatorCase {
+    private static class RangeAndLessCase implements IAgregatorCase<Pair<Selector>, Selector> {
 
         @Override
-        public boolean matches(Selector next, Selector actual) {
-            char c1 = actual.comparator.charAt(0);
+        public boolean matches(Pair<Selector> item) {
+            char c1 = item.actual.comparator.charAt(0);
             boolean is_sharp = c1=='<' || c1 == '>';
-            return next.hasRange()&&is_sharp;
+            return item.next.hasRange()&&is_sharp;
         }
 
         @Override
-        public Selector agregate(Selector next, Selector actual) {
-            return aggregateRangeWithSel(next, actual);
+        public Selector agregate(Pair<Selector> item) {
+            return aggregateRangeWithSel(item.next, item.actual);
         }
         
     }
 
-    private static class LessAndGreaterCase implements IAgregatorCase {
+    private static class LessAndGreaterCase implements IAgregatorCase<Pair<Selector>, Selector> {
         private final List<String> string_sequence;
 
         public LessAndGreaterCase(List<String> string_sequence) {
@@ -193,31 +194,31 @@ public class SelectorAndAgregator {
         }
 
         @Override
-        public boolean matches(Selector next, Selector actual) {
-            boolean symmetric_comparators = next.comparator.charAt(0) == '<' && actual.comparator.charAt(0) == '>';
+        public boolean matches(Pair<Selector> item) {
+            boolean symmetric_comparators = item.next.comparator.charAt(0) == '<' && item.actual.comparator.charAt(0) == '>';
             return symmetric_comparators;
         }
 
         @Override
-        public Selector agregate(Selector next, Selector actual) {
-            if (NumericUtil.compareDoubles(next.getDoubleValue(string_sequence), actual.getDoubleValue(string_sequence))) {
-                Selector result = getPrototype(next);
-                result.setValue(actual.getValue());
+        public Selector agregate(Pair<Selector> item) {
+            if (NumericUtil.compareDoubles(item.next.getDoubleValue(string_sequence), item.actual.getDoubleValue(string_sequence))) {
+                Selector result = getPrototype(item.next);
+                result.setValue(item.actual.getValue());
                 return result;
             }
-            boolean values_match = next.getDoubleValue(string_sequence) > actual.getDoubleValue(string_sequence);
+            boolean values_match = item.next.getDoubleValue(string_sequence) > item.actual.getDoubleValue(string_sequence);
             if (values_match) {
-                Selector result = getPrototype(next);
-                result.setRange_begin(actual.getValue());
-                result.setRange_end(next.getValue());
+                Selector result = getPrototype(item.next);
+                result.setRange_begin(item.actual.getValue());
+                result.setRange_end(item.next.getValue());
                 return result;
             } else {
-                throw new ExcludingSelectorsException(next, actual);
+                throw new ExcludingSelectorsException(item.next, item.actual);
             }
         }
     }
 
-    private static class LessOrGreaterSameDirection implements IAgregatorCase {
+    private static class LessOrGreaterSameDirection implements IAgregatorCase<Pair<Selector>, Selector> {
         private final List<String> string_sequence;
 
         public LessOrGreaterSameDirection(List<String> string_sequence) {
@@ -225,78 +226,78 @@ public class SelectorAndAgregator {
         }
 
         @Override
-        public boolean matches(Selector next, Selector actual) {
-            boolean same_comparators = next.comparator.charAt(0) == actual.comparator.charAt(0);
-            boolean inequality_comparators = next.comparator.charAt(0) == '<' || next.comparator.charAt(0) == '>';
+        public boolean matches(Pair<Selector> item) {
+            boolean same_comparators = item.next.comparator.charAt(0) == item.actual.comparator.charAt(0);
+            boolean inequality_comparators = item.next.comparator.charAt(0) == '<' || item.next.comparator.charAt(0) == '>';
             return same_comparators&&inequality_comparators;
         }
 
         @Override
-        public Selector agregate(Selector next, Selector actual) {
-            if (next.comparator.charAt(0)=='<') {
-                if (next.getDoubleValue(string_sequence) < actual.getDoubleValue(string_sequence)) {
-                    return next;
+        public Selector agregate(Pair<Selector> item) {
+            if (item.next.comparator.charAt(0)=='<') {
+                if (item.next.getDoubleValue(string_sequence) < item.actual.getDoubleValue(string_sequence)) {
+                    return item.next;
                 } else {
-                    return actual;
+                    return item.actual;
                 }
             } else {
-                if (next.getDoubleValue(string_sequence) > actual.getDoubleValue(string_sequence)) {
-                    return next;
+                if (item.next.getDoubleValue(string_sequence) > item.actual.getDoubleValue(string_sequence)) {
+                    return item.next;
                 } else {
-                    return actual;
+                    return item.actual;
                 }
             }
         }
     }
 
-    private static class EqualityAndInequality implements IAgregatorCase {
+    private static class EqualityAndInequality implements IAgregatorCase<Pair<Selector>, Selector> {
 
         public EqualityAndInequality() {
         }
 
         @Override
-        public boolean matches(Selector next, Selector actual) {
-            boolean formal_assumption = next.comparator.equals("=") && actual.comparatorIsNonequality();
-            boolean helper_assumption = !next.hasRange()&&!actual.hasRange()&&!next.hasSet()&&!actual.hasSet();
+        public boolean matches(Pair<Selector> item) {
+            boolean formal_assumption = item.next.comparator.equals("=") && item.actual.comparatorIsNonequality();
+            boolean helper_assumption = !item.next.hasRange()&&!item.actual.hasRange()&&!item.next.hasSet()&&!item.actual.hasSet();
             return formal_assumption&& helper_assumption;
         }
 
         @Override
-        public Selector agregate(Selector next, Selector actual) {
-            if (next.getValue().equalsIgnoreCase(actual.getValue())) {
-                throw new ExcludingSelectorsException(next, actual);
+        public Selector agregate(Pair<Selector> item) {
+            if (item.next.getValue().equalsIgnoreCase(item.actual.getValue())) {
+                throw new ExcludingSelectorsException(item.next, item.actual);
             } else {
-                return next;
+                return item.next;
             }
         }
     }
 
-    private static class TwoSetsCase implements IAgregatorCase {
+    private static class TwoSetsCase implements IAgregatorCase<Pair<Selector>, Selector> {
 
         @Override
-        public boolean matches(Selector next, Selector actual) {
-            return next.hasSet()&&!actual.hasRange();
+        public boolean matches(Pair<Selector> item) {
+            return item.next.hasSet()&&!item.actual.hasRange();
         }
 
         @Override
-        public Selector agregate(Selector next, Selector actual) {
+        public Selector agregate(Pair<Selector> item) {
             LinkedList<String> items = new LinkedList<String>();
-            if (actual.hasSet()) {
-                for (String item : actual.getSet_elements()) {
-                    if (Util.containsIgnoreCase(next.getSet_elements(), item)) {
-                        items.add(item);
+            if (item.actual.hasSet()) {
+                for (String elem : item.actual.getSet_elements()) {
+                    if (Util.containsIgnoreCase(item.next.getSet_elements(), elem)) {
+                        items.add(elem);
                     }
                 }
             } else {
-                String item = actual.getValue();
-                if (Util.containsIgnoreCase(next.getSet_elements(), item)) {
-                    items.add(item);
+                String val = item.actual.getValue();
+                if (Util.containsIgnoreCase(item.next.getSet_elements(), val)) {
+                    items.add(val);
                 }
             }
             if (items.size()<=0) {
-                throw new ExcludingSelectorsException(next, actual);
+                throw new ExcludingSelectorsException(item.next, item.actual);
             } else {
-                Selector result = getPrototype(next);
+                Selector result = getPrototype(item.next);
                 result.setSet_elements(items);
                 return result;
             }

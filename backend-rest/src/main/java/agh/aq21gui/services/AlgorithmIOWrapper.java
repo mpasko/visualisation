@@ -21,6 +21,7 @@ import agh.aq21gui.utils.Util;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -34,7 +35,12 @@ public class AlgorithmIOWrapper {
     private boolean post_prune = false;
     private boolean sort = false;
     private List<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
+    private String algorithmname;
 
+    public AlgorithmIOWrapper(String algorithm) {
+        this.algorithmname = algorithm.toLowerCase(Locale.US);
+    }
+    
     public Output outputPostProcessing(Output result) {
         Output processed = result;
         /* */
@@ -58,6 +64,7 @@ public class AlgorithmIOWrapper {
 
     public Input inputPreProcessing(Input input) {
         Input copy = Util.deepCopyInput(input);
+        copy = removePrefixes(copy);
         parseParameters(copy.runsGroup);
         copy = applyRangeDiscretization(copy);
         copy = new AttributeRemover().dropAttributes(copy, ignore_attributes);
@@ -75,13 +82,14 @@ public class AlgorithmIOWrapper {
     }
 
     public void addDefaultValues(Input input, RunsGroup runs) {
+        attachPrefixes(runs);
         for (Test run : runs.runs) {
-            run.addParameter("aggregate", "false");
-            run.addParameter("vertical_aggregate", "false");
-            run.addParameter("post_prune", "false");
-            run.addParameter("sort", "false");
-            run.addParameter("ignore_attributes", "[ignore=]");
-            run.addParameter("discretize_ranges", "[]");
+            run.addParameter("general.aggregate", "false");
+            run.addParameter("general.vertical_aggregate", "false");
+            run.addParameter("general.post_prune", "false");
+            run.addParameter("general.sort", "false");
+            run.addParameter("general.ignore_attributes", "[ignore=]");
+            run.addParameter("general.discretize_ranges", "[]");
         }
         /*LinkedList<Parameter> parameters = new LinkedList<Parameter>();
          parameters.add();
@@ -134,6 +142,38 @@ public class AlgorithmIOWrapper {
                     ranges.add(new DiscretizerRanges(descriptor.getName(), values));
                 }
             }
+        }
+    }
+
+    private Input removePrefixes(Input input) {
+        RunsGroup runs = input.getRunsGroup();
+        if (runs.runs.size() >= 1) {
+            removePrefixes(runs.runs.get(0).getRunSpecificParameters());
+        }
+        removePrefixes(runs.getGlobalLearningParameters());
+        return input;
+    }
+    
+    private void removePrefixes(List<Parameter> parameters) {
+        for (Parameter param : parameters) {
+            if (param.name.startsWith("general")) {
+                param.setName(param.name.replaceAll("general.", ""));
+            } else if (param.name.startsWith(algorithmname)) {
+                param.setName(param.name.replaceAll(algorithmname+".", ""));
+            }
+        }
+    }
+
+    private void attachPrefixes(RunsGroup runs) {
+        if (runs.runs.size() >= 1) {
+            attachPrefixes(runs.runs.get(0).getRunSpecificParameters());
+        }
+        attachPrefixes(runs.getGlobalLearningParameters());
+    }
+    
+    private void attachPrefixes(List<Parameter> parameters) {
+        for (Parameter param : parameters) {
+            param.setName(String.format("%s.%s", algorithmname, param.name));
         }
     }
 }

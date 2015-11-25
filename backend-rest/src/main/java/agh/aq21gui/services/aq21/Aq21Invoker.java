@@ -11,6 +11,7 @@ import agh.aq21gui.model.output.Output;
 import agh.aq21gui.services.AbstractInvoker;
 import agh.aq21gui.utils.Printer;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  *
@@ -60,7 +61,7 @@ public class Aq21Invoker extends AbstractInvoker{
     public String getAppPath() {
         final String osName = System.getProperty("os.name");
         String path;
-        if (true || osName.toLowerCase().contains("windows")) {
+        if (osName.toLowerCase(Locale.US).contains("windows")) {
             path = Configuration.AQ21WINPATH;
         } else {
             path = Configuration.AQ21LINPATH;
