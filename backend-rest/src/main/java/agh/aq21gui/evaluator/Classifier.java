@@ -56,16 +56,25 @@ public class Classifier {
         Domain classDom = input.findDomainObjectRrecursively(hypothesisClass.getName());
         if (!NumericUtil.isWildcard(eventClass)) {
             boolean premiseMatches;
-            boolean theoryMatches;
+            boolean classMatches;
             if (questionAsFalse) {
                 premiseMatches = hypo.matchesEventStrictly(map, input);
-                theoryMatches = hypothesisClass.matchesValueStrictly(eventClass, classDom.set_elements);
+                classMatches = hypothesisClass.matchesValueStrictly(eventClass, classDom.set_elements);
             } else {
                 premiseMatches = hypo.matchesEvent(map, input);
-                theoryMatches = hypothesisClass.matchesValue(eventClass, classDom.set_elements);
+                classMatches = hypothesisClass.matchesValue(eventClass, classDom.set_elements);
             }
-            logSingleEvent(event, premiseMatches, theoryMatches);
-            stats.analyzeCase(premiseMatches, theoryMatches);
+            logSingleEvent(event, premiseMatches, classMatches);
+            if (premiseMatches != classMatches) {
+                String type = "";
+                if (premiseMatches && !classMatches) {
+                    type = "FalsePositive";
+                } else if (!premiseMatches && classMatches) {
+                    type = "FalseNegative";
+                }
+                saveCounterExample(event, hypo, type, stats);
+            }
+            stats.analyzeCase(premiseMatches, classMatches);
         }
     }
 
@@ -75,5 +84,10 @@ public class Classifier {
         System.out.print(event.toString());
         System.out.println(String.format("Outcome: premise=%s theory=%s\n", premiseMatches, theoryMatches));
         */
+    }
+
+    private void saveCounterExample(Event event, Hypothesis hypo, String type, Statistics stats) {
+        CounterExample counterExample = new CounterExample(event, hypo, type);
+        stats.addCounterExample(counterExample);
     }
 }

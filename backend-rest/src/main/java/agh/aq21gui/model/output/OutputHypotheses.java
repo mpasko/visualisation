@@ -9,6 +9,8 @@ import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.TreeNode;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -59,5 +61,13 @@ public class OutputHypotheses implements IAQ21Deserializable{
             out = builder.toString();
         }
         return out;
+    }
+
+    public List<String> getKeyParameters() {
+        Set<String> result = new TreeSet<String>();
+        for (Hypothesis hypo : hypotheses) {
+            result.addAll(hypo.getKeyParameters());
+        }
+        return new LinkedList<String>(result);
     }
 }

@@ -7,6 +7,8 @@ package agh.aq21gui.filters;
 import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.Input;
+import agh.aq21gui.model.input.Parameter;
+import agh.aq21gui.model.input.Test;
 import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.Util;
@@ -42,6 +44,7 @@ public class ContinuousClassFilter {
             LinkedList<String> labels = prepareLabels(Util.strings(cd.getValue()), cd.getComparator());
             setupNewDomain(labels, result, cd.getName());
             result = processEventsSingle(result, index, cd, labels.get(0), labels.get(1));
+            fixupConsequentSingle(result, cd, labels.get(0), labels.get(1));
         }
         return result;
     }
@@ -53,6 +56,7 @@ public class ContinuousClassFilter {
         setupNewDomain(labels, result, cd.getName());
         int index = result.gAG().getIndexOfAttribute(cd.getName());
         result = processEventsMultiple(result, index, cd, labels);
+        fixupConsequentMultiple(result, cd, labels);
         return result;
     }
 
@@ -153,7 +157,7 @@ public class ContinuousClassFilter {
         LinkedList<String> labels = new LinkedList<String>();
         for (String stringValue : stringValues) {
             double doubleValue = NumericUtil.tryParse(stringValue);
-            assertNotStringValue(doubleValue);
+            //assertNotStringValue(doubleValue);
             final String negatedComparator = Util.negatedComparator(comparator);
             String match = verbalize(comparator) + varbalizeValue(stringValue);
             String not_match = verbalize(negatedComparator) + varbalizeValue(stringValue);
@@ -168,5 +172,42 @@ public class ContinuousClassFilter {
         triggered.set_elements = labels;
         result.obtainDomainsGroup().domains.add(triggered);
         result.gAG().replaceAttributeDomain(name, triggered);
+    }
+
+    private void fixupConsequentSingle(Input result, ClassDescriptor cd, String match, String not_match) {
+        for(Test run : result.runsGroup.runs) {
+            Parameter consequent = run.findConsequentParam();
+            if (consequent!=null) {
+                Domain classDom = result.findDomainObjectRrecursively(cd.getName());
+                List<String> set = null;
+                for (ClassDescriptor desc : consequent.getDescriptors()) {
+                    if (desc.name.equalsIgnoreCase(cd.name)) {
+                        String value = desc.getValue();
+                        if (!NumericUtil.isNumber(value)) {
+                            set = classDom.set_elements;
+                        }
+                        if (cd.matchesValue(value, set)) {
+                            desc.setValue(match);
+                        } else {
+                            desc.setValue(not_match);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void fixupConsequentMultiple(Input result, ClassDescriptor cd, List<String> labels) {
+        for(Test run : result.runsGroup.runs) {
+            Parameter consequent = run.findConsequentParam();
+            if (consequent!=null) {
+                for (ClassDescriptor desc : consequent.getDescriptors()) {
+                    if (!desc.isCustomValue() && !desc.isNonNumeric() && desc.name.equalsIgnoreCase(cd.name)) {
+                        int number = determineWhichRangeMatches(desc.getDoubleValue(null), labels);
+                        desc.setValue(labels.get(number));
+                    }
+                }
+            }
+        }
     }
 }

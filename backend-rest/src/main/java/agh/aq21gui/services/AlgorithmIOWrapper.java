@@ -173,7 +173,9 @@ public class AlgorithmIOWrapper {
     
     private void attachPrefixes(List<Parameter> parameters) {
         for (Parameter param : parameters) {
-            param.setName(String.format("%s.%s", algorithmname, param.name));
+            if (!param.name.equalsIgnoreCase("consequent")) {
+                param.setName(String.format("%s.%s", algorithmname, param.name));
+            }
         }
     }
 }

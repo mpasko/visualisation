@@ -33,6 +33,8 @@ public class J48Tree {
         fixupBranchAttributes();
     }
 
+    public J48Tree() {}
+
     private void parseNode(TreeNode tree) {
         Node node = new Node();
         node.setName(tree.childAt(0, Tj48TreeParser.ID).value());

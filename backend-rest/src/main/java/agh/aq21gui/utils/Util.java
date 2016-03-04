@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -197,5 +198,34 @@ public class Util {
                 }
             }
         }
+    }
+
+    public static String formatEventByKeyParams(List<String> keys, Map<String, Object> event) {
+        StringBuilder result = new StringBuilder();
+        result.append("{");
+        int index = 0;
+        for (String key : keys) {
+            result.append(key).append(": ");
+            result.append(event.get(key));
+            if (index < keys.size() - 1) {
+                result.append(", ");
+            }
+        }
+        result.append("}");
+        String string = result.toString();
+        return string;
+    }
+
+    public static String formatEventByKeyParams(Map<String, Object> event) {
+        return formatEventByKeyParams(new ArrayList<String>(event.keySet()), event);
+    }
+
+    public static String formatInputByKeyParams(Input input, List<String> keys) {
+        StringBuilder fullresult = new StringBuilder();
+        for (Map<String, Object> event : input.getEvents()) {
+            String string = formatEventByKeyParams(keys, event);
+            fullresult.append(string).append("\n");
+        }
+        return fullresult.toString();
     }
 }

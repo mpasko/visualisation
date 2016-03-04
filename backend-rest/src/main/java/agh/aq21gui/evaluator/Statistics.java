@@ -5,6 +5,8 @@
 package agh.aq21gui.evaluator;
 
 import agh.aq21gui.utils.Util;
+import java.util.LinkedList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -37,6 +39,7 @@ public class Statistics {
     private int trueNegative=0;
     private int falsePositive=0;
     private int falseNegative=0;
+    private List<CounterExample> counterExamples = new LinkedList<CounterExample>();
 
     /**
      * @return the truePositive
@@ -185,5 +188,13 @@ public class Statistics {
         } else {
             return a/b;
         }
+    }
+
+    void addCounterExample(CounterExample counterExample) {
+        this.counterExamples.add(counterExample);
+    }
+    
+    public List<CounterExample> collectCounterExamples() {
+        return this.counterExamples;
     }
 }

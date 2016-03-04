@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -144,6 +146,19 @@ public class Hypothesis {
             matches |= rule.matchesEventStrictly(map, in);
         }
         return matches;
+    }
+
+    public List<String> getKeyParameters() {
+        Set<String> result = new TreeSet<String>();
+        for (Rule rule : this.rules) {
+            for (Selector selector : rule.getSelectors()) {
+                result.add(selector.name);
+            }
+        }
+        for (ClassDescriptor descriptor : this.getClasses()) {
+            result.add(descriptor.name);
+        }
+        return new LinkedList<String>(result);
     }
 	
 }

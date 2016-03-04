@@ -5,6 +5,9 @@
 package agh.aq21gui.filters;
 
 import agh.aq21gui.model.input.Input;
+import agh.aq21gui.model.input.Parameter;
+import agh.aq21gui.model.input.Run;
+import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.stubs.Utils;
 import agh.aq21gui.utils.Util;
@@ -32,6 +35,51 @@ public class ContinuousClassFilterTest {
     public void setUp() {
     }
 
+    @Test
+    public void when_consequent_present_should_change_parameter() {
+        System.out.println("when_consequent_present_should_change_parameter");
+        Input in = new Input();
+        in.addAttribute("marker", "numeric", "");
+        in.addAttribute("class", "continuous", "");
+        in.addEvent("1", "2.3");
+        in.addEvent("2", "4.9");
+        in.addEvent("3", "5.01");
+        in.addEvent("4", "9.9");
+        RunsGroup runs = new RunsGroup();
+		Run run_c1 = new Run();
+		run_c1.setName("Run_c1");
+        String inequality = ">=";
+        String class_name = "class";
+		run_c1.addParameter("Consequent", String.format("[%s%s%s]", class_name, inequality, 5.01));
+        runs.runs.add(run_c1);
+        in.runsGroup = runs;
+        ClassDescriptor cd = new ClassDescriptor(class_name, ">", "5");
+        verifyCorrectParameterChange(in, cd, inequality, class_name);
+    }
+
+    @Test
+    public void when_linear_attr_and_consequent_present_should_change_parameter() {
+        System.out.println("when_linear_attr_and_consequent_present_should_change_parameter");
+        Input in = new Input();
+        in.addAttribute("marker", "numeric", "");
+        in.addAttribute("class", "linear", "a, b, c, d, e");
+        in.addEvent("1", "a");
+        in.addEvent("2", "b");
+        in.addEvent("3", "c");
+        in.addEvent("4", "d");
+        in.addEvent("4", "e");
+        RunsGroup runs = new RunsGroup();
+		Run run_c1 = new Run();
+		run_c1.setName("Run_c1");
+        String inequality = ">=";
+        String class_name = "class";
+		run_c1.addParameter("Consequent", String.format("[%s%s%s]", class_name, inequality, "c"));
+        runs.runs.add(run_c1);
+        in.runsGroup = runs;
+        ClassDescriptor cd = new ClassDescriptor(class_name, ">", "c");
+        verifyCorrectParameterChange(in, cd, inequality, class_name);
+    }
+    
     @Test
     public void when_single_value_should_divide_into_two_separate_parts() {
         System.out.println("when_single_value_should_divide_into_two_separate_parts");
@@ -104,5 +152,16 @@ public class ContinuousClassFilterTest {
         assertEquals(1, ContinuousClassFilter.determineWhichRangeMatches(b, set_elements));
         assertEquals(2, ContinuousClassFilter.determineWhichRangeMatches(c, set_elements));
         assertEquals(2, ContinuousClassFilter.determineWhichRangeMatches(d, set_elements));
+    }
+
+    private void verifyCorrectParameterChange(Input in, ClassDescriptor cd, String inequality, String class_name) {
+        ContinuousClassFilter instance = new ContinuousClassFilter();
+        Input result = instance.filter(in, cd);
+        agh.aq21gui.model.input.Test run_result = result.runsGroup.runs.get(0);
+        Parameter desired_paramater = run_result.runSpecificParameters.parameters.get(0);
+        assertEquals(1, desired_paramater.getDescriptors().size());
+        ClassDescriptor desired_descriptor = desired_paramater.getDescriptors().get(0);
+        assertEquals(inequality, desired_descriptor.comparator);
+        assertEquals(result.getEvents().get(2).get(class_name), desired_descriptor.getValue());
     }
 }

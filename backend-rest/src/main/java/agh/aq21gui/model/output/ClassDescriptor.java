@@ -288,6 +288,11 @@ public class ClassDescriptor extends NameValueEntity {
         return getValue().equalsIgnoreCase("*");
     }
 
+    @JsonIgnore
+    public boolean isNonNumeric() {
+        return !NumericUtil.isNumber(value);
+    }
+
     public boolean isGeneralizationOf(ClassDescriptor other, List<String> linearOrder) {
         boolean result;
         if (this.equals(other)) {

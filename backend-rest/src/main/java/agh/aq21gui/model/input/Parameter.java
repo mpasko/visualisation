@@ -139,7 +139,7 @@ public class Parameter implements IAQ21Serializable {
         }
     }
 
-    void setDescriptors(List<ClassDescriptor> descriptors) {
+    public void setDescriptors(List<ClassDescriptor> descriptors) {
         if (descriptors.size() > 0) {
             StringBuilder builder = new StringBuilder();
             for (ClassDescriptor descriptor : descriptors) {
