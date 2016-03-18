@@ -54,7 +54,7 @@ public class J48ServiceTest {
         for (String item : items) {
             assertFalse(NumericUtil.isNumber(item));
         }
-        List<String> discretizedSet = result.findDomainObjectRrecursively("class").getRange();
+        List<String> discretizedSet = result.findDomainObjectRecursively("class").getRange();
         List<agh.aq21gui.model.input.Test> generatedRuns = result.getRunsGroup().runs;
         assertEquals(discretizedSet.size(), generatedRuns.size());
         assertTrue(discretizedSet.size()>2);

@@ -87,7 +87,7 @@ public class Branch {
 
     @Override
     public String toString() {
-        StringBuilder bbuild = new StringBuilder("nodes");
+        StringBuilder bbuild = new StringBuilder();
         bbuild.append(this.getFrom()).append(" to ").append(this.getTo()).append(" is ");
         bbuild.append(this.getAttribute()).append(this.getComparator()).append(this.getValue());
         bbuild.append("\n");

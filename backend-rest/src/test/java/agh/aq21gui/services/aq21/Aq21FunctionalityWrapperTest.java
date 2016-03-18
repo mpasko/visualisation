@@ -47,7 +47,7 @@ public class Aq21FunctionalityWrapperTest {
         for (String item : items) {
             assertFalse(NumericUtil.isNumber(item));
         }
-        List<String> discretizedSet = result.findDomainObjectRrecursively("class").getRange();
+        List<String> discretizedSet = result.findDomainObjectRecursively("class").getRange();
         assertEquals(1, result.getRunsGroup().runs.size());
         assertEquals(discretizedSet.size(), result.getOutputHypotheses().size());
         assertTrue(discretizedSet.size()>2);
@@ -58,7 +58,7 @@ public class Aq21FunctionalityWrapperTest {
     public void when_integer_then_should_perform_good_job() {
         System.out.println("when_integer_then_should_perform_good_job");
         Input in = generateInputWithStarRun(size);
-        in.findDomainObjectRrecursively(ACLASS).setdomain("integer");
+        in.findDomainObjectRecursively(ACLASS).setdomain("integer");
         Aq21FunctionalityWrapper instance = new Aq21FunctionalityWrapper();
         Output result = instance.enhancedInvoke(in);
         List<String> items = result.getCollumnOfData(ACLASS);
@@ -67,7 +67,7 @@ public class Aq21FunctionalityWrapperTest {
         for (String item : items) {
             assertFalse(NumericUtil.isNumber(item));
         }
-        List<String> discretizedSet = result.findDomainObjectRrecursively("class").getRange();
+        List<String> discretizedSet = result.findDomainObjectRecursively("class").getRange();
         assertEquals(1, result.getRunsGroup().runs.size());
         assertEquals(discretizedSet.size(), result.getOutputHypotheses().size());
         assertTrue(discretizedSet.size()>2);

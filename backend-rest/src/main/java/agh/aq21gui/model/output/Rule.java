@@ -92,7 +92,7 @@ public class Rule {
             Object eventValue = map.get(sel.getName());
             Util.isNull(eventValue, "eventValue");
             Util.isNull(sel, "sel");
-            List<String> list = in.findDomainObjectRrecursively(sel.name).set_elements;
+            List<String> list = in.findDomainObjectRecursively(sel.name).set_elements;
             matches &= sel.matchesValue(eventValue.toString(), list);
         }
         return matches;
@@ -104,7 +104,7 @@ public class Rule {
             Object eventValue = map.get(sel.getName());
             //Util.isNull(eventValue, "eventValue");
             //Util.isNull(sel, "sel");
-            List<String> list = in.findDomainObjectRrecursively(sel.name).set_elements;
+            List<String> list = in.findDomainObjectRecursively(sel.name).set_elements;
             matches &= sel.matchesValueStrictly(eventValue.toString(), list);
         }
         return matches;

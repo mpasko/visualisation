@@ -30,7 +30,7 @@ public class Aq21FunctionalityWrapper {
     }
 
     public Input performDiscretizationWhenNeeded(Input in, ClassDescriptor descriptor, Input filteredData) {
-        Domain domain = in.findDomainObjectRrecursively(descriptor.name);
+        Domain domain = in.findDomainObjectRecursively(descriptor.name);
         boolean classIsNumeric = domain.isContinuous()||domain.isInteger();
         if (descriptor.isCustomValue()&&classIsNumeric) {
             Discretizer discretizer = new Discretizer();

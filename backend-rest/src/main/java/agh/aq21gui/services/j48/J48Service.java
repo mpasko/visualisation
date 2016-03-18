@@ -37,7 +37,7 @@ public class J48Service {
         //System.out.println(Util.attachLines(input.toString()));
         //System.out.println("----------------------------------------------------------------------------");
         ClassDescriptor descriptor = input.getAggregatedClassDescriptor();
-        Domain classDom = input.findDomainObjectRrecursively(descriptor.getName());
+        Domain classDom = input.findDomainObjectRecursively(descriptor.getName());
         Input filteredData;
         if (classDom.isContinuous() || classDom.isInteger()) {
             if (descriptor.isCustomValue()) {
@@ -139,7 +139,7 @@ public class J48Service {
         List<Test> new_runs = new LinkedList<Test>();
         for (Test run : filteredData.runsGroup.runs) {
             if (run.grepClassDescriptor().isCustomValue()) {
-                Domain domain = filteredData.findDomainObjectRrecursively(descriptor.name);
+                Domain domain = filteredData.findDomainObjectRecursively(descriptor.name);
                 if (domain.getRange() == null) {
                     throw new RuntimeException("If star (*) used for classifying continuous data, it should be discretized first");
                 }

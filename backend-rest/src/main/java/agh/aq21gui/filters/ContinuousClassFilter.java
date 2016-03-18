@@ -93,7 +93,7 @@ public class ContinuousClassFilter {
         for (Event event : result.obtainEventsGroup().events) {
             String currentValue = event.getValues().get(index);
             if (!NumericUtil.isWildcard(currentValue)) {
-                Domain classDom = result.findDomainObjectRrecursively(cd.getName());
+                Domain classDom = result.findDomainObjectRecursively(cd.getName());
                 if (cd.matchesValue(currentValue, classDom.set_elements)) {
                     event.replaceValueAt(index, match);
                 } else {
@@ -178,7 +178,7 @@ public class ContinuousClassFilter {
         for(Test run : result.runsGroup.runs) {
             Parameter consequent = run.findConsequentParam();
             if (consequent!=null) {
-                Domain classDom = result.findDomainObjectRrecursively(cd.getName());
+                Domain classDom = result.findDomainObjectRecursively(cd.getName());
                 List<String> set = null;
                 for (ClassDescriptor desc : consequent.getDescriptors()) {
                     if (desc.name.equalsIgnoreCase(cd.name)) {

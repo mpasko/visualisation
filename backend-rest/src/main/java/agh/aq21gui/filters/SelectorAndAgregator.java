@@ -81,7 +81,7 @@ public class SelectorAndAgregator {
         }
         return result;
         */
-        List<String> stringsOrder = input.findDomainObjectRrecursively(next.name).getRange();
+        List<String> stringsOrder = input.findDomainObjectRecursively(next.name).getRange();
         Chain<Pair<Selector>, Selector> chain = new Chain<Pair<Selector>, Selector>();
         chain.add(new LessAndGreaterCase(stringsOrder));
         chain.add(new LessOrGreaterSameDirection(stringsOrder));

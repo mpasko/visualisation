@@ -82,6 +82,15 @@ public class Util {
         bw.close();
     }
 
+    public static void binaryToStream(String content, OutputStream fos) {
+        try {
+            fos.write(content.getBytes());
+        } catch (IOException ex) {
+            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
     public static String negatedComparator(final String comparator) {
         String neg;
         if (comparator.equals("<")) {

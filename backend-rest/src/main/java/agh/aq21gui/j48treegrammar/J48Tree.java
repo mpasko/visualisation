@@ -39,7 +39,7 @@ public class J48Tree {
         Node node = new Node();
         node.setName(tree.childAt(0, Tj48TreeParser.ID).value());
         node.setAttribute(tree.childAt(1, Tj48TreeParser.ID).value());
-        this.getNodes().add(node);
+        addNode(node);
     }
 
     private void parseBranch(TreeNode tree) {
@@ -49,10 +49,10 @@ public class J48Tree {
         branch.setComparator(tree.childAt(2, Tj48TreeParser.EQUAL).value());
         CommonTree valueTree = tree.childAt(3, TreeNode.ANY_TYPE).tree();
         branch.setValue(valueTree.getText());
-        this.getBranches().add(branch);
+        addBranch(branch);
     }
 
-    private void fixupBranchAttributes() {
+    public void fixupBranchAttributes() {
         for (Branch branch : this.getBranches()){
             Node from = findNodeByName(branch.getFrom());
             branch.setAttribute(from.getAttribute());
@@ -95,7 +95,7 @@ public class J48Tree {
     
     @Override
     public String toString(){
-        StringBuilder build = new StringBuilder("nodes");
+        StringBuilder build = new StringBuilder();
         for (Node node: this.nodes){
             build.append(node.getName()).append(" is ").append(node.getAttribute());
             build.append(" root=").append(node.isRoot()).append(" leaf=").append(node.isLeaf());
@@ -105,6 +105,14 @@ public class J48Tree {
             build.append(branch.toString());
         }
         return build.toString();
+    }
+
+    public void addNode(Node node) {
+        this.nodes.add(node);
+    }
+
+    public void addBranch(Branch branch) {
+        this.branches.add(branch);
     }
     
 }

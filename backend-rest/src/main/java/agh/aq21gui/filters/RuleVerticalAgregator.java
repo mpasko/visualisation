@@ -152,9 +152,9 @@ public class RuleVerticalAgregator {
                 new_rule = candidate;
             } else {
                 Selector sel1 = different_selectors.get(0);
-                List<String> sel1list = input.findDomainObjectRrecursively(sel1.getName()).set_elements;
+                List<String> sel1list = input.findDomainObjectRecursively(sel1.getName()).set_elements;
                 Selector sel2 = different_selectors.get(1);
-                List<String> sel2list = input.findDomainObjectRrecursively(sel2.getName()).set_elements;
+                List<String> sel2list = input.findDomainObjectRecursively(sel2.getName()).set_elements;
                 if (sel1.isGeneralizationOf(sel2, sel2list)) {
                     new_rule = candidate;
                     new_rule.addSelector(sel1);

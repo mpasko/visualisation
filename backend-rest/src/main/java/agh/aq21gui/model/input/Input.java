@@ -252,7 +252,7 @@ public class Input implements IAQ21Serializable {
         return run.grepClassDescriptor();
     }
 
-    public Domain findDomainObjectRrecursively(String name) {
+    public Domain findDomainObjectRecursively(String name) {
         String currentName = name;
         Attribute attr = this.findAttribute(currentName);
         Domain found = null;

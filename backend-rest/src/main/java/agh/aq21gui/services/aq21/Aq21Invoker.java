@@ -9,6 +9,7 @@ import agh.aq21gui.aq21grammar.ParsingException;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.services.AbstractInvoker;
+import agh.aq21gui.services.ExecInvoker;
 import agh.aq21gui.utils.Printer;
 import java.io.IOException;
 import java.util.Locale;
@@ -17,7 +18,7 @@ import java.util.Locale;
  *
  * @author marcin
  */
-public class Aq21Invoker extends AbstractInvoker{
+public class Aq21Invoker implements AbstractInvoker{
     
     private static final String AQ21INPUT = "input.aq21";
 	
@@ -37,7 +38,7 @@ public class Aq21Invoker extends AbstractInvoker{
 		//Logger.getLogger(Aq21Resource.class.getName()).info("Request accepted");
 		String result="";
 		try {
-			result = run(AQ21INPUT, input.toString());
+			result = new ExecInvoker().run(getAppPath(), AQ21INPUT, AQ21INPUT, input.toString());
 			return parser.parse(result);
         } catch (IOException ex) {
             Printer.logException(this.getClass(), "Error accessing input or output files", ex);
@@ -51,11 +52,6 @@ public class Aq21Invoker extends AbstractInvoker{
 		stub.setRaw(result);
 		return stub;
 	}
-
-    @Override
-    public String[] getInputFilenames() {
-        return new String[] {AQ21INPUT};
-    }
 
     @Override
     public String getAppPath() {

@@ -157,4 +157,12 @@ public class Output extends Input{
     public OutputHypotheses obtainOutputHypotheses() {
         return outHypo;
     }
+
+    public void merge(Output partialResult) {
+        this.outHypo.hypotheses.addAll(partialResult.getOutputHypotheses());
+        StringBuilder build = new StringBuilder(this.getRaw());
+        build.append("\n");
+        build.append(partialResult.getRaw());
+        this.setRaw(build.toString());
+    }
 }

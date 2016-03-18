@@ -53,7 +53,7 @@ public class Classifier {
         Map<String, Object> map = input.generateKeyValue(event);
         String className = hypothesisClass.name.toLowerCase(Locale.getDefault());
         String eventClass = map.get(className).toString().toLowerCase(Locale.getDefault());
-        Domain classDom = input.findDomainObjectRrecursively(hypothesisClass.getName());
+        Domain classDom = input.findDomainObjectRecursively(hypothesisClass.getName());
         if (!NumericUtil.isWildcard(eventClass)) {
             boolean premiseMatches;
             boolean classMatches;
