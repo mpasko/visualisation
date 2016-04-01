@@ -8,6 +8,7 @@ import agh.aq21gui.j48treegrammar.Branch;
 import agh.aq21gui.j48treegrammar.J48Tree;
 import agh.aq21gui.j48treegrammar.Node;
 import agh.aq21gui.model.input.Attribute;
+import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Test;
 import agh.aq21gui.model.output.ClassDescriptor;
@@ -139,7 +140,6 @@ public class C45BinTreeReader {
         J48Tree result = new J48Tree();
         addNode(c45tree, "root", result);
         traverseTree(c45tree, result, "root", 1);
-//        System.out.println(result.toString());
         result.fixupBranchAttributes();
         return result;
     }
@@ -150,23 +150,32 @@ public class C45BinTreeReader {
             String childName = String.format("N%s", enumerator);
             //visitBranch(parrent, child, parrentName, childName, result);
             addNode(child, childName, result);
-            boolean isFirstChild = child == parrent.branch.get(0);
-            addBranch(parrent, child, parrentName, childName, result, isFirstChild);
+            int childNum = parrent.branch.indexOf(child);
+            addBranch(parrent, child, parrentName, childName, result, childNum);
             enumerator = traverseTree(child, result, childName, enumerator);
         }
         return enumerator;
     }
 
-    private void addBranch(C45Tree parrent, C45Tree child, String parrentName, String childName, J48Tree result, boolean firstChild) {
+    private void addBranch(C45Tree parrent, C45Tree child, String parrentName, String childName, J48Tree result, int childNum) {
         if (parrent.nodeType == ThreshContin) {
             Branch branch = new Branch();
             branch.setFrom(parrentName);
             branch.setTo(childName);
-            branch.setComparator(firstChild?"<=":">"); //TODO
+            branch.setComparator(childNum==0?"<=":">");
             branch.setValue(String.valueOf(parrent.cut));
             result.addBranch(branch);
         } else if (parrent.nodeType == BrDiscr) {
-            //TODO
+            Branch branch = new Branch();
+            branch.setFrom(parrentName);
+            branch.setTo(childName);
+            branch.setComparator("="); 
+            Attribute attr = experiment.getAttributes().get(child.tested);
+            Domain dom = experiment.findDomainObjectRecursively(attr.name);
+            String value = dom.getRange().get(childNum);
+            branch.setValue(value);
+            result.addBranch(branch);
+        } else {
             throw new RuntimeException("Unsupported BrDiscr with C4.5 algorithm");
         }
     }

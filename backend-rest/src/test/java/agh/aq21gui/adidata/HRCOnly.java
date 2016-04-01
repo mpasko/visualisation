@@ -5,6 +5,7 @@
 package agh.aq21gui.adidata;
 
 import agh.aq21gui.Aq21Resource;
+import agh.aq21gui.C45Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;
 import agh.aq21gui.JRipResource;
@@ -34,6 +35,7 @@ public class HRCOnly {
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new C45Resource(), "unproned"));
         adiExperiment.setAlgList(algSet);
         LinkedList<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
         ranges.add(new DiscretizerRanges(W_ROZ, 820, 970, 1140, 1350, 1550));

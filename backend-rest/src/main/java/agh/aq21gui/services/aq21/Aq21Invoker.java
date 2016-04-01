@@ -38,7 +38,8 @@ public class Aq21Invoker implements AbstractInvoker{
 		//Logger.getLogger(Aq21Resource.class.getName()).info("Request accepted");
 		String result="";
 		try {
-			result = new ExecInvoker().run(getAppPath(), AQ21INPUT, AQ21INPUT, input.toString());
+            ExecInvoker.ExecFileRequest inputfile = new ExecInvoker.ExecFileRequest(AQ21INPUT, input.toString());
+			result = new ExecInvoker().run(getAppPath(), AQ21INPUT, inputfile);
 			return parser.parse(result);
         } catch (IOException ex) {
             Printer.logException(this.getClass(), "Error accessing input or output files", ex);
