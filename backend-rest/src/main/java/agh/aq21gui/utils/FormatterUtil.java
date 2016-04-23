@@ -59,4 +59,15 @@ public class FormatterUtil {
         }
         return prefix;
     }
+
+    public static String makeFilenameFromText(String caption) {
+        String lc = caption.toLowerCase();
+        String spaces = lc.replaceAll(" ", "-").replaceAll("_", "-");
+        String diacritic = spaces.replaceAll("\u017C", "z");
+        diacritic = diacritic.replaceAll("\u015B", "s");
+        diacritic = diacritic.replaceAll("\u0107", "c");
+        diacritic = diacritic.replaceAll("\u0142", "l");
+        diacritic = diacritic.replaceAll("\u00F3", "o");
+        return diacritic;
+    }
 }

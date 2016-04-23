@@ -8,6 +8,7 @@ import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.Run;
 import agh.aq21gui.model.input.Test;
+import agh.aq21gui.model.output.Output;
 
 /**
  *
@@ -16,6 +17,7 @@ import agh.aq21gui.model.input.Test;
 public class SingleRun {
     public Input in;
     public Test run;
+    public Output out;
     
     public SingleRun(Input in, Test run) {
         this.in = in;

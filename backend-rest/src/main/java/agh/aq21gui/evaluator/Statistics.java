@@ -40,6 +40,7 @@ public class Statistics {
     private int falsePositive=0;
     private int falseNegative=0;
     private List<CounterExample> counterExamples = new LinkedList<CounterExample>();
+    private double complexity=0.0;
 
     /**
      * @return the truePositive
@@ -106,6 +107,7 @@ public class Statistics {
         this.falsePositive+=stats.falsePositive;
         this.trueNegative+=stats.trueNegative;
         this.truePositive+=stats.truePositive;
+        this.complexity+=stats.complexity;
     }
 
     void analyzeCase(boolean premiseMatches, boolean theoryMatches) {
@@ -196,5 +198,17 @@ public class Statistics {
     
     public List<CounterExample> collectCounterExamples() {
         return this.counterExamples;
+    }
+
+    public void setComplexity(double c) {
+        this.complexity = c;
+    }
+    
+    public double getComplexity() {
+        return this.complexity;
+    }
+
+    void incrementComplexity() {
+        this.complexity+=1.0;
     }
 }

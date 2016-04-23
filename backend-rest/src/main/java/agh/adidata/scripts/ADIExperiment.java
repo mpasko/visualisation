@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.adidata;
+package agh.adidata.scripts;
 
 import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.IResource;
@@ -17,20 +17,20 @@ import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import testtools.MeasurmentResultFormatter;
+import agh.adidata.scripts.testtools.MeasurmentResultFormatter;
 
 /**
  *
  * @author marcin
  */
 public class ADIExperiment {
-    
+
     public static final String STOP = "stop";
     public static final String W_ROZ = "wytrzym_rozciag_mpa";
     public static final String WYDL = "wydluzenie";
     public static final String PRZEW = "przewezenie";
     public static final String HRC = "hrc";
-    public static final String UDAR= "udarnosc";
+    public static final String UDAR = "udarnosc";
     public static final String G_PLAST = "granica_plast_mpa";
     public static final String W_ZME = "wytrzym_zmecz_mpa";
     public static final String FRAC = "frac_toughness";
@@ -40,7 +40,7 @@ public class ADIExperiment {
         strings.remove(item);
         return strings;
     }
-    
+
     public static List<String> allElementsAndreceipe() {
         LinkedList<String> strings = new LinkedList<String>();
         strings.addAll(Util.strings("C", "Si", "Mn", "Mg", "Cu", "Ni", "Mo", "S", "P", "B", "V", "Cr", "Ti", "Sn", "Nb", "Al"));
@@ -48,11 +48,10 @@ public class ADIExperiment {
         strings.add(STOP);
         return strings;
     }
-    
+
     public static List<String> stopOnly() {
         return Util.strings(STOP);
     }
-    
     private Input inputPattern;
     private List<Entry<IResource, String>> algSet;
     private List<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
@@ -86,23 +85,27 @@ public class ADIExperiment {
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
     }
 
-    public void runAllPossibilities(String className, String threshold, List<String> ignore) {
-        statTable = new MeasurmentResultFormatter();
-        for (Entry<IResource, String> entry : algSet) {
-            ExperimentCase exp = new ExperimentCase(entry.getKey(), entry.getValue(), className, threshold, ignore);
-            exp.setStats(statTable);
-            exp.setOutputDirectory(outputDirectory);
-            exp.setSuiteName(suiteName);
-            exp.setDiscretizerRanges(ranges);
-            exp.runExperiment(inputPattern);
+    public void runAllPossibilities(String className, String threshold, List<String> ignore, String caption) {
+        try {
+            statTable = new MeasurmentResultFormatter();
+            StringBuilder knowledge = new StringBuilder();
+            for (Entry<IResource, String> entry : algSet) {
+                ExperimentCase exp = new ExperimentCase(entry.getKey(), entry.getValue(), className, threshold, ignore, suiteName);
+                exp.setStats(statTable);
+                exp.setOutputDirectory(outputDirectory);
+                exp.setDiscretizerRanges(ranges);
+                exp.runExperiment(inputPattern);
+                knowledge.append(exp.knowledge).append("\n");
+            }
+            String table = statTable.formatTextResults();
+            System.out.println(table);
+            formatAndSaveLatexTable(caption);
+            String full_name = String.format("%s%s_knowledge.txt", outputDirectory, suiteName);
+            Util.saveFile(full_name, knowledge.toString());
+        } catch (RuntimeException ex) {
+            String message = String.format("%s (%s) caused an exception: %s", suiteName, caption, ex.getMessage());
+            System.out.println(message);
         }
-        String table = statTable.formatTextResults(this);
-        System.out.println(table);
-    }
-
-    public String alignNumber(int number) {
-        String stringified = Integer.valueOf(number).toString();
-        return FormatterUtil.alignString(5, " ", stringified);
     }
 
     /**
@@ -110,5 +113,13 @@ public class ADIExperiment {
      */
     public void setRanges(List<DiscretizerRanges> ranges) {
         this.ranges = ranges;
+    }
+
+    public void formatAndSaveLatexTable(String caption) {
+        String latex = statTable.formatLatexResults(caption);
+        String temporaryOutput = "D:\\Repo\\Studia\\Project\\magisterka_uporz¹dkowana\\redakcja2\\tresc\\tabele\\";
+        //String temporaryOutput = outputDirectory;
+        String latexFile = String.format("%slatex\\%s.tex", temporaryOutput, FormatterUtil.makeFilenameFromText(caption));
+        Util.saveFile(latexFile, latex, "UTF-8");
     }
 }

@@ -30,8 +30,8 @@ public class Domain extends NameValueEntity{
     
     public Domain(String name, String domain){
         this();
-        this.name = name;
-        this.domain=domain;
+        setname(name);
+        setdomain(domain);
     }
 	
 	@JsonProperty("name")
@@ -40,7 +40,7 @@ public class Domain extends NameValueEntity{
 	}
 	
 	public void setname(String name){
-		this.name = name;
+		this.name = Util.validateString(name);
 	}
 	
 	@JsonProperty("domain")
@@ -49,7 +49,7 @@ public class Domain extends NameValueEntity{
 	}
 	
 	public void setdomain(String name){
-		this.domain = name;
+		this.domain = Util.validateString(name);
 	}
 	
 	@XmlElement(name="parameters")
@@ -59,8 +59,9 @@ public class Domain extends NameValueEntity{
 		return parameters;
 	}
 	
-	public void setparameters(String params){
-		String params_nonbre = params.replace("{", "").replace("}", "").replace(" ", "");
+	public void setparameters(String params_raw){
+        String params_valid = Util.validateString(params_raw);
+		String params_nonbre = params_valid.replace("{", "").replace("}", "").replace(" ", "");
 		this.set_elements = new LinkedList<String>();
 		for (String item : params_nonbre.split(",")) {
 			if (!item.isEmpty()) {

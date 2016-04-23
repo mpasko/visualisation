@@ -4,6 +4,7 @@
  */
 package agh.aq21gui.model.input;
 
+import agh.aq21gui.utils.Util;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
@@ -44,7 +45,7 @@ public abstract class NameValueEntity implements IAQ21Serializable {
 
 	@XmlElement(name = "name")
 	public void setName(String nm) {
-		this.name = nm;
+		this.name = Util.validateString(nm);
 	}
 
 	public void traverse(){

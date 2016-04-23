@@ -8,7 +8,6 @@ import agh.aq21gui.model.input.Attribute;
 import agh.aq21gui.model.input.AttributesGroup;
 import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.DomainsGroup;
-import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.EventsGroup;
 import agh.aq21gui.model.input.Run;
 import agh.aq21gui.model.input.Test;
@@ -56,8 +55,10 @@ public class Aq21ArchetypeConfig extends IArchetypeConfig{
         r.addParameter("ambiguity", "IncludeInPos");
         r.addParameter("trim", "optimal");
         r.addParameter("compute_alternative_covers", "true");
-        r.addParameter("maxstar", "1");
-        r.addParameter("maxrule", "10");
+        
+        //These guys are causing much trouble sometimes
+        //r.addParameter("maxstar", "1");
+        //r.addParameter("maxrule", "10");
         
         r.addParameter("learn_rules_mode", "standard");
         r.addParameter("exceptions", "false");
@@ -68,7 +69,7 @@ public class Aq21ArchetypeConfig extends IArchetypeConfig{
         r.addParameter("display_selectors_coverage", "true");
         r.addParameter("display_values_coverage", "false");
         r.addParameter("display_events_covered", "false");
-        r.addParameter("display_alternative_covers", "true");
+        r.addParameter("display_alternative_covers", "false");
         r.addParameter("max_alternatives", "10");
         r.addParameter("attribute_selection_method", "none");
         r.addParameter("handling_unknown_values", "program_selected_method");

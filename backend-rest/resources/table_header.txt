@@ -1,0 +1,7 @@
+\begin{table}[H]
+{
+\centering
+\begin{tabular}{| c | c | c | c | c | c |}
+\hline
+Nazwa & TP & TN & FP & FN & C  \\
+\hline

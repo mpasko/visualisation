@@ -2,37 +2,43 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.adidata;
+package agh.adidata.scripts;
 
-import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.Aq21Resource;
+import agh.aq21gui.C45Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;
 import agh.aq21gui.JRipResource;
+import static agh.adidata.scripts.ADIExperiment.*;
+import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.stubs.StubFactory;
-import agh.aq21gui.utils.Util;
 import java.util.AbstractMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import static agh.aq21gui.adidata.ADIExperiment.*;
 
 /**
  *
  * @author marcin
  */
-public class PropertyRecognitionUpdated {
+public class PropertyRecognUp {
     
     public static void main(String[] args) {
+        fromReceipe();
+    }
+
+    public static void fromReceipe() {
         final ADIExperiment adiExperiment = new ADIExperiment("Property_recognition_from_ingredients_and_forgery");
         adiExperiment.setInput(StubFactory.loadAdiUpdatedData());
         LinkedList<Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
+        
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new C45Resource(), "unpruned"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
+        
         //// Error:
-        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
         adiExperiment.setAlgList(algSet);
         LinkedList<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
@@ -45,13 +51,14 @@ public class PropertyRecognitionUpdated {
         ranges.add(new DiscretizerRanges(W_ZME, 225, 240, 265, 275));
         ranges.add(new DiscretizerRanges(FRAC, 50, 54, 59, 60, 62));
         adiExperiment.setRanges(ranges);
-		adiExperiment.runAllPossibilities(W_ROZ, null, allPropertiesWithout(W_ROZ));
-        adiExperiment.runAllPossibilities(WYDL, null, allPropertiesWithout(WYDL));
-        adiExperiment.runAllPossibilities(PRZEW, null, allPropertiesWithout(PRZEW));
-        adiExperiment.runAllPossibilities(HRC, null, allPropertiesWithout(HRC));
-        adiExperiment.runAllPossibilities(UDAR, null, allPropertiesWithout(UDAR));
-        adiExperiment.runAllPossibilities(G_PLAST, null, allPropertiesWithout(G_PLAST));
-        adiExperiment.runAllPossibilities(W_ZME, null, allPropertiesWithout(W_ZME));
-        adiExperiment.runAllPossibilities(FRAC, null, allPropertiesWithout(FRAC));
+        String caption = "Zale\u017Cno\u015B\u0107 od sk\u0142adu i sposobu otrzymywania dla ";
+        adiExperiment.runAllPossibilities(W_ROZ, null, allPropertiesWithout(W_ROZ), caption + W_ROZ);
+        adiExperiment.runAllPossibilities(WYDL, null, allPropertiesWithout(WYDL), caption + WYDL);
+        adiExperiment.runAllPossibilities(PRZEW, null, allPropertiesWithout(PRZEW), caption + PRZEW);
+        adiExperiment.runAllPossibilities(HRC, null, allPropertiesWithout(HRC), caption + HRC);
+        adiExperiment.runAllPossibilities(UDAR, null, allPropertiesWithout(UDAR), caption + UDAR);
+        adiExperiment.runAllPossibilities(G_PLAST, null, allPropertiesWithout(G_PLAST), caption + G_PLAST);
+        adiExperiment.runAllPossibilities(W_ZME, null, allPropertiesWithout(W_ZME), caption + W_ZME);
+        adiExperiment.runAllPossibilities(FRAC, null, allPropertiesWithout(FRAC), caption + FRAC);
     }
 }

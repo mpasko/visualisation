@@ -10,6 +10,8 @@ import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Rule;
 import agh.aq21gui.model.output.Selector;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.runtime.RecognitionException;
@@ -267,5 +269,66 @@ public class ClassifierTest {
         assertEquals(2, result.getTrueNegative());
         assertEquals(0, result.getFalsePositive());
         assertEquals(0, result.getFalseNegative());
+    }
+    
+    @Test
+    public void when_empty_hypo_then_complexity_is_zero() {
+        Input input = new Input();
+        List<Hypothesis> list = new LinkedList<Hypothesis>();
+        Hypothesis emptyHypo = new Hypothesis();
+        list.add(emptyHypo);
+        input.setOutputHypotheses(list);
+        Classifier instance = new Classifier(input);
+        assertEquals(0.0, instance.performStatistics(emptyHypo).getComplexity(), 0.0001);
+    }
+    
+    @Test
+    public void when_empty_rule_then_complexity_is_zero() {
+        Input input = new Input();
+        List<Hypothesis> list = new LinkedList<Hypothesis>();
+        Hypothesis emptyHypo = new Hypothesis();
+        Rule emptyRule = new Rule();
+        emptyHypo.rules.add(emptyRule);
+        list.add(emptyHypo);
+        input.setOutputHypotheses(list);
+        Classifier instance = new Classifier(input);
+        assertEquals(0.0, instance.performStatistics(emptyHypo).getComplexity(), 0.0001);
+    }
+    
+    @Test
+    public void when_single_rule_then_complexity_is_one() throws RecognitionException {
+        Input input = new Input();
+        List<Hypothesis> list = new LinkedList<Hypothesis>();
+        Hypothesis emptyHypo = new Hypothesis();
+        emptyHypo.rules.add(new Rule(Selector.parse("X=a")));
+        list.add(emptyHypo);
+        input.setOutputHypotheses(list);
+        Classifier instance = new Classifier(input);
+        assertEquals(1.0, instance.performStatistics(emptyHypo).getComplexity(), 0.0001);
+    }
+    
+    @Test
+    public void when_two_rules_then_complexity_is_two() throws RecognitionException {
+        Input input = new Input();
+        List<Hypothesis> list = new LinkedList<Hypothesis>();
+        Hypothesis emptyHypo = new Hypothesis();
+        emptyHypo.rules.add(new Rule(Selector.parse("X=a")));
+        emptyHypo.rules.add(new Rule(Selector.parse("Y=b")));
+        list.add(emptyHypo);
+        input.setOutputHypotheses(list);
+        Classifier instance = new Classifier(input);
+        assertEquals(2.0, instance.performStatistics(emptyHypo).getComplexity(), 0.0001);
+    }
+    
+    @Test
+    public void when_two_selectors_then_complexity_is_two() throws RecognitionException {
+        Input input = new Input();
+        List<Hypothesis> list = new LinkedList<Hypothesis>();
+        Hypothesis emptyHypo = new Hypothesis();
+        emptyHypo.rules.add(new Rule(Selector.parse("X=a"),Selector.parse("Y=d")));
+        list.add(emptyHypo);
+        input.setOutputHypotheses(list);
+        Classifier instance = new Classifier(input);
+        assertEquals(2.0, instance.performStatistics(emptyHypo).getComplexity(), 0.0001);
     }
 }

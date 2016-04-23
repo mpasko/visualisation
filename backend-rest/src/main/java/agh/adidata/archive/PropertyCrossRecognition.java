@@ -2,35 +2,35 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.adidata;
+package agh.adidata.archive;
 
 import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;
 import agh.aq21gui.JRipResource;
-import static agh.aq21gui.adidata.ADIExperiment.*;
+import agh.adidata.scripts.ADIExperiment;
+import static agh.adidata.scripts.ADIExperiment.*;
 import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.stubs.StubFactory;
 import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  *
  * @author marcin
  */
-public class PropertyRecognitionFromAll {
+public class PropertyCrossRecognition {
     
     public static void main(String[] args) {
-        final ADIExperiment adiExperiment = new ADIExperiment("Property_recognition_from_all");
+        final ADIExperiment adiExperiment = new ADIExperiment("PropertyCrossRecognition_classic");
         adiExperiment.setInput(StubFactory.loadAdiUpdatedData());
-        LinkedList<Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
+        LinkedList<Map.Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         //// Error:
-        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
         adiExperiment.setAlgList(algSet);
         LinkedList<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
@@ -43,13 +43,13 @@ public class PropertyRecognitionFromAll {
         ranges.add(new DiscretizerRanges(W_ZME, 225, 240, 265, 275));
         ranges.add(new DiscretizerRanges(FRAC, 50, 54, 59, 60, 62));
         adiExperiment.setRanges(ranges);
-		adiExperiment.runAllPossibilities(W_ROZ, null, stopOnly());
-        adiExperiment.runAllPossibilities(WYDL, null, stopOnly());
-        adiExperiment.runAllPossibilities(PRZEW, null, stopOnly());
-        adiExperiment.runAllPossibilities(HRC, null, stopOnly());
-        adiExperiment.runAllPossibilities(UDAR, null, stopOnly());
-        adiExperiment.runAllPossibilities(G_PLAST, null, stopOnly());
-        adiExperiment.runAllPossibilities(W_ZME, null, stopOnly());
-        adiExperiment.runAllPossibilities(FRAC, null, stopOnly());
+		adiExperiment.runAllPossibilities(W_ROZ, null, allElementsAndreceipe(), "");
+        adiExperiment.runAllPossibilities(WYDL, null, allElementsAndreceipe(), "");
+        adiExperiment.runAllPossibilities(PRZEW, null, allElementsAndreceipe(), "");
+        adiExperiment.runAllPossibilities(UDAR, null, allElementsAndreceipe(), "");
+        adiExperiment.runAllPossibilities(G_PLAST, null, allElementsAndreceipe(), "");
+        adiExperiment.runAllPossibilities(W_ZME, null, allElementsAndreceipe(), "");
+        adiExperiment.runAllPossibilities(FRAC, null, allElementsAndreceipe(), "");
+        adiExperiment.runAllPossibilities(HRC, null, allElementsAndreceipe(), "");
     }
 }

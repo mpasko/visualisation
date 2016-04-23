@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.adidata.archive;
+package agh.adidata.archive;
 
 import agh.aq21gui.Aq21Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;
-import agh.aq21gui.adidata.ADIExperiment;
+import agh.adidata.scripts.ADIExperiment;
 import agh.aq21gui.stubs.StubFactory;
 import agh.aq21gui.utils.Util;
 import java.util.AbstractMap;
@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import static agh.aq21gui.adidata.ADIExperiment.*;
+import static agh.adidata.scripts.ADIExperiment.*;
 /**
  *
  * @author marcin
@@ -37,12 +37,12 @@ public class PropertyRecognitionChemical {
         //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
         adiExperiment.setAlgList(algSet);
-		adiExperiment.runAllPossibilities(RM_MPA, null, allWithout(RM_MPA));
-        adiExperiment.runAllPossibilities(RE_MPA, null, allWithout(RE_MPA));
-        adiExperiment.runAllPossibilities(WYTRZYM_ZMECZ_MPA, null, allWithout(WYTRZYM_ZMECZ_MPA));
-        adiExperiment.runAllPossibilities(K1C_M_PA_VM, null, allWithout(K1C_M_PA_VM));
-        adiExperiment.runAllPossibilities(A5_PERCENT, null, allWithout(A5_PERCENT));
-        adiExperiment.runAllPossibilities(HRC, null, allWithout(HRC));
+		adiExperiment.runAllPossibilities(RM_MPA, null, allWithout(RM_MPA), "");
+        adiExperiment.runAllPossibilities(RE_MPA, null, allWithout(RE_MPA), "");
+        adiExperiment.runAllPossibilities(WYTRZYM_ZMECZ_MPA, null, allWithout(WYTRZYM_ZMECZ_MPA), "");
+        adiExperiment.runAllPossibilities(K1C_M_PA_VM, null, allWithout(K1C_M_PA_VM), "");
+        adiExperiment.runAllPossibilities(A5_PERCENT, null, allWithout(A5_PERCENT), "");
+        adiExperiment.runAllPossibilities(HRC, null, allWithout(HRC), "");
     }
 
     private static List<String> allWithout(String item) {

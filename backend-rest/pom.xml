@@ -133,7 +133,10 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <!--
                     <mainClass>agh.aq21gui.Main</mainClass>
+                    -->
+                    <mainClass>agh.adidata.scripts.AllRunner</mainClass>
                 </configuration>
             </plugin>
             <plugin>

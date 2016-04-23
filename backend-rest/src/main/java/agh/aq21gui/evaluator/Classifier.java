@@ -9,6 +9,8 @@ import agh.aq21gui.model.input.Event;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.ClassDescriptor;
 import agh.aq21gui.model.output.Hypothesis;
+import agh.aq21gui.model.output.Rule;
+import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.utils.NumericUtil;
 import java.util.Collection;
 import java.util.Locale;
@@ -45,6 +47,7 @@ public class Classifier {
         for(Event event : input.obtainEventsGroup().events) {
             analyzeEvent(event, hypo, stats);
         }
+        countHypoComplexity(hypo, stats);
         return stats;
     }
 
@@ -89,5 +92,13 @@ public class Classifier {
     private void saveCounterExample(Event event, Hypothesis hypo, String type, Statistics stats) {
         CounterExample counterExample = new CounterExample(event, hypo, type);
         stats.addCounterExample(counterExample);
+    }
+
+    private void countHypoComplexity(Hypothesis hypo, Statistics stats) {
+        for (Rule rule : hypo.rules) {
+            for (int i=0; i<rule.getSelectors().size(); ++i) {
+                stats.incrementComplexity();
+            }
+        }
     }
 }

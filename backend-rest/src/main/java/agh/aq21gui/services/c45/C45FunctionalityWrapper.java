@@ -10,7 +10,7 @@ import agh.aq21gui.model.output.Output;
 import agh.aq21gui.model.splitter.Merger;
 import agh.aq21gui.model.splitter.SingleRun;
 import agh.aq21gui.model.splitter.Splitter;
-import java.util.LinkedList;
+import java.util.Collection;
 
 /**
  *
@@ -24,11 +24,11 @@ public class C45FunctionalityWrapper {
     
     public Output run(Input in) {
         C45Invoker invoker = new C45Invoker();
-        LinkedList<Output> results = new LinkedList<Output>();
-        for (SingleRun run : splitter.split(in)) {
+        Collection<SingleRun> splitted = splitter.split(in);
+        for (SingleRun run : splitted) {
             Input input = illegalValueRemover.remove(run.in, run.getClassName(), "?");
-            results.add(invoker.invoke(input));
+            run.out = invoker.invoke(input);
         }
-        return merger.merge(in, results);
+        return merger.merge(in, splitted);
     }
 }

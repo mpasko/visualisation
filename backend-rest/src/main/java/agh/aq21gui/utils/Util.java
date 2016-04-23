@@ -36,6 +36,15 @@ import org.codehaus.jackson.map.SerializationConfig;
  * @author marcin
  */
 public class Util {
+    public static final String DEFAULT_ENCODING = "Cp1250";
+    
+    public static String validateString(String in) {
+        if (in == null) {
+            return "";
+        } else {
+            return in.toLowerCase();
+        }
+    }
 
     public static void isNull(Object obj, String name) {
         if (obj == null) {
@@ -74,10 +83,18 @@ public class Util {
     }
 
     public static void stringToStream(String in, OutputStream out) throws IOException {
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));
+        stringToStream(in, out, DEFAULT_ENCODING);
+    }
+    
+    public static void stringToStream(String in, OutputStream out, String encoding) throws IOException {
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, encoding));
         for (String line : in.split("\n")) {
             bw.write(line);
-            bw.newLine();
+            if (encoding.equalsIgnoreCase("UTF-8")) {
+                bw.append("\n");
+            } else {
+                bw.newLine();
+            }
         }
         bw.close();
     }
@@ -115,7 +132,10 @@ public class Util {
     }
 
     public static Input deepCopyInput(Input in) {
-        OutputParser parser = new OutputParser();
+        if (in instanceof Output) {
+            return deepCopyOutput((Output)in);
+        }
+        //OutputParser parser = new OutputParser();
 
         //System.out.print(attachLines(in.toString()));
         String json = Util.objectToJson(in);
@@ -190,12 +210,16 @@ public class Util {
         return indexOfIgnoreCase(list, item)>=0;
     }
 
-    public static void saveFile(String full_name, String content) {
+    public static void saveFile(String filename, String content) {
+        saveFile(filename, content, DEFAULT_ENCODING);
+    }
+
+    public static void saveFile(String full_name, String content, String encoding) {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(full_name);
             fos.flush();
-            Util.stringToStream(content, fos);
+            Util.stringToStream(content, fos, encoding);
         } catch (IOException ex) {
             throw new RuntimeException("Error saving file: "+full_name, ex);
         } finally {

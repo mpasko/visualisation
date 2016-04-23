@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.adidata;
+package agh.adidata.scripts;
 
 import agh.aq21gui.IResource;
 import agh.aq21gui.MetricsResource;
@@ -10,24 +10,19 @@ import agh.aq21gui.evaluator.StatsAgregator;
 import agh.aq21gui.filters.AttributeRemover;
 import agh.aq21gui.filters.ContinuousClassFilter;
 import agh.aq21gui.filters.RuleAgregator;
+import agh.aq21gui.filters.RulePrunner;
+import agh.aq21gui.filters.RuleSorter;
+import agh.aq21gui.filters.RuleVerticalAgregator;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.input.RunsGroup;
 import agh.aq21gui.model.output.ClassDescriptor;
-import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
-import agh.aq21gui.model.output.OutputHypotheses;
-import agh.aq21gui.model.output.Rule;
-import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.utils.NumericUtil;
 import agh.aq21gui.utils.Printer;
 import agh.aq21gui.utils.Util;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import testtools.MeasurmentResultFormatter;
+import agh.adidata.scripts.testtools.MeasurmentResultFormatter;
 
 /**
  *
@@ -47,16 +42,18 @@ public class ExperimentCase {
     private String outputDirectory;
     private String suiteName;
     private List<DiscretizerRanges> discretizerRanges;
+    public String knowledge;
 
-    public ExperimentCase(IResource key, String value, String className, String threshold, List<String> ignore) {
+    public ExperimentCase(IResource key, String value, String className, String threshold, List<String> ignore, String suiteName) {
         this.resource = key;
         this.mode = value;
         this.className = className;
         this.threshold = threshold;
+        this.suiteName = suiteName;
         this.ignore = ignore;
         name = String.format("%s-%s", resource.getName().replace("Resource", ""), mode);
         description = String.format("Experiment, mode=%s%nclass=%s%nignoring=%s", name, className, ignore);
-        keyword = String.format("%s-%s-%s", name, className, ignore);
+        keyword = String.format("%s-%s-%s", name, className, suiteName);
     }
     
     public void runExperiment(Input inputPattern) {
@@ -90,13 +87,18 @@ public class ExperimentCase {
 
     public Output outputPostProcessing(Output result) {
         Output processed = result;
-        
+        System.out.println("Enabled filters: ");
+        /* */
+        System.out.println("   -RuleAgregator");
         processed = new RuleAgregator().agregate(processed);
         /* *x/
+        System.out.println("   -RuleVerticalAgregator");
         processed = new RuleVerticalAgregator().agregate(processed);
         /* *x/
-        processed = new RulePrunner().doAll(processed);
-        /* *x/
+        //processed = new RulePrunner().doAll(processed);
+        processed = new RulePrunner().prune(processed);
+        /* */
+        System.out.println("   -RuleSorter");
         processed = new RuleSorter().sort(processed);
         /* */
         return processed;
@@ -119,11 +121,15 @@ public class ExperimentCase {
 
     private void saveResume(String description, Output processed, Input input, String name, String className, String keyword) {
         StringBuilder resume = new StringBuilder(description);
+        resume.append("\nKeyword: ").append(keyword).append("\n");
+        resume.append("\nKnowledge:\n");
+        //resume.append(processed.obtainOutputHypotheses().toString());
+        resume.append(processed.toString());
+        
         resume.append("\nKey parameters:\n");
         List<String> keyParameters = processed.obtainOutputHypotheses().getKeyParameters();
         resume.append(Util.formatInputByKeyParams(input, keyParameters));
-        resume.append("\nKnowledge:\n");
-        resume.append(processed.obtainOutputHypotheses().toString());
+        
         //System.out.println(resume.toString());
         String full_name = String.format("%s%s_%s_%s.txt", outputDirectory, suiteName, name, className);
         Util.saveFile(full_name, resume.toString());
@@ -139,12 +145,12 @@ public class ExperimentCase {
 
     private void saveMainKnowledge(String keyword, Output output) {
         StringBuilder resume = new StringBuilder();
-        resume.append("Keyword:\n").append(keyword);
-//        List<String> keyParameters = getKeyParameters(output.obtainOutputHypotheses());
+        resume.append("\nKeyword: ").append(keyword).append("\n");
         resume.append("\nKnowledge:\n");
         resume.append(output.obtainOutputHypotheses().toString());
-        String full_name = String.format("%s%s_knowledge.txt", outputDirectory, suiteName);
-        Util.saveFile(full_name, resume.toString());
+        //String full_name = String.format("%s%s_knowledge.txt", outputDirectory, suiteName);
+        //Util.saveFile(full_name, resume.toString());
+        knowledge = resume.toString();
     }
 
     void runExperiment() {

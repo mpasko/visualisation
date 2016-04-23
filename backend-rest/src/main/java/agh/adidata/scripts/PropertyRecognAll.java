@@ -2,36 +2,44 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package agh.aq21gui.adidata.archive;
+package agh.adidata.scripts;
 
 import agh.aq21gui.Aq21Resource;
+import agh.aq21gui.C45Resource;
 import agh.aq21gui.IResource;
 import agh.aq21gui.J48Resource;
 import agh.aq21gui.JRipResource;
-import agh.aq21gui.adidata.ADIExperiment;
-import static agh.aq21gui.adidata.ADIExperiment.*;
+import static agh.adidata.scripts.ADIExperiment.*;
 import agh.aq21gui.services.DiscretizerRanges;
 import agh.aq21gui.stubs.StubFactory;
 import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
  * @author marcin
  */
-public class PropertyCrossRecognition {
+public class PropertyRecognAll {
     
     public static void main(String[] args) {
-        final ADIExperiment adiExperiment = new ADIExperiment("PropertyCrossRecognition_classic");
+        fromAll();
+    }
+
+    public static void fromAll() {
+        final ADIExperiment adiExperiment = new ADIExperiment("Property_recognition_from_all");
         adiExperiment.setInput(StubFactory.loadAdiUpdatedData());
-        LinkedList<Map.Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
+        LinkedList<Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new C45Resource(), "unpruned"));
+        
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         //// Error:
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
+        
         adiExperiment.setAlgList(algSet);
         LinkedList<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
         ranges.add(new DiscretizerRanges(W_ROZ, 820, 970, 1140, 1350, 1550));
@@ -43,13 +51,14 @@ public class PropertyCrossRecognition {
         ranges.add(new DiscretizerRanges(W_ZME, 225, 240, 265, 275));
         ranges.add(new DiscretizerRanges(FRAC, 50, 54, 59, 60, 62));
         adiExperiment.setRanges(ranges);
-		adiExperiment.runAllPossibilities(W_ROZ, null, allElementsAndreceipe());
-        adiExperiment.runAllPossibilities(WYDL, null, allElementsAndreceipe());
-        adiExperiment.runAllPossibilities(PRZEW, null, allElementsAndreceipe());
-        adiExperiment.runAllPossibilities(UDAR, null, allElementsAndreceipe());
-        adiExperiment.runAllPossibilities(G_PLAST, null, allElementsAndreceipe());
-        adiExperiment.runAllPossibilities(W_ZME, null, allElementsAndreceipe());
-        adiExperiment.runAllPossibilities(FRAC, null, allElementsAndreceipe());
-        adiExperiment.runAllPossibilities(HRC, null, allElementsAndreceipe());
+        String caption = "Zale\u017Cno\u015B\u0107 od wszystkich atrybut\u00F3w dla ";
+        adiExperiment.runAllPossibilities(W_ROZ, null, stopOnly(), caption + W_ROZ);
+        adiExperiment.runAllPossibilities(WYDL, null, stopOnly(), caption + WYDL);
+        adiExperiment.runAllPossibilities(PRZEW, null, stopOnly(), caption + PRZEW);
+        adiExperiment.runAllPossibilities(HRC, null, stopOnly(), caption + HRC);
+        adiExperiment.runAllPossibilities(UDAR, null, stopOnly(), caption + UDAR);
+        adiExperiment.runAllPossibilities(G_PLAST, null, stopOnly(), caption + G_PLAST);
+        adiExperiment.runAllPossibilities(W_ZME, null, stopOnly(), caption + W_ZME);
+        adiExperiment.runAllPossibilities(FRAC, null, stopOnly(), caption + FRAC);
     }
 }
