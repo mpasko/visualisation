@@ -34,7 +34,7 @@ public class PropertyRecognUp {
         
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new C45Resource(), "unpruned"));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         
         //// Error:
@@ -60,5 +60,6 @@ public class PropertyRecognUp {
         adiExperiment.runAllPossibilities(G_PLAST, null, allPropertiesWithout(G_PLAST), caption + G_PLAST);
         adiExperiment.runAllPossibilities(W_ZME, null, allPropertiesWithout(W_ZME), caption + W_ZME);
         adiExperiment.runAllPossibilities(FRAC, null, allPropertiesWithout(FRAC), caption + FRAC);
+        adiExperiment.saveKnowledge();
     }
 }

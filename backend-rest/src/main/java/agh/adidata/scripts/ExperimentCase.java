@@ -23,6 +23,7 @@ import agh.aq21gui.utils.Printer;
 import agh.aq21gui.utils.Util;
 import java.util.List;
 import agh.adidata.scripts.testtools.MeasurmentResultFormatter;
+import agh.aq21gui.filters.Rehumaniser;
 
 /**
  *
@@ -35,12 +36,12 @@ public class ExperimentCase {
     String threshold;
     List<String> ignore;
     
-    String name;
+    String algorithmName;
     String description;
     String keyword;
     private MeasurmentResultFormatter statTable;
     private String outputDirectory;
-    private String suiteName;
+    //private String suiteName;
     private List<DiscretizerRanges> discretizerRanges;
     public String knowledge;
 
@@ -49,11 +50,11 @@ public class ExperimentCase {
         this.mode = value;
         this.className = className;
         this.threshold = threshold;
-        this.suiteName = suiteName;
+        //this.suiteName = suiteName;
         this.ignore = ignore;
-        name = String.format("%s-%s", resource.getName().replace("Resource", ""), mode);
-        description = String.format("Experiment, mode=%s%nclass=%s%nignoring=%s", name, className, ignore);
-        keyword = String.format("%s-%s-%s", name, className, suiteName);
+        algorithmName = String.format("%s-%s", resource.getName().replace("Resource", ""), mode);
+        description = String.format("Experiment, mode=%s%nclass=%s%nignoring=%s", algorithmName, className, ignore);
+        keyword = String.format("%s-%s-%s", suiteName, algorithmName, className);
     }
     
     public void runExperiment(Input inputPattern) {
@@ -67,9 +68,12 @@ public class ExperimentCase {
             metricsResource.questionAsFalse = true;
         }
         StatsAgregator metrics = metricsResource.analyze(processed);
+        //here we can maintain results in human readable format:
+        processed = new Rehumaniser().rehumaniseOutput(processed);
         printRegularResults(description, result, processed, metrics);
-        statTable.consumeResults(processed, name, metrics);
-        saveResume(description, processed, input, name, className, keyword);
+        statTable.consumeResults(processed, algorithmName, metrics);
+        
+        saveResume(description, processed, input, algorithmName, className, keyword);
         saveMainKnowledge(keyword, processed);
     }
     
@@ -91,7 +95,7 @@ public class ExperimentCase {
         /* */
         System.out.println("   -RuleAgregator");
         processed = new RuleAgregator().agregate(processed);
-        /* *x/
+        /* /
         System.out.println("   -RuleVerticalAgregator");
         processed = new RuleVerticalAgregator().agregate(processed);
         /* *x/
@@ -100,6 +104,9 @@ public class ExperimentCase {
         /* */
         System.out.println("   -RuleSorter");
         processed = new RuleSorter().sort(processed);
+        /* *x/
+        System.out.println("   -Rehumaniser");
+        processed = new Rehumaniser().rehumaniseOutput(processed);
         /* */
         return processed;
     }
@@ -128,10 +135,11 @@ public class ExperimentCase {
         
         resume.append("\nKey parameters:\n");
         List<String> keyParameters = processed.obtainOutputHypotheses().getKeyParameters();
+        new Rehumaniser().rehumaniseEvents(input.obtainEventsGroup());
         resume.append(Util.formatInputByKeyParams(input, keyParameters));
         
         //System.out.println(resume.toString());
-        String full_name = String.format("%s%s_%s_%s.txt", outputDirectory, suiteName, name, className);
+        String full_name = String.format("%s%s.txt", outputDirectory, keyword);
         Util.saveFile(full_name, resume.toString());
     }
 
@@ -165,9 +173,10 @@ public class ExperimentCase {
         this.outputDirectory = outputDirectory;
     }
 
+    /*
     void setSuiteName(String suiteName) {
         this.suiteName = suiteName;
-    }
+    }*/
 
     void setDiscretizerRanges(List<DiscretizerRanges> ranges) {
         this.discretizerRanges = ranges;

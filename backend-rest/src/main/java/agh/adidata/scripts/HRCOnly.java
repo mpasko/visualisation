@@ -36,7 +36,7 @@ public class HRCOnly {
         //// Error:
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new C45Resource(), "unpruned"));
         adiExperiment.setAlgList(algSet);
         LinkedList<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
@@ -51,5 +51,6 @@ public class HRCOnly {
         adiExperiment.setRanges(ranges);
         adiExperiment.runAllPossibilities(HRC, null, stopOnly(), "Testy dla HRC");
         adiExperiment.runAllPossibilities(HRC, null, allElementsAndreceipe(), "Testy dla HRC");
+        adiExperiment.saveKnowledge();
     }
 }

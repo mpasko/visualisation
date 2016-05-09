@@ -5,6 +5,7 @@
 package agh.aq21gui.filters;
 
 import agh.aq21gui.filters.selectoragregator.ExcludingSelectorsException;
+import agh.aq21gui.model.input.Domain;
 import agh.aq21gui.model.input.Input;
 import agh.aq21gui.model.output.Selector;
 import agh.aq21gui.utils.NumericUtil;
@@ -12,8 +13,11 @@ import agh.aq21gui.utils.Util;
 import agh.aq21gui.utils.chain.Chain;
 import agh.aq21gui.utils.chain.IAgregatorCase;
 import agh.aq21gui.utils.chain.Pair;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -27,61 +31,7 @@ public class SelectorAndAgregator {
     }
     
     public Selector agregateTwoSels(Selector next, Selector actual) {
-        /*
-        char c1 = next.getComparator().charAt(0);
-        char c2 = actual.getComparator().charAt(0);
-        Selector result = new Selector();
-        result.setName(next.getName());
-        double val1 = NumericUtil.tryParse(next.getValue());
-        double val2 = NumericUtil.tryParse(actual.getValue());
-        if (!next.range_begin.isEmpty()){
-            return aggregateRangeWithSel(next, actual);
-        } else if (!actual.range_begin.isEmpty()) {
-            return aggregateRangeWithSel(actual, next);
-        }
-        if (next.comparatorIsNonequality()&&!actual.comparatorIsNonequality()) {
-            
-        } else if (!next.comparatorIsNonequality()&&actual.comparatorIsNonequality()) {
-            
-        }
-        if (c1 == c2) {
-            if (c1 == '<') {
-                if (val1 < val2) {
-                    return next;
-                } else {
-                    return actual;
-                }
-            } else if (c1 == '>') {
-                if (val1 > val2) {
-                    return next;
-                } else {
-                    return actual;
-                }
-            }
-        } else {
-            if (c1 == '<' && c2 == '>') {
-                if (val2 < val1) {
-                    result.setRange_begin(NumericUtil.stringValueOf(val2));
-                    result.setRange_end(NumericUtil.stringValueOf(val1));
-                    result.setComparator("=");
-                } else {
-                    String message = String.format("Excluding selectors:%s and:%s", next.toString(), actual.toString());
-                    throw new RuntimeException(message);
-                }
-            } else if (c1 == '>' && c2 == '<') {
-                if (val1 < val2) {
-                    result.setRange_begin(NumericUtil.stringValueOf(val1));
-                    result.setRange_end(NumericUtil.stringValueOf(val2));
-                    result.setComparator("=");
-                } else {
-                    String message = String.format("Excluding selectors:%s and:%s", next.toString(), actual.toString());
-                    throw new RuntimeException(message);
-                }
-            }
-        }
-        return result;
-        */
-        List<String> stringsOrder = input.findDomainObjectRecursively(next.name).getRange();
+        List<String> stringsOrder = prepareValueList(next);
         Chain<Pair<Selector>, Selector> chain = new Chain<Pair<Selector>, Selector>();
         chain.add(new LessAndGreaterCase(stringsOrder));
         chain.add(new LessOrGreaterSameDirection(stringsOrder));
@@ -90,6 +40,21 @@ public class SelectorAndAgregator {
         chain.add(new EqualityAndInequality());
         chain.add(new TwoSetsCase());
         return chain.agregate(new Pair<Selector>(next, actual));
+    }
+
+    private List<String> prepareValueList(Selector next) {
+        Domain domain = input.findDomainObjectRecursively(next.name);
+        List<String> stringsOrder = domain.getRange();
+        if (domain.isContinuous() || domain.isInteger()) {
+            for (Map<String, Object> event : input.getEvents()) {
+                String value = event.get(next.name).toString();
+                if (NumericUtil.isNumber(value)) {
+                    stringsOrder.add(normalize(value));
+                }
+            }
+            Collections.sort(stringsOrder, new StringNumberComparator());
+        }
+        return stringsOrder;
     }
     
     private static Selector getPrototype(Selector next) {
@@ -202,6 +167,9 @@ public class SelectorAndAgregator {
         @Override
         public Selector agregate(Pair<Selector> item) {
             if (NumericUtil.compareDoubles(item.next.getDoubleValue(string_sequence), item.actual.getDoubleValue(string_sequence))) {
+                if ((item.next.comparator.length()<=1) || (item.actual.comparator.length()<=1)) {
+                    throw new ExcludingSelectorsException(item.next, item.actual);
+                }
                 Selector result = getPrototype(item.next);
                 result.setValue(item.actual.getValue());
                 return result;
@@ -209,11 +177,42 @@ public class SelectorAndAgregator {
             boolean values_match = item.next.getDoubleValue(string_sequence) > item.actual.getDoubleValue(string_sequence);
             if (values_match) {
                 Selector result = getPrototype(item.next);
-                result.setRange_begin(item.actual.getValue());
-                result.setRange_end(item.next.getValue());
+                String rangeStart = item.actual.getValue();
+                String rangeEnd = item.next.getValue();
+                try {
+                if (item.actual.comparator.length()<=1) {
+                    rangeStart = nextValueOf(rangeStart);
+                }
+                if (item.next.comparator.length()<=1) {
+                    rangeEnd = prevValueOf(rangeEnd);
+                }
+                } catch (IndexOutOfBoundsException ex) {
+                    throw new ExcludingSelectorsException(item.next, item.actual);
+                }
+                result.setRange_begin(rangeStart);
+                result.setRange_end(rangeEnd);
                 return result;
             } else {
                 throw new ExcludingSelectorsException(item.next, item.actual);
+            }
+        }
+
+        private String nextValueOf(String rangeStart) {
+            int currentIndex = string_sequence.lastIndexOf(normalize(rangeStart));
+            assertNotMinusOne(currentIndex, rangeStart);
+            return string_sequence.get(currentIndex + 1);
+        }
+
+        private String prevValueOf(String rangeStart) {
+            int currentIndex = string_sequence.indexOf(normalize(rangeStart));
+            assertNotMinusOne(currentIndex, rangeStart);
+            return string_sequence.get(currentIndex - 1);
+        }
+
+        private void assertNotMinusOne(int currentIndex, String rangeStart) throws RuntimeException {
+            if (currentIndex == -1) {
+                String message = String.format("Internal Error!, cannot find %s among: %s", rangeStart, string_sequence);
+                throw new RuntimeException(message);
             }
         }
     }
@@ -234,18 +233,33 @@ public class SelectorAndAgregator {
 
         @Override
         public Selector agregate(Pair<Selector> item) {
+            double nextDouble = item.next.getDoubleValue(string_sequence);
+            double actualDouble = item.actual.getDoubleValue(string_sequence);
+            if (NumericUtil.compareDoubles(nextDouble, actualDouble)){
+                return returnShorterComparator(item);
+            }
             if (item.next.comparator.charAt(0)=='<') {
-                if (item.next.getDoubleValue(string_sequence) < item.actual.getDoubleValue(string_sequence)) {
+                if (nextDouble < actualDouble) {
                     return item.next;
                 } else {
                     return item.actual;
                 }
             } else {
-                if (item.next.getDoubleValue(string_sequence) > item.actual.getDoubleValue(string_sequence)) {
+                if (nextDouble > actualDouble) {
                     return item.next;
                 } else {
                     return item.actual;
                 }
+            }
+        }
+
+        private Selector returnShorterComparator(Pair<Selector> item) {
+            if (item.next.comparator.equalsIgnoreCase(item.actual.comparator)) {
+                return item.next;
+            } else if (item.next.comparator.length() <= 1) {
+                return item.next;
+            } else {
+                return item.actual;
             }
         }
     }
@@ -303,5 +317,24 @@ public class SelectorAndAgregator {
             }
         }
     }
+
+    private static class StringNumberComparator implements Comparator<String> {
+
+        public StringNumberComparator() {
+        }
+
+        @Override
+        public int compare(String t, String t1) {
+            double a = NumericUtil.parseDoubleDefault(t, 0);
+            double b = NumericUtil.parseDoubleDefault(t1, 0);
+            return Double.compare(a, b);
+        }
+    }
     
+    private static String normalize(String value) {
+        if (value.endsWith(".0")) {
+            return value.substring(0, value.length()-2);
+        }
+        return value;
+    }
 }

@@ -34,6 +34,8 @@ public class ADIExperiment {
     public static final String G_PLAST = "granica_plast_mpa";
     public static final String W_ZME = "wytrzym_zmecz_mpa";
     public static final String FRAC = "frac_toughness";
+    
+    public static StringBuilder knowledge;
 
     public static List<String> allPropertiesWithout(String item) {
         List<String> strings = Util.strings(STOP, W_ROZ, WYDL, PRZEW, HRC, UDAR, G_PLAST, W_ZME, FRAC);
@@ -61,6 +63,7 @@ public class ADIExperiment {
 
     public ADIExperiment(String suiteName) {
         this.suiteName = suiteName;
+        this.knowledge = new StringBuilder();
         generateDefaultAlgorithmSet();
     }
 
@@ -88,20 +91,18 @@ public class ADIExperiment {
     public void runAllPossibilities(String className, String threshold, List<String> ignore, String caption) {
         try {
             statTable = new MeasurmentResultFormatter();
-            StringBuilder knowledge = new StringBuilder();
             for (Entry<IResource, String> entry : algSet) {
                 ExperimentCase exp = new ExperimentCase(entry.getKey(), entry.getValue(), className, threshold, ignore, suiteName);
                 exp.setStats(statTable);
                 exp.setOutputDirectory(outputDirectory);
                 exp.setDiscretizerRanges(ranges);
                 exp.runExperiment(inputPattern);
-                knowledge.append(exp.knowledge).append("\n");
+                knowledge.append(exp.knowledge);
+                knowledge.append("\n====================================================\n");
             }
             String table = statTable.formatTextResults();
             System.out.println(table);
             formatAndSaveLatexTable(caption);
-            String full_name = String.format("%s%s_knowledge.txt", outputDirectory, suiteName);
-            Util.saveFile(full_name, knowledge.toString());
         } catch (RuntimeException ex) {
             String message = String.format("%s (%s) caused an exception: %s", suiteName, caption, ex.getMessage());
             System.out.println(message);
@@ -121,5 +122,10 @@ public class ADIExperiment {
         //String temporaryOutput = outputDirectory;
         String latexFile = String.format("%slatex\\%s.tex", temporaryOutput, FormatterUtil.makeFilenameFromText(caption));
         Util.saveFile(latexFile, latex, "UTF-8");
+    }
+
+    public void saveKnowledge() {
+            String full_name = String.format("%s%s_knowledge.txt", outputDirectory, suiteName);
+            Util.saveFile(full_name, knowledge.toString());
     }
 }

@@ -33,10 +33,24 @@ public class RuleAgregatorTest {
     @BeforeClass
     public static void setUpClass() {
         Input input = new Input();
-        input.addDomain("a", "continuous", "");
-        input.addDomain("b", "continuous", "");
-        input.addDomain("c", "continuous", "");
-        input.addDomain("o", "continuous", "");
+        input.addDomain("ad", "continuous", "");
+        input.addDomain("bd", "continuous", "");
+        input.addDomain("cd", "continuous", "");
+        input.addDomain("od", "nominal", "");
+        input.addAttribute("c", "cd", "");
+        input.addAttribute("b", "bd", "");
+        input.addAttribute("a", "ad", "");
+        input.addAttribute("o", "od", "");
+        input.addEvent("260", "1", "17", "none");
+        input.addEvent("261", "2", "16", "none");
+        input.addEvent("360", "3", "1", "none");
+        input.addEvent("359", "20", "2", "none");
+        input.addEvent("329", "19", "1", "cd");
+        input.addEvent("366", "1", "1", "cd");
+        input.addEvent("10", "1", "1", "cd");
+        input.addEvent("9", "1", "1", "cd");
+        input.addEvent("330", "1", "1", "cd");
+        input.addEvent("300", "1", "1", "cd");
         agregator = new SelectorAndAgregator(input);
     }
     
@@ -58,11 +72,11 @@ public class RuleAgregatorTest {
         assertEquals(3, result.size());
         for (Selector sel : result) {
             if (sel.name.equalsIgnoreCase("a")) {
-                assertEquals("1", sel.getRange_begin().replaceAll("\\.", ""));
-                assertEquals("17", sel.getRange_end().replaceAll("\\.", ""));
-            } else if (sel.name.equalsIgnoreCase("b")) {
                 assertEquals("2", sel.getRange_begin().replaceAll("\\.", ""));
-                assertEquals("20", sel.getRange_end().replaceAll("\\.", ""));
+                assertEquals("16", sel.getRange_end().replaceAll("\\.", ""));
+            } else if (sel.name.equalsIgnoreCase("b")) {
+                assertEquals("3", sel.getRange_begin().replaceAll("\\.", ""));
+                assertEquals("19", sel.getRange_end().replaceAll("\\.", ""));
             } else if (sel.name.equalsIgnoreCase("c")) {
                 assertEquals("10", sel.getValue().replaceAll("\\.", ""));
             } else {
@@ -77,8 +91,8 @@ public class RuleAgregatorTest {
         Selector next = Selector.parse("[a>1]");
         Selector actual = Selector.parse("[a<17]");
         Selector result = agregator.agregateTwoSels(next, actual);
-        assertEquals("1", result.getRange_begin().replaceAll("\\.", ""));
-        assertEquals("17", result.getRange_end().replaceAll("\\.", ""));
+        assertEquals("2", result.getRange_begin().replaceAll("\\.", ""));
+        assertEquals("16", result.getRange_end().replaceAll("\\.", ""));
     }
 
     /**
@@ -98,7 +112,7 @@ public class RuleAgregatorTest {
             assertEquals(2, result.size());
             for (Selector sel : result) {
                 if (sel.name.equals("c")){
-                    assertEquals("260", sel.range_begin.replaceAll("\\.0", ""));
+                    assertEquals("261", sel.range_begin.replaceAll("\\.0", ""));
                     assertEquals("329", sel.range_end.replaceAll("\\.0", ""));
                     assertEquals("=", sel.comparator);
                 } else {
@@ -128,6 +142,29 @@ public class RuleAgregatorTest {
             assertEquals("=", sel.comparator);
             
             verifySelector(sel, "[c=300..329]");
+        } catch (RecognitionException ex) {
+            fail(ex.getMessage());
+        }
+    }
+    
+    //[wygrz_izoterm_temp_c<=330.0][wygrz_izoterm_temp_c<=366.0][wygrz_izoterm_temp_c>300.0]
+    @Test
+    public void bizarre_bug_reproduction(){
+        try {
+            System.out.println("builds_range_and_compares_with_another");
+            Selector c1 = Selector.parse("[c<=330.0]");
+            Selector c2 = Selector.parse("[c<=366.0]");
+            Selector c4 = Selector.parse("[c>300.0]");
+            List<Selector> selectors = Arrays.asList(c1,c2,c4);
+            RuleAgregator instance = new RuleAgregator();
+            List<Selector> result = instance.agregateSelectors(selectors, agregator);
+            assertEquals(1, result.size());
+            Selector sel = result.get(0);
+            assertEquals("329", sel.range_begin.replaceAll("\\.0", ""));
+            assertEquals("330", sel.range_end.replaceAll("\\.0", ""));
+            assertEquals("=", sel.comparator);
+            
+            verifySelector(sel, "[c=329..330]");
         } catch (RecognitionException ex) {
             fail(ex.getMessage());
         }

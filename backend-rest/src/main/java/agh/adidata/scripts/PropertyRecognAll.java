@@ -34,7 +34,7 @@ public class PropertyRecognAll {
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new C45Resource(), "unpruned"));
         
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
+        //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         //// Error:
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
@@ -60,5 +60,6 @@ public class PropertyRecognAll {
         adiExperiment.runAllPossibilities(G_PLAST, null, stopOnly(), caption + G_PLAST);
         adiExperiment.runAllPossibilities(W_ZME, null, stopOnly(), caption + W_ZME);
         adiExperiment.runAllPossibilities(FRAC, null, stopOnly(), caption + FRAC);
+        adiExperiment.saveKnowledge();
     }
 }

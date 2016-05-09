@@ -42,21 +42,53 @@ public class SelectorAndAgregatorTest {
     }
     
     @Test
+    public void testAgregateTwoSelsLess() {
+        System.out.println("testAgregateTwoSelsLess...");
+        Input in = new Input();
+        in.addEvent("260");
+        in.addEvent("261");
+        in.addEvent("360");
+        in.addEvent("359");
+        in.addAttribute("c", "continuous", "");
+        testTwoSelectorsAndExpectOther(in, "[c>260]", "[c<360]", "[c=261..359]");
+        testTwoSelectorsAndExpectExclusion(in, "[c<260]", "[c>260]");
+    }
+    
+    @Test
     public void testAgregateTwoSelsLessEqual() {
-        System.out.println("testAgregateTwoSelsEqualityNonequality...");
+        System.out.println("testAgregateTwoSelsLessEqual...");
         Input in = new Input();
         in.addDomain("c", "continuous", "");
-        testTwoSelectorsAndExpectOther(in, "[c>260]", "[c<=360]", "[c=260..360]");
-        testTwoSelectorsAndExpectExclusion(in, "[c<=260]", "[c>360]");
+        testTwoSelectorsAndExpectOther(in, "[c>=260]", "[c<=360]", "[c=260..360]");
+        testTwoSelectorsAndExpectOther(in, "[c>=260]", "[c<=260]", "[c=260]");
+        testTwoSelectorsAndExpectExclusion(in, "[c<=260]", "[c>=360]");
+    }
+    
+    @Test
+    public void testAgregateTwoSelsLessSameDirection() {
+        System.out.println("testAgregateTwoSelsLessSameDirection...");
+        Input in = new Input();
+        in.addDomain("c", "continuous", "");
+        testTwoSelectorsAndExpectOther(in, "[c>260]", "[c>360]", "[c>360]");
+        testTwoSelectorsAndExpectOther(in, "[c<260]", "[c<360]", "[c<260]");
     }
     
     @Test
     public void testAgregateTwoSelsLessEqualSameDirection() {
-        System.out.println("testAgregateTwoSelsEqualityNonequality...");
+        System.out.println("testAgregateTwoSelsLessEqualSameDirection...");
         Input in = new Input();
         in.addDomain("c", "continuous", "");
-        testTwoSelectorsAndExpectOther(in, "[c>260]", "[c>=360]", "[c>=360]");
-        testTwoSelectorsAndExpectOther(in, "[c<260]", "[c<=360]", "[c<260]");
+        testTwoSelectorsAndExpectOther(in, "[c>=260]", "[c>=360]", "[c>=360]");
+        testTwoSelectorsAndExpectOther(in, "[c<=260]", "[c<=360]", "[c<=260]");
+    }
+    
+    @Test
+    public void testAgregateTwoSelsMixedSameDirection() {
+        System.out.println("testAgregateTwoSelsMixedSameDirection...");
+        Input in = new Input();
+        in.addDomain("c", "continuous", "");
+        testTwoSelectorsAndExpectOther(in, "[c>=260]", "[c>260]", "[c>260]");
+        testTwoSelectorsAndExpectOther(in, "[c<=260]", "[c<260]", "[c<260]");
     }
     
     @Test
@@ -79,13 +111,35 @@ public class SelectorAndAgregatorTest {
     
     
     @Test
+    public void testAgregateTwoSelsLessForLinear() {
+        System.out.println("testAgregateTwoSelsLessForLinear...");
+        Input in = new Input();
+        in.addAttribute("x", "x_domain", "");
+        in.addDomain("x_domain", "linear", "a, b, c, d, e");
+        testTwoSelectorsAndExpectOther(in, "[x>a]", "[x<e]", "[x=b..d]");
+        testTwoSelectorsAndExpectExclusion(in, "[x<=a]", "[x>b]");
+        testTwoSelectorsAndExpectExclusion(in, "[x<a]", "[x>b]");
+        testTwoSelectorsAndExpectExclusion(in, "[x<a]", "[x>=b]");
+    }
+    
+    @Test
     public void testAgregateTwoSelsLessEqualForLinear() {
         System.out.println("testAgregateTwoSelsLessEqualForLinear...");
         Input in = new Input();
+        in.addAttribute("x", "x_domain", "");
+        in.addDomain("x_domain", "linear", "a, b, c");
+        testTwoSelectorsAndExpectOther(in, "[x>=a]", "[x<=b]", "[x=a..b]");
+        testTwoSelectorsAndExpectExclusion(in, "[x<=a]", "[x>=b]");
+    }
+    
+    @Test
+    public void testAgregateTwoSelsLessSameDirectionForLinear() {
+        System.out.println("testAgregateTwoSelsLessSameDirectionForLinear...");
+        Input in = new Input();
         in.addAttribute("c", "c_domain", "");
         in.addDomain("c_domain", "linear", "a, b");
-        testTwoSelectorsAndExpectOther(in, "[c>a]", "[c<=b]", "[c=a..b]");
-        testTwoSelectorsAndExpectExclusion(in, "[c<=a]", "[c>b]");
+        testTwoSelectorsAndExpectOther(in, "[c>a]", "[c>b]", "[c>b]");
+        testTwoSelectorsAndExpectOther(in, "[c<a]", "[c<b]", "[c<a]");
     }
     
     @Test
@@ -94,6 +148,18 @@ public class SelectorAndAgregatorTest {
         Input in = new Input();
         in.addAttribute("c", "c_domain", "");
         in.addDomain("c_domain", "linear", "a, b");
+        testTwoSelectorsAndExpectOther(in, "[c>=a]", "[c>=b]", "[c>=b]");
+        testTwoSelectorsAndExpectOther(in, "[c<=a]", "[c<=b]", "[c<=a]");
+    }
+    
+    @Test
+    public void testAgregateTwoSelsMixedSameDirectionForLinear() {
+        System.out.println("testAgregateTwoSelsMixedSameDirectionForLinear...");
+        Input in = new Input();
+        in.addAttribute("c", "c_domain", "");
+        in.addDomain("c_domain", "linear", "a, b");
+        testTwoSelectorsAndExpectOther(in, "[c>=a]", "[c>b]", "[c>b]");
+        testTwoSelectorsAndExpectOther(in, "[c<=a]", "[c<b]", "[c<=a]");
         testTwoSelectorsAndExpectOther(in, "[c>a]", "[c>=b]", "[c>=b]");
         testTwoSelectorsAndExpectOther(in, "[c<a]", "[c<=b]", "[c<a]");
     }

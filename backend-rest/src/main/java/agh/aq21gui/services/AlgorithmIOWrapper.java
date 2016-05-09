@@ -6,6 +6,7 @@ package agh.aq21gui.services;
 
 import agh.aq21gui.filters.AttributeRemover;
 import agh.aq21gui.filters.ContinuousClassFilter;
+import agh.aq21gui.filters.Rehumaniser;
 import agh.aq21gui.filters.RuleAgregator;
 import agh.aq21gui.filters.RulePrunner;
 import agh.aq21gui.filters.RuleSorter;
@@ -36,6 +37,7 @@ public class AlgorithmIOWrapper {
     private boolean sort = false;
     private List<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
     private String algorithmname;
+    private boolean rehumanise = false;
 
     public AlgorithmIOWrapper(String algorithm) {
         this.algorithmname = algorithm.toLowerCase(Locale.US);
@@ -59,6 +61,9 @@ public class AlgorithmIOWrapper {
             processed = new RuleSorter().sort(processed);
         }
         /* */
+        if (rehumanise) {
+            processed = new Rehumaniser().rehumaniseOutput(processed);
+        }
         return processed;
     }
 
@@ -88,6 +93,7 @@ public class AlgorithmIOWrapper {
             run.addParameter("general.vertical_aggregate", "false");
             run.addParameter("general.post_prune", "false");
             run.addParameter("general.sort", "false");
+            run.addParameter("general.rehumanise", "false");
             run.addParameter("general.ignore_attributes", "[ignore=]");
             run.addParameter("general.discretize_ranges", "[]");
         }
@@ -105,6 +111,7 @@ public class AlgorithmIOWrapper {
                         || param.name.equalsIgnoreCase("vertical_aggregate")
                         || param.name.equalsIgnoreCase("post_prune")
                         || param.name.equalsIgnoreCase("sort")
+                        || param.name.equalsIgnoreCase("rehumanise")
                         || param.name.equalsIgnoreCase("ignore_attributes")
                         || param.name.equalsIgnoreCase("discretize_ranges")) {
                     parameters.remove(param);
@@ -131,6 +138,8 @@ public class AlgorithmIOWrapper {
                 post_prune = param.isTrue();
             } else if (param.name.equalsIgnoreCase("sort")) {
                 sort = param.isTrue();
+            } else if (param.name.equalsIgnoreCase("rehumanise")) {
+                rehumanise = param.isTrue();
             } else if (param.name.equalsIgnoreCase("ignore_attributes")) {
                 ignore_attributes = new LinkedList<String>();
                 for (ClassDescriptor desc : param.getDescriptors()) {

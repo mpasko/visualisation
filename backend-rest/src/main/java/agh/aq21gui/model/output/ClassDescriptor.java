@@ -75,6 +75,10 @@ public class ClassDescriptor extends NameValueEntity {
             this.value = val;
             if (val.contains(",")) {
                 String trimmed = val.replaceAll(" ", "");
+                if (trimmed.contains("..")) {
+                    this.range_begin = trimmed.split("..")[0];
+                    this.range_end = trimmed.split("..")[1];
+                }
                 if (trimmed.contains("{")) {
                     this.range_begin = trimmed.split(",")[0];
                     this.range_end = trimmed.split(",")[1];
