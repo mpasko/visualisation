@@ -19,12 +19,6 @@ import java.util.logging.Logger;
  * @author marcin
  */
 public class EnumeratedNamesEvent implements EventAdapter{
-	
-	private static Long enumerator;
-	
-	static{
-		enumerator = new Long(0);
-	}
 
 	@Override
 	public List<Event> loadEvents(List<Map<String, Object>> events, AttributesGroup attrs) {
@@ -58,8 +52,7 @@ public class EnumeratedNamesEvent implements EventAdapter{
 	
 	TreeMap<String, Object> formatEvent(AttributesGroup attributesGroup, List<String> values, int digits) {
 		TreeMap<String, Object> workingMap = new TreeMap<String, Object>();
-		workingMap.put("id", enumerator);
-		enumerator++;
+		workingMap.put("id", Generator.getNextObject());
 		int counter = 1;
 		for (String value:values){
 			workingMap.put(generateAttrName(counter, digits), value);

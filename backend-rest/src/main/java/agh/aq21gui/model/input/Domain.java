@@ -5,6 +5,7 @@
 package agh.aq21gui.model.input;
 
 import agh.aq21gui.aq21grammar.TParser;
+import agh.aq21gui.model.input.events.Generator;
 import agh.aq21gui.utils.TreeNode;
 import agh.aq21gui.utils.Util;
 import java.util.LinkedList;
@@ -21,8 +22,6 @@ import org.codehaus.jackson.annotate.JsonProperty;
  */
 @XmlRootElement
 public class Domain extends NameValueEntity{
-	
-	private static long generator = 0;
 	
 	private String domain="";
 	private String parameters="";
@@ -72,8 +71,7 @@ public class Domain extends NameValueEntity{
 	}
 	
 	public Domain(){
-		this.id = generator;
-		generator++;
+		this.id = Generator.getNext("domain");
 	}
 	
 	private boolean estimate_brace(){

@@ -24,11 +24,12 @@ import java.util.Map.Entry;
 public class PropertyRecognAll {
     
     public static void main(String[] args) {
-        fromAll();
+        fromAll(false);
     }
 
-    public static void fromAll() {
+    public static void fromAll(boolean humanize) {
         final ADIExperiment adiExperiment = new ADIExperiment("Property_recognition_from_all");
+        adiExperiment.setHumanize(humanize);
         adiExperiment.setInput(StubFactory.loadAdiUpdatedData());
         LinkedList<Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));

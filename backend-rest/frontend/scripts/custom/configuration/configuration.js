@@ -17,7 +17,8 @@ function(Memory, ObjectStore, registry, ContentPane, TextBox, editor, grid, topi
         objectStore: new Memory({
             data: [
                 {id: "empty", label: "Please choose an algorithm..."}, 
-                {id: "aq21", label: "AQ21 (Windows binary)"}, 
+                {id: "aq21", label: "AQ21 (binary)"}, 
+                {id: "c45", label: "C45 (binary)"}, 
                 {id: "j48", label: "J48 (from Weka)" }, 
                 {id: "jripp", label: "JRipper (from Weka)" }
             ]})

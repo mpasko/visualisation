@@ -44,7 +44,7 @@ public class SelectorAndAgregator {
 
     private List<String> prepareValueList(Selector next) {
         Domain domain = input.findDomainObjectRecursively(next.name);
-        List<String> stringsOrder = domain.getRange();
+        List<String> stringsOrder = new LinkedList<String>(domain.getRange());
         if (domain.isContinuous() || domain.isInteger()) {
             for (Map<String, Object> event : input.getEvents()) {
                 String value = event.get(next.name).toString();

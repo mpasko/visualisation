@@ -60,6 +60,7 @@ public class ADIExperiment {
     private MeasurmentResultFormatter statTable;
     private final String suiteName;
     public static final String outputDirectory = "E:\\misc\\temporary_experiments\\";
+    private boolean humanize = false;
 
     public ADIExperiment(String suiteName) {
         this.suiteName = suiteName;
@@ -93,6 +94,7 @@ public class ADIExperiment {
             statTable = new MeasurmentResultFormatter();
             for (Entry<IResource, String> entry : algSet) {
                 ExperimentCase exp = new ExperimentCase(entry.getKey(), entry.getValue(), className, threshold, ignore, suiteName);
+                exp.setHumanize(this.humanize);
                 exp.setStats(statTable);
                 exp.setOutputDirectory(outputDirectory);
                 exp.setDiscretizerRanges(ranges);
@@ -100,13 +102,13 @@ public class ADIExperiment {
                 knowledge.append(exp.knowledge);
                 knowledge.append("\n====================================================\n");
             }
-            String table = statTable.formatTextResults();
-            System.out.println(table);
-            formatAndSaveLatexTable(caption);
         } catch (RuntimeException ex) {
             String message = String.format("%s (%s) caused an exception: %s", suiteName, caption, ex.getMessage());
             System.out.println(message);
         }
+        String table = statTable.formatTextResults();
+        System.out.println(table);
+        formatAndSaveLatexTable(caption);
     }
 
     /**
@@ -127,5 +129,9 @@ public class ADIExperiment {
     public void saveKnowledge() {
             String full_name = String.format("%s%s_knowledge.txt", outputDirectory, suiteName);
             Util.saveFile(full_name, knowledge.toString());
+    }
+
+    void setHumanize(boolean humanize) {
+        this.humanize=humanize;
     }
 }

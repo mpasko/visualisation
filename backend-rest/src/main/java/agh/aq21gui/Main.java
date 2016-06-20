@@ -1,5 +1,6 @@
 package agh.aq21gui;
 
+import agh.adidata.scripts.AllRunner;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.stubs.StubFactory;
 import agh.aq21gui.utils.Util;
@@ -19,6 +20,9 @@ public class Main {
         options.addOption("A", "ac-sample", false, "Ac sample output");
         options.addOption("B", "baloons-sample", false, "Baloons sample output");
         options.addOption("S", "simple-sample", false, "Simple sample output");
+        
+        options.addOption("T", "all-tests", false, "Run all test scripts");
+        options.addOption("H", "humanize", false, "Convert rules back to human readable format");
         CommandLine cmd = parser.parse(options, args);
         if (cmd.hasOption("iris-sample")) {
             printAsJsonString(StubFactory.getIrisOutput());
@@ -31,6 +35,9 @@ public class Main {
             return;
         } else if (cmd.hasOption("simple-sample")) {
             printAsJsonString(StubFactory.getSimpleData());
+            return;
+        } else if (cmd.hasOption("all-tests")) {
+            AllRunner.runAll(cmd.hasOption("humanize"));
             return;
         }
 		try {

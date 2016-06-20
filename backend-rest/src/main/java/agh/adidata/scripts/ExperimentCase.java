@@ -44,6 +44,7 @@ public class ExperimentCase {
     //private String suiteName;
     private List<DiscretizerRanges> discretizerRanges;
     public String knowledge;
+    private boolean humanize = false;
 
     public ExperimentCase(IResource key, String value, String className, String threshold, List<String> ignore, String suiteName) {
         this.resource = key;
@@ -95,18 +96,21 @@ public class ExperimentCase {
         /* */
         System.out.println("   -RuleAgregator");
         processed = new RuleAgregator().agregate(processed);
-        /* /
+        /* */
         System.out.println("   -RuleVerticalAgregator");
         processed = new RuleVerticalAgregator().agregate(processed);
-        /* *x/
+        /* */
         //processed = new RulePrunner().doAll(processed);
+        System.out.println("   -RulePrunner Step 1");
         processed = new RulePrunner().prune(processed);
         /* */
         System.out.println("   -RuleSorter");
         processed = new RuleSorter().sort(processed);
-        /* *x/
-        System.out.println("   -Rehumaniser");
-        processed = new Rehumaniser().rehumaniseOutput(processed);
+        /* */
+        if (this.humanize) {
+            System.out.println("   -Rehumaniser");
+            processed = new Rehumaniser().rehumaniseOutput(processed);
+        }
         /* */
         return processed;
     }
@@ -180,5 +184,9 @@ public class ExperimentCase {
 
     void setDiscretizerRanges(List<DiscretizerRanges> ranges) {
         this.discretizerRanges = ranges;
+    }
+
+    void setHumanize(boolean humanize) {
+        this.humanize = humanize;
     }
 }

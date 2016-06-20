@@ -80,7 +80,7 @@ define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "
         style: "height : 100%;"
       }, "events");
       eventsGrid = new grid.paginated({
-        store: internal.stores.events,
+        store: internal.stores.simplifiedEvents,
         columns: (function() {
           var _i, _len, _results;
           _results = [];

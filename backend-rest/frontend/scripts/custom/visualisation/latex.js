@@ -15,7 +15,6 @@ define(["dojo/dom", "dijit/registry"], function(dom, registry) {
       var index, output;
       var name = selector.name.replace(/_/g, "\\ ");
       var value = selector.value.replace(/_/g, "\\ ");
-      console.log(name);
       
       if (!this.isEmpty(selector.range_begin) && !this.isEmpty(selector.range_end)) {
         return ["(", name, "\\in\\langle", selector.range_begin, ",\\ ", selector.range_end, "\\rangle", ")"].join(" ");

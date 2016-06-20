@@ -4,13 +4,29 @@ define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "d
     stores: {
       attr: new Memory(),
       domains: new Memory(),
-      events: new Memory()
+      events: new Memory(),
+      simplifiedEvents: new Memory()
     },
     visualisations: [datagrid, scatterPlot]
   };
+  prepareEvents = function (events, attributes) {
+    prepared=[];
+    for (item = 0; item < events.length; item++) {
+        event=events[item];
+        preparedEvent={};
+        attrNumber = 1;
+        preparedEvent["id"] = event.id;
+        for (attrIndex = 0; attrIndex < attributes.length; attrIndex++) {
+            attribute=attributes[attrIndex];
+            value = event[attribute.name];
+            preparedEvent["attribute"+attrNumber++] = value;
+        };
+        prepared.push(preparedEvent);
+    };
+    return prepared;
+  };
   module = {
     update: function(input) {
-      console.log(input);
       var attribute, item, _i, _j, _len, _len1, _ref, _ref1;
       _ref = input.attributes;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -19,6 +35,7 @@ define(["dojo/store/Memory", "dijit/registry", "custom/grid", "dgrid/editor", "d
       }
       internal.stores.attr.setData(input.attributes);
       internal.stores.domains.setData(input.domains);
+      internal.stores.simplifiedEvents.setData(prepareEvents(input.events, input.attributes));
       internal.stores.events.setData(input.events);
       _ref1 = internal.visualisations;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {

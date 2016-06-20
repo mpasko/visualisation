@@ -22,12 +22,6 @@ import java.util.logging.Logger;
  */
 public class NameValueEvent implements EventAdapter {
 
-    private static Long enumerator;
-
-    static {
-        enumerator = new Long(0);
-    }
-
     @Override
     public List<Event> loadEvents(List<Map<String, Object>> events, AttributesGroup attrs) {
         LinkedList<Event> product = new LinkedList<Event>();
@@ -53,8 +47,7 @@ public class NameValueEvent implements EventAdapter {
 
     TreeMap<String, Object> formatEvent(AttributesGroup attributesGroup, List<String> values) {
         TreeMap<String, Object> workingMap = new TreeMap<String, Object>();
-        workingMap.put("id", enumerator);
-        enumerator++;
+        workingMap.put("id", Generator.getNext("event"));
         Iterator<Attribute> attrIterator = attributesGroup.attributes.iterator();
         try {
             for (String value : values) {

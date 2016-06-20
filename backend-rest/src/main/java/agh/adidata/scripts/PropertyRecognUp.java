@@ -24,11 +24,12 @@ import java.util.Map.Entry;
 public class PropertyRecognUp {
     
     public static void main(String[] args) {
-        fromReceipe();
+        fromReceipe(false);
     }
 
-    public static void fromReceipe() {
+    public static void fromReceipe(boolean humanize) {
         final ADIExperiment adiExperiment = new ADIExperiment("Property_recognition_from_ingredients_and_forgery");
+        adiExperiment.setHumanize(humanize);
         adiExperiment.setInput(StubFactory.loadAdiUpdatedData());
         LinkedList<Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
         

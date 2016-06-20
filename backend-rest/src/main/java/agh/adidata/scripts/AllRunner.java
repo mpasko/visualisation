@@ -10,8 +10,12 @@ package agh.adidata.scripts;
  */
 public class AllRunner {
     public static void main(String[] args) {
-        HRCOnly.hrcOnly();
-        PropertyRecognAll.fromAll();
-        PropertyRecognUp.fromReceipe();
+        runAll(false);
+    }
+
+    public static void runAll(boolean humanize) {
+        //HRCOnly.hrcOnly(humanize);
+        PropertyRecognAll.fromAll(humanize);
+        PropertyRecognUp.fromReceipe(humanize);
     }
 }

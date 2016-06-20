@@ -101,6 +101,9 @@ public class Aq21Resource implements IResource{
 	})
     @Override
     public RunsGroup generateConfig(Input in) {
+        if (in.getAttributes().isEmpty() || in.obtainEventsGroup().events.isEmpty()) {
+            throw new RuntimeException("Unable to create configuration for empty input!");
+        }
         List<Test> runs = new Aq21ArchetypeConfig().createConfig(in);
         RunsGroup group = new RunsGroup();
         group.setRuns(runs);

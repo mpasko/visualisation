@@ -10,6 +10,7 @@ import agh.aq21gui.model.output.Hypothesis;
 import agh.aq21gui.model.output.Output;
 import agh.aq21gui.utils.FormatterUtil;
 import agh.aq21gui.utils.Util;
+import java.text.DecimalFormat;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -73,6 +74,13 @@ public class MeasurmentResultFormatter {
                 build.append(stat.getFalsePositive());
                 build.append(" & ");
                 build.append(stat.getFalseNegative());
+                build.append(" & ");
+                double f1 = stat.getF1Score();
+                String f1text = new DecimalFormat("0.0000").format(f1);
+                if (Double.isNaN(f1)) {
+                    f1text = "-";
+                }
+                build.append(f1text);
                 build.append(" & ");
                 build.append(stat.getComplexity());
                 build.append("\\\\\n\\hline\n");

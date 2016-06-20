@@ -11,7 +11,7 @@ define(["dijit/registry", "dojo/dom-construct", "custom/grid", "dgrid/editor", "
       traits = utils.getNumericAttributes(this.stores.attr, this.stores.domains);
       n = traits.length;
       internal.categories.setData(utils.getCategories(this.stores.attr, this.stores.domains));
-      data = this.stores.events.query({});
+      data = this.stores.simplifiedEvents.query({});
       mapping_discrete = utils.getUserToData(this.stores.attr, this.stores.domains, ["integer", "linear", "nominal"]);
       mapping_numeric = utils.getDataToUser(this.stores.attr, this.stores.domains, ["integer", "continuous"]);
       domainsByTrait = utils.getDomains(this.stores.attr, this.stores.domains);
