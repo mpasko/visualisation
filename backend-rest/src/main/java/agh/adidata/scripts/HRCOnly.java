@@ -32,11 +32,15 @@ public class HRCOnly {
         adiExperiment.setInput(StubFactory.loadAdiUpdatedData());
         LinkedList<Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "unpruned"));
+        /*
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "pd"));
         //// Error:
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "atf"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new Aq21Resource(), "tf"));
+        */
         //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new C45Resource(), "prune"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new C45Resource(), "unpruned"));
         adiExperiment.setAlgList(algSet);
         LinkedList<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
@@ -49,8 +53,8 @@ public class HRCOnly {
         ranges.add(new DiscretizerRanges(W_ZME, 225, 240, 265, 275));
         ranges.add(new DiscretizerRanges(FRAC, 50, 54, 59, 60, 62));
         adiExperiment.setRanges(ranges);
-        adiExperiment.runAllPossibilities(HRC, null, stopOnly(), "Testy dla HRC");
-        adiExperiment.runAllPossibilities(HRC, null, allElementsAndreceipe(), "Testy dla HRC");
+        //adiExperiment.runAllPossibilities(HRC, null, stopOnly(), "Testy dla HRC");
+        adiExperiment.runAllPossibilities(HRC, null, allElementsAndreceipe(), "Testy HRC w zale¿noœci od sk³adu i otrzymywania (tylko J48 i C4.5)");
         adiExperiment.saveKnowledge();
     }
 }

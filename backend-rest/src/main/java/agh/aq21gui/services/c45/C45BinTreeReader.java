@@ -160,9 +160,11 @@ public class C45BinTreeReader {
             branch.setFrom(parrentName);
             branch.setTo(childName);
             branch.setComparator("="); 
+            debugPrintOutOfBounds("Case1", parrent.tested, experiment.getAttributes());
             //Attribute attr = experiment.getAttributes().get(child.tested);
             Attribute attr = experiment.getAttributes().get(parrent.tested);
             Domain dom = experiment.findDomainObjectRecursively(attr.name);
+            debugPrintOutOfBounds("Case2", childNum, dom.getRange());
             String value = dom.getRange().get(childNum);
             branch.setValue(value);
             result.addBranch(branch);
@@ -174,14 +176,23 @@ public class C45BinTreeReader {
     private void addNode(C45Tree child, String childName, J48Tree result) {
         Node node = new Node();
         if (child.branch.isEmpty()) {
+            debugPrintOutOfBounds("Case3", child.leaf, this.classRange);
             String classVal = this.classRange.get(child.leaf);
             node.setAttribute(classVal);
         } else {
+            debugPrintOutOfBounds("Case4", child.tested, experiment.getAttributes());
             Attribute attr = experiment.getAttributes().get(child.tested);
             node.setAttribute(attr.name);
         }
         node.setName(childName);
         result.addNode(node);
+    }
+
+    private void debugPrintOutOfBounds(String name, int weGet, List someList) {
+        //System.out.println(name+": "+weGet+" of "+someList.size());
+        if (someList.size()-1 < weGet) {
+            new RuntimeException("Out of bounds").printStackTrace();
+        }
     }
 
     public class C45Tree {

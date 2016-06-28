@@ -86,10 +86,11 @@ public class MeasurmentResultFormatter {
                 build.append("\\\\\n\\hline\n");
             }
         }
-        build.append("\\end{tabular}\n}\n");
-        build.append(String.format("\\caption{\\texttt{%s}}", caption).replaceAll("_", "\\\\_"));
+        build.append(String.format("\\caption{\\texttt{%s}}", caption).replaceAll("_", "\\\\_")); 
         build.append("\n");
-        build.append("\\end{table}\n");
+        build.append("\\end{longtable}\n");
+        //build.append("}\n");
+        //build.append("\\end{table}\n");
         return build.toString();
     }
 

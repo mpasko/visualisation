@@ -60,6 +60,10 @@ public class TestsGroup implements IAQ21Serializable {
 		p.value = value;
 		globalLearningParameters.parameters.add(p);
 	}
+    
+    public Parameter findParam(String name) {
+        return globalLearningParameters.findParam(name);
+    }
 
 	@XmlElement(name = "globalLearningParameters")
 	public void setGlobalLearningParameters(List<Parameter> parameters) {

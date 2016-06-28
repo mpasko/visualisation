@@ -130,13 +130,7 @@ public class Test implements IAQ21Serializable {
     }
     
     public Parameter findParam(String name) {
-        Parameter found = null;
-        for (Parameter param : this.runSpecificParameters.parameters) {
-            if (param.name.equalsIgnoreCase(name)) {
-                found = param;
-            }
-        }
-        return found;
+        return runSpecificParameters.findParam(name);
     }
     
     public String grepClassName() {

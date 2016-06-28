@@ -54,7 +54,7 @@ public class C45ArchetypeConfig extends IArchetypeConfig{
     }
 
     public void addC45SpecificParameters(Test r, String condition) {
-//        r.addParameter("prune", "false");
+        r.addParameter("prune", "false");
 //        r.addParameter("collapse", "false");
 //        r.addParameter("minimum_instances", "2");
     }

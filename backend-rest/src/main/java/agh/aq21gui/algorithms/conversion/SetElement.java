@@ -5,11 +5,11 @@
 package agh.aq21gui.algorithms.conversion;
 
 import agh.aq21gui.model.output.Selector;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import sun.misc.Compare;
-import sun.misc.Sort;
 
 /**
  *
@@ -20,7 +20,9 @@ class SetElement extends RangeElement {
 
 	public SetElement(List<String> set_elements) {
 		String [] array = new ArrayList<String>(set_elements).toArray(new String[set_elements.size()]);
-		Sort.quicksort(array, new Compare() {
+        Arrays.sort(array, new CaseInsensitiveComparator());
+		/*
+        Sort.quicksort(array, new Compare() {
 
 			@Override
 			public int doCompare(Object o, Object o1) {
@@ -29,6 +31,7 @@ class SetElement extends RangeElement {
 				return a.compareToIgnoreCase(b);
 			}
 		});
+        */
 		elems = Arrays.asList(array);
 	}
 
@@ -73,5 +76,16 @@ class SetElement extends RangeElement {
 		}
 		return 0;
 	}
+
+    private static class CaseInsensitiveComparator implements Comparator<String>, Serializable {
+
+        public CaseInsensitiveComparator() {
+        }
+
+        @Override
+        public int compare(String t, String t1) {
+            return t.compareToIgnoreCase(t1);
+        }
+    }
 	
 }

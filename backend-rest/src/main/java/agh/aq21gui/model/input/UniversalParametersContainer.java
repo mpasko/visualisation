@@ -64,4 +64,14 @@ public class UniversalParametersContainer implements IAQ21Serializable {
 			p.traverse();
 		}
 	}
+
+    public Parameter findParam(String name) {
+        Parameter found = null;
+        for (Parameter param : parameters) {
+            if (param.name.equalsIgnoreCase(name)) {
+                found = param;
+            }
+        }
+        return found;
+    }
 }

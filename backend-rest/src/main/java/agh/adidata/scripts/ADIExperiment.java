@@ -59,7 +59,7 @@ public class ADIExperiment {
     private List<DiscretizerRanges> ranges = new LinkedList<DiscretizerRanges>();
     private MeasurmentResultFormatter statTable;
     private final String suiteName;
-    public static final String outputDirectory = "E:\\misc\\temporary_experiments\\";
+    public static final String outputDirectory = ScriptsConfiguration.getParam("results_path");
     private boolean humanize = false;
 
     public ADIExperiment(String suiteName) {
@@ -120,7 +120,7 @@ public class ADIExperiment {
 
     public void formatAndSaveLatexTable(String caption) {
         String latex = statTable.formatLatexResults(caption);
-        String temporaryOutput = "D:\\Repo\\Studia\\Project\\magisterka_uporz¹dkowana\\redakcja2\\tresc\\tabele\\";
+        String temporaryOutput = ScriptsConfiguration.getParam("latex_tables");
         //String temporaryOutput = outputDirectory;
         String latexFile = String.format("%slatex\\%s.tex", temporaryOutput, FormatterUtil.makeFilenameFromText(caption));
         Util.saveFile(latexFile, latex, "UTF-8");

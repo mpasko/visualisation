@@ -1,7 +1,4 @@
-\begin{table}[H]
-{
-\centering
-\begin{tabular}{| c | c | c | c | c | c | c |}
+\begin{longtable}{| c | c | c | c | c | c | c |}
 \hline
 Nazwa & TP & TN & FP & FN & F1 & C \\
 \hline

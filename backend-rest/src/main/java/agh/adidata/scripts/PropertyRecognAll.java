@@ -32,7 +32,7 @@ public class PropertyRecognAll {
         adiExperiment.setHumanize(humanize);
         adiExperiment.setInput(StubFactory.loadAdiUpdatedData());
         LinkedList<Entry<IResource, String>> algSet = new LinkedList<Map.Entry<IResource, String>>();
-        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new J48Resource(), "prune"));
+        algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new C45Resource(), "prune"));
         algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new C45Resource(), "unpruned"));
         
         //algSet.add(new AbstractMap.SimpleEntry<IResource, String>(new JRipResource(), "strict"));
